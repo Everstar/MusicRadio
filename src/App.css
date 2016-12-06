@@ -1,0 +1,59 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.App-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.MenuBar-header {
+  padding-left: 10%;
+  padding-top: 10%;
+  background-size: cover;
+}
+
+.Nickname {
+  line-height: 2.15;
+  color: white;
+}
+
+.hiddenOverflow {
+  overflow: hidden;
+}
+
+.againstMyself {
+  font-family:'againstmyself77862c7c017677';
+}
+
+.subTitle {
+  font-size: x-large;
+}
+
+.JennaSue {
+  font-family:'JennaSue7786866a817677';
+}
+
+.alignCenter {
+  text-align: center;
+}
+
+.inputForm {
+  width: 256px;
+}
