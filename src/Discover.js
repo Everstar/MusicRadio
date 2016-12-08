@@ -9,7 +9,7 @@ var Discover = React.createClass({
     },
 
     componentWillMount: function() {
-        var discover_js = document.createElement('script');
+        let discover_js = document.createElement('script');
         discover_js.src = './js/discover.js';
         document.body.appendChild(discover_js);
         this.setState({discover_js: discover_js});

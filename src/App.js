@@ -12,7 +12,7 @@ const App = React.createClass({
 
     //初始化
     getInitialState() {
-        let username = localStorage.getItem('username');
+        let username = window.localStorage.getItem('username');
         if(username != null) {
             console.log('登录状态存在:' + username);
             Auth.username = username;
@@ -56,7 +56,10 @@ const App = React.createClass({
               <MuiThemeProvider>
                   <MenuBar/>
               </MuiThemeProvider>
-                {this.state.permit ? this.props.children : null}
+                <MuiThemeProvider>
+                    {/*{this.state.permit ? this.props.children : null}*/}
+                    {this.props.children }
+                </MuiThemeProvider>
             </div>
         );
     }

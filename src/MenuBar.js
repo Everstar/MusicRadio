@@ -5,14 +5,13 @@ import React, {Component} from 'react';
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
-import Toggle from 'material-ui/Toggle';
 import Drawer from 'material-ui/Drawer';
 import AvMusicVideo from 'material-ui/svg-icons/av/music-video'
 import NavigationMenu from 'material-ui/svg-icons/navigation/menu'
 import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
 import Avatar from 'material-ui/Avatar';
-import {Link, browserHistory}from 'react-router';
+import {IndexLink, Link, browserHistory, hashHistory}from 'react-router';
 import Auth from './account/Auth'
 
 
@@ -35,7 +34,7 @@ class Signin extends React.Component {
 
         return (
             <Link to="/Sign" style={{display:this.state.display}}>
-                <FlatButton {...Props} label="SignIn" onClick={this.onSwitch}/>
+                <FlatButton {...Props} label="SignIn" rippleColor="pink" onClick={this.onSwitch}/>
             </Link>
         );
     }
@@ -49,15 +48,63 @@ class DrawerUndocked extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {open: false};
+        this.state = {
+            open: false,
+
+            menuItem_status : [true, false, false, false, false, false]
+
+        };
     }
 
     handleToggle = () => this.setState({open: !this.state.open});
 
     handleClose = () => this.setState({open: false});
 
+    onTouchMenuItem = (index) => {
+        let status = [false, false, false, false, false, false];
+        status[index] = true;
+
+        this.setState({
+            menuItem_status : status
+        });
+    };
+
     onclick = (event) => {
-        this.props.onSwitch(event.target.innerHTML);
+        // this.props.onSwitch(event.target.innerHTML);
+        console.log(this.props.onSwitch);
+
+        switch (event.target.innerHTML) {
+            case 'Discover' :
+                console.log('Discover');
+                hashHistory.push('Discover');
+                this.onTouchMenuItem(0);
+                break;
+            case 'Hot List' :
+                console.log('HotList');
+                hashHistory.push('HotList');
+                this.onTouchMenuItem(1);
+                break;
+            case 'Home' :
+                console.log('Home');
+                hashHistory.push('Home');
+                this.onTouchMenuItem(2);
+                break;
+            case 'Music List' :
+                console.log('MusicList');
+                hashHistory.push('Home');
+                this.onTouchMenuItem(3);
+                break;
+            case 'Friends' :
+                console.log('Friends');
+                hashHistory.push('Home');
+                this.onTouchMenuItem(4);
+                break;
+            case 'Message' :
+                console.log('Message');
+                hashHistory.push('Home');
+                this.onTouchMenuItem(5);
+                break;
+        }
     };
 
     onSignOut = (event) => {
@@ -81,16 +128,16 @@ class DrawerUndocked extends React.Component {
                     <div className="MenuBar-header" style={MenubarHeader_Background}>
                         <Avatar src="img/profile_1.png" size={56} />
                         <br/>
-                        <span id="nickname" className="Nickname" >Everstar</span>
+                        <span className="Nickname">{Auth.username}</span>
                     </div>
                     <Divider />
-                    <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} href="/#/Discover" primaryText="Discover"/>
-                    <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Hot List"/>
+                    <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Discover" disabled={this.state.menuItem_status[0]}/>
+                    <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Hot List" disabled={this.state.menuItem_status[1]}/>
                     <Divider />
-                    <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} href="/#/Home" primaryText="Home"/>
-                    <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Music List"/>
-                    <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Friends"/>
-                    <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Message"/>
+                    <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Home" disabled={this.state.menuItem_status[2]}/>
+                    <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Music List" disabled={this.state.menuItem_status[3]}/>
+                    <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Friends" disabled={this.state.menuItem_status[4]}/>
+                    <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Message" disabled={this.state.menuItem_status[5]}/>
                     <Divider />
                     <MenuItem onTouchTap={this.handleClose} onClick={this.onSignOut} primaryText="Sign Out"/>
                 </Drawer>
@@ -111,7 +158,6 @@ class MenuBar extends Component {
 
     state = {
         logged: false,
-        title : 'Discover'
     };
 
     componentWillMount() {
@@ -119,14 +165,9 @@ class MenuBar extends Component {
             this.setState({logged : true});
     };
 
+    //回首页
     toMainPage = () => {
-        this.setState({title : 'Discover'});
         this.refs.sign.setState({display : 'block'});
-    };
-
-    componentWillUpdate() {
-        if(this.state.title !== 'Discover')
-            this.toMainPage();
     };
 
     handleChange = (event, logged) => {
@@ -140,16 +181,11 @@ class MenuBar extends Component {
     render() {
         return (
             <div>
-                {/*<Toggle*/}
-                    {/*label="Logged"*/}
-                    {/*defaultToggled={false}*/}
-                    {/*onToggle={this.handleChange}*/}
-                    {/*labelPosition="right"*/}
-                    {/*style={{margin: 20}}*/}
-                {/*/>*/}
                 <AppBar
-                    title={this.state.title}
-                    iconElementLeft={this.state.logged ? <DrawerUndocked onSwitch={this.changeTitle} /> : <IconButton href="/#/" onClick={this.toMainPage} ><AvMusicVideo /></IconButton>}
+                    title={window.location.hash.substr(2) || 'Music Radio'}
+                    iconElementLeft={this.state.logged ? <DrawerUndocked onSwitch={this.changeTitle} /> : <IndexLink to="/" activeClassName="active" onlyActiveOnIndex={true}>
+                        <IconButton iconStyle={{color:'white'}} tooltip="Discover" touch={true} onClick={this.toMainPage} ><AvMusicVideo /></IconButton>
+                    </IndexLink>}
                     iconElementRight={this.state.logged ? null : <Signin ref="sign" onSwitch={this.changeTitle} />}
                 />
             </div>

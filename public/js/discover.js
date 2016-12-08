@@ -4,7 +4,7 @@ var element;
 var drawingArea;
 var width;
 var height;
-var volume = 0.6;
+var volume = 0.3;
 
 var scale_factor = 6,
     note_overlap = 2,
