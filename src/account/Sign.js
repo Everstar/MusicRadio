@@ -98,6 +98,19 @@ export default class Sign extends React.Component {
 
     // 登录
     onSignIn = () => {
+
+        /*
+        * 为了测试而存在
+        */
+        if(this.state.username == 'test'){
+            this.refs.dialog.handleOpen();
+            //登录信息保存到本地
+            window.localStorage.setItem('username', this.state.username);
+            Auth.username = this.state.username;
+            return;
+        }
+
+
         const URL = API.SignIn;
         let callback = 'c'+Math.floor((Math.random()*100000000)+1);
         $.ajax({

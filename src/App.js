@@ -23,24 +23,24 @@ const App = React.createClass({
         }
     },
 
-    checkPrivilege() {
-        let component_id = (this.props.children.type.displayName || this.props.children.type.name);
-        let permit = false;
-        if(!this.state.logged)
-            permit = (component_id === 'Discover' || component_id === 'Sign');
-        else
-            permit = true;
-        this.setState({permit : permit});
-        return permit;
-    },
+    // checkPrivilege() {
+    //     let component_id = (this.props.children.type.displayName || this.props.children.type.name);
+    //     let permit = false;
+    //     if(!this.state.logged)
+    //         permit = (component_id === 'Discover' || component_id === 'Sign');
+    //     else
+    //         permit = true;
+    //     this.setState({permit : permit});
+    //     return permit;
+    // },
 
-    shouldComponentUpdate() {
-        return this.checkPrivilege();
-    },
-
-    componentWillMount() {
-        this.checkPrivilege();
-    },
+    // shouldComponentUpdate() {
+    //     return this.checkPrivilege();
+    // },
+    //
+    // componentWillMount() {
+    //     this.checkPrivilege();
+    // },
 
     // componentWillUpdate() {
     //     //this.checkPrivilege();

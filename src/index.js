@@ -5,6 +5,7 @@ import App from './App';
 import Sign from './account/Sign'
 import Discover from './Discover'
 import Home from './Home'
+import HotList from './HotList'
 import './index.css';
 
 
@@ -20,6 +21,7 @@ ReactDOM.render((
             <Route path="/Sign" component={Sign}/>
             <Route path="/Discover" component={Discover}/>
             <Route path="/Home" component={Home}/>
+            <Route path="/HotList" component={HotList}/>
         </Route>
     </Router>
 ), document.getElementById("root"));

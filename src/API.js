@@ -3,7 +3,7 @@
  */
 import React from 'react'
 
-let URL = 'http://localhost:8080';
+let URL = 'http://192.168.31.230:8081';
 
 //后端API
 class API extends React.Component{
@@ -11,6 +11,9 @@ class API extends React.Component{
     static SignIn = URL + '/signin';
     static SignUp = URL + '/signup';
     static Account = URL + '/account';
+
+    static Info = URL + '/info';
+    static HotList = URL + '/hotlist';
 
     static render() {
         return null;

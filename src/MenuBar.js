@@ -117,6 +117,7 @@ class DrawerUndocked extends React.Component {
         return (
             <div>
                 <IconButton
+                    iconStyle={{color : 'white'}}
                     onTouchTap={this.handleToggle}
                 ><NavigationMenu/></IconButton>
                 <Drawer
@@ -163,6 +164,10 @@ class MenuBar extends Component {
     componentWillMount() {
         if(Auth.username != null)
             this.setState({logged : true});
+        if(window.location.hash != '#/'){
+            // browserHistory.push('/');
+            // window.location.reload();
+        }
     };
 
     //回首页
