@@ -2,6 +2,8 @@ package com.musicbubble.repository;
 
 import com.musicbubble.model.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -13,7 +15,11 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer>{
 
     UserEntity findByUserName(String userName);
 
-    void
+    @Query("select u.passwd from UserEntity u where u.userName = ?1")
+    String findPasswdByUserName(String userName);
 
+    @Modifying
+    @Query("update UserEntity u set u.experience = u.experience + ?2 where u.userName = ?1")
+    int incExperience(String userName, int exp);
 
 }

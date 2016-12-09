@@ -26,7 +26,7 @@ public class MainController {
 
     @ResponseBody
     @RequestMapping(value = "/admin/users/", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public UserEntity getUserPasswd(@RequestParam int id){
+    public UserEntity getUserPasswd(@RequestParam("id") int id){
         UserEntity userEntity = userRepository.findOne(id);
         return userEntity;
     }
