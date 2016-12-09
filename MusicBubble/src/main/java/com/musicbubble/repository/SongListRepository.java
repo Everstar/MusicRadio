@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SongListRepository extends JpaRepository<SongListEntity, Integer>{
 
-    
+
 }
