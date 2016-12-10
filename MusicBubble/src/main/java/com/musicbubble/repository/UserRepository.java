@@ -5,13 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by happyfarmer on 2016/12/3.
  */
-@Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer>{
-
 
     UserEntity findByUserName(String userName);
 

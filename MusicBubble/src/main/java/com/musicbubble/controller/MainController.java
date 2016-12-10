@@ -23,11 +23,4 @@ public class MainController {
     public String index(){
         return "index";
     }
-
-    @ResponseBody
-    @RequestMapping(value = "/admin/users/", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public UserEntity getUserPasswd(@RequestParam("id") int id){
-        UserEntity userEntity = userRepository.findOne(id);
-        return userEntity;
-    }
 }

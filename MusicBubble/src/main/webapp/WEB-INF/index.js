@@ -5,13 +5,16 @@
 
 $('btn').click(function () {
     $("log").html('clicked');
+    var postData = {"username" : "许迪文", "password" : "123", "gender" : "M"};
+
     $.ajax({
         type: "GET",
-        url: "http://localhost:8080/admin/users",
+        dataType:"json",
+        contentType:"application/json",
+        data:JSON.stringify(postData),
+        url: "http://localhost:8080/signup",
         success: function (data) {
-            var dataJson = JSON.stringify(data);
-            var jsonInfo = JSON.parse(dataJson);
-            alert(jsonInfo.length);
+            console.log("signup success");
         }
     });
 });

@@ -23,8 +23,9 @@
 
 <h3 id="log">出现此页面，说明配置成功。</h3>
 
-<button id="btn">clickMe</button>
-
+<button id="btn1">signup</button>
+<br/>
+<button id="btn2">signin</button>
 <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
 <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 
@@ -35,25 +36,35 @@
 
 <script type="text/javascript">
 
-    $('#btn').click(function () {
-        $("#log").html('clicked');
-        var uri = "/admin/users";
-        var postData={user_id:1};
+    $('#btn1').click(function () {
+        var postData = {"username": "许迪文", "password": "123", "gender": "M"};
+
         $.ajax({
             type: "POST",
-            url: uri,
-            contentType:"application/json",
-            data:JSON.stringify(postData),
-            async: false,
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify(postData),
+            url: "http://localhost:8080/signup",
             success: function (data) {
-                console.log("success");
-                var dataJson = JSON.stringify(data);
-                var jsonInfo = JSON.parse(dataJson);
-                alert(jsonInfo.passwd);
+                alert("signup success");
             }
         });
     });
-    console.log("???");
+    $('#btn2').click(function () {
+        var postData = {"username": "许迪文", "password": "123"};
+
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify(postData),
+            url: "http://localhost:8080/signin",
+            success: function (data) {
+                ajaxobj = eval("(" + data + ")");
+                alert(ajaxobj);
+            }
+        });
+    });
 </script>
 
 </body>

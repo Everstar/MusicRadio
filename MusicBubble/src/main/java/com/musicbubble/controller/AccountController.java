@@ -29,8 +29,12 @@ public class AccountController implements Serializable {
         return new ResponseEntity<Object>(map, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/signup", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<Object> signUp(@RequestBody String username, @RequestBody String password, @RequestBody String sex) {
+    @RequestMapping(value = "/signup", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+    public ResponseEntity<Object> signUp(@RequestBody Map<String, String> data) {
+        String username = data.get("username").trim();
+        String password = data.get("password").trim();
+        String sex = data.get("gender").trim();
+        System.out.println(username + " " + password + " " + sex);
         Map<String, Object> map = new HashMap<>();
         boolean res = accountService.SignUp(username, password, sex);
         map.put("result", res);
@@ -39,7 +43,10 @@ public class AccountController implements Serializable {
     }
 
     @RequestMapping(value = "/signin", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<Object> signIn(@RequestBody String username, @RequestBody String password) {
+    public ResponseEntity<Object> signIn(@RequestBody Map<String, String> data) {
+        String username = data.get("username").trim();
+        String password = data.get("password").trim();
+        System.out.println(username + " " + password);
         Map<String, Object> map = new HashMap<>();
         boolean res = accountService.SignIn(username, password);
         map.put("result", res);
@@ -47,20 +54,18 @@ public class AccountController implements Serializable {
             return new ResponseEntity<Object>(map, HttpStatus.UNAUTHORIZED);
         }
 
-        //set user token;
-        String tokenId = Encrypt.SHA512(username);
         //set expire time;
         String tokenTime = DateTimeUtil.makeExpireTime(7 * 24 * 3600);
 
         HttpStatus status = HttpStatus.OK;
         try {
-            String encrypted = DESUtil.encrypt(tokenId + '|' + tokenTime, DESUtil.getKey());
+            String encrypted = DESUtil.encrypt(username + '|' + tokenTime, DESUtil.getKey());
             map.put("token", encrypted);
+            System.out.println("token " + encrypted);
         } catch (Exception e) {
             e.printStackTrace();
             status = HttpStatus.INTERNAL_SERVER_ERROR;
-        }finally {
-            return new ResponseEntity<Object>(map, HttpStatus.OK);
         }
+        return new ResponseEntity<Object>(map, status);
     }
 }

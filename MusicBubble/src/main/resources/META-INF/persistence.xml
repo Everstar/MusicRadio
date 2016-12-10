@@ -7,8 +7,8 @@
         <properties>
             <property name="hibernate.connection.url" value="jdbc:mysql://10.60.42.203:8888/DB_03"/>
             <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
-            <property name="hibernate.connection.username"/>
-            <property name="hibernate.connection.password"/>
+            <property name="hibernate.connection.username" value="T03"/>
+            <property name="hibernate.connection.password" value="rfQelnj0"/>
             <!--<property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/DB_03"/>-->
             <!--<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>-->
             <!--<property name="hibernate.connection.username" value="root"/>-->

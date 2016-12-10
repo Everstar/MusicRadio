@@ -28,7 +28,7 @@ public class AccountService extends MyService {
         UserEntity entity = new UserEntity();
         entity.setUserId(0);
         entity.setUserName(user_name);
-        entity.setPasswd(Encrypt.SHA256(passwd));
+        entity.setPasswd(Encrypt.SHA512(passwd));
         entity.setRank(1);
         entity.setSex(sex.equals("M") ? "M" : "F");
         entity.setExperience(0);
@@ -39,9 +39,10 @@ public class AccountService extends MyService {
     public boolean SignIn(String user_name, String passwd) {
         String password = userRepository.findPasswdByUserName(user_name);
         if (!password.equals(Encrypt.SHA512(passwd))) {
+            System.out.println("password invalid");
             return false;
         }
-        userRepository.incExperience(user_name, 10);
+//        userRepository.incExperience(user_name, 10);
 
         return true;
     }
