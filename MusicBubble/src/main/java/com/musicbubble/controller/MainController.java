@@ -16,9 +16,6 @@ import java.util.List;
 @Controller
 public class MainController {
 
-    @Autowired
-    UserRepository userRepository;
-
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(){
         return "index";

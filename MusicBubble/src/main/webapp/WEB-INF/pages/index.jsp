@@ -26,6 +26,10 @@
 <button id="btn1">signup</button>
 <br/>
 <button id="btn2">signin</button>
+<br/>
+<button id="btn3">getLyric</button>
+<br/>
+<button id="btn4">search</button>
 <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
 <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 
@@ -61,10 +65,41 @@
             url: "http://localhost:8080/signin",
             success: function (data) {
                 ajaxobj = eval("(" + data + ")");
-                alert(ajaxobj);
+                alert(ajaxobj.result + "\n" + ajaxobj.token);
             }
         });
     });
+
+    $('#btn3').click(function () {
+        var uri ="http://localhost:8080/api/lyric?id=" + 5134011;
+        $.ajax({
+            type : "get",
+            dataType : "json",
+            url :uri,
+            success:function (data) {
+                alert("getLyric Success");
+            }
+        });
+    });
+
+    $('#btn4').click(function () {
+        var postData = {"s" : "River", "offset" : 0, "limit" : 10, "type" : "1"};
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify(postData),
+            url: "http://music.163.com/api/search/pc",
+            success: function (data) {
+                ajaxobj = eval("(" + data + ")");
+                alert(ajaxobj);
+            },
+            error : function (data){
+                alert("error");
+            }
+        });
+    });
+
 </script>
 
 </body>

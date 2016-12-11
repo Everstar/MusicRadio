@@ -18,14 +18,14 @@ public class DateTimeUtil {
         return formatter.format(date);
     }
 
-    public static Date getExpireTime(String timeStr){
+    private static Date getExpireTime(String timeStr){
         SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
         Date date = formatter.parse(timeStr, new ParsePosition(0));
         return date;
     }
 
-    public static boolean expires(Date date){
-        return date.before(new Date());
+    public static boolean expires(String timeStr){
+        return getExpireTime(timeStr).before(new Date());
     }
 
 }

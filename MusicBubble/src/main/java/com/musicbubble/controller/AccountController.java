@@ -24,7 +24,7 @@ public class AccountController implements Serializable {
     @RequestMapping(value = "/account", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<Object> validateAccount(@RequestParam("id") String id) {
         Map<String, Object> map = new HashMap<>();
-        boolean exists = accountService.Exists(id);
+        boolean exists = accountService.Exists(id) != -1;
         map.put("result", exists);
         return new ResponseEntity<Object>(map, HttpStatus.OK);
     }
@@ -59,9 +59,11 @@ public class AccountController implements Serializable {
 
         HttpStatus status = HttpStatus.OK;
         try {
-            String encrypted = DESUtil.encrypt(username + '|' + tokenTime, DESUtil.getKey());
+            String encrypted = DESUtil.encrypt(accountService.Exists(username) +'|' + tokenTime, DESUtil.getKey());
             map.put("token", encrypted);
+
             System.out.println("token " + encrypted);
+
         } catch (Exception e) {
             e.printStackTrace();
             status = HttpStatus.INTERNAL_SERVER_ERROR;

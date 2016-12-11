@@ -1,9 +1,9 @@
 package com.musicbubble.service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.musicbubble.model.ImageEntity;
 import com.musicbubble.repository.ImageRepository;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ import java.util.Map;
 public class ResourceService extends MyService {
 
     @Autowired
-    ImageRepository imageRepository;
+    private ImageRepository imageRepository;
 
     private String getOutputFromURL(String uri) throws MalformedURLException, IOException, Exception {
         URL url = new URL(uri);
@@ -40,11 +40,13 @@ public class ResourceService extends MyService {
         String uri = new String("http://music.163.com/api/song/detail/?id=" + id + "&ids=%5B" + id + "%5D");
         try {
             String res = getOutputFromURL(uri);
-            JSONObject obj = (JSONObject) JSON.parse(res);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNode = mapper.readTree(res);
+            JsonNode songNode = rootNode.path("songs").get(0);
             map = new HashMap<>();
-            map.put("song_name", obj.getString("song_name"));
-            map.put("song_artists", obj.getString("song_artists"));
-            map.put("mp3Url", obj.getString("mp3Url"));
+            map.put("song_name", songNode.path("name").asText());
+            map.put("song_artists", songNode.path("artists").get(0).path("name").asText());
+            map.put("mp3Url", songNode.path("mp3Url").asText());
 
         } catch (MalformedURLException e) {
             System.err.println(uri + "is not a valid url");
@@ -52,22 +54,34 @@ public class ResourceService extends MyService {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-
         }
 
         return map;
     }
 
-
-    public Map<String, String> GetImgUrlById(String id) {
-        ImageEntity entity = imageRepository.findOne(Integer.parseInt(id));
-        Map<String, String> map = null;
-        if (entity != null) {
-            map.put("imgType", entity.getImageType().equals("0") ? "local" : "outside");
-            map.put("imgUrl", entity.getImageUri());
-
+    public String GetMusicLyric(String id){
+        String uri = new String("http://music.163.com/api/song/media?id=" + id);
+        String lyric = null;
+        try {
+            String res = getOutputFromURL(uri);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNode = mapper.readTree(res);
+            lyric = rootNode.path("lyric").asText();
+            System.out.println(lyric);
+        }catch (MalformedURLException e) {
+            System.err.println(uri + "is not a valid url");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return map;
+        return lyric;
+    }
+
+
+
+    public String GetImgUrlById(int id) {
+        ImageEntity entity = imageRepository.findOne(id);
+        return entity!=null?entity.getImageUri():null;
     }
 }

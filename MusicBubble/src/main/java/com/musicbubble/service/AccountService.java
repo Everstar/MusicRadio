@@ -2,6 +2,8 @@ package com.musicbubble.service;
 
 import com.musicbubble.model.UserEntity;
 import com.musicbubble.repository.UserRepository;
+import com.musicbubble.tools.DESUtil;
+import com.musicbubble.tools.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.musicbubble.service.MyService;
@@ -16,10 +18,10 @@ public class AccountService extends MyService {
     @Autowired
     private UserRepository userRepository;
 
-    public boolean Exists(String user_name) {
+    public Integer Exists(String user_name) {
         UserEntity entity = null;
         entity = userRepository.findByUserName(user_name);
-        return entity != null;
+        return entity != null ? entity.getUserId() : -1;
     }
 
     public boolean SignUp(String user_name, String passwd, String sex) {
@@ -45,6 +47,25 @@ public class AccountService extends MyService {
 //        userRepository.incExperience(user_name, 10);
 
         return true;
+    }
+
+    public String GetUserNameById(int user_id) {
+        UserEntity userEntity = userRepository.findOne(user_id);
+        return userEntity == null ? null : userEntity.getUserName();
+    }
+
+    public int IdentifyUser(String token) {
+        int user_id = -1;
+        try {
+            String decrypted = DESUtil.decrypt(token, DESUtil.getKey());
+            String[] tokens = decrypted.split("|");
+            boolean expires = DateTimeUtil.expires(tokens[1]);
+            if (!expires)
+                user_id = Integer.parseInt(tokens[0]);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return user_id;
     }
 
 }
