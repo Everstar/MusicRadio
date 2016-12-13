@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.*;
+import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,12 +26,11 @@ public class ResourceService extends MyService {
     private String getOutputFromURL(String uri) throws MalformedURLException, IOException, Exception {
         URL url = new URL(uri);
         HttpURLConnection uc = (HttpURLConnection) url.openConnection();
-        InputStream buffer = new BufferedInputStream(uc.getInputStream());
-        Reader reader = new InputStreamReader(buffer);
-        int c;
+        BufferedReader reader = new BufferedReader(new InputStreamReader(uc.getInputStream(), Charset.forName("UTF-8")));
         StringBuilder result = new StringBuilder();
-        while ((c = reader.read()) != -1) {
-            result.append((char) c);
+        String line;
+        while ((line = reader.readLine()) != null) {
+            result.append(line);
         }
         return result.toString();
 
@@ -59,16 +60,16 @@ public class ResourceService extends MyService {
         return map;
     }
 
-    public String GetMusicLyric(String id){
+    public Map<String, String> GetMusicLyric(String id) {
         String uri = new String("http://music.163.com/api/song/media?id=" + id);
-        String lyric = null;
+        Map<String, String> lyric = null;
         try {
             String res = getOutputFromURL(uri);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rootNode = mapper.readTree(res);
-            lyric = rootNode.path("lyric").asText();
-            System.out.println(lyric);
-        }catch (MalformedURLException e) {
+            String lyricStr = rootNode.path("lyric").asText();
+            lyric = parseLyric(lyricStr);
+        } catch (MalformedURLException e) {
             System.err.println(uri + "is not a valid url");
         } catch (IOException e) {
             e.printStackTrace();
@@ -78,10 +79,29 @@ public class ResourceService extends MyService {
         return lyric;
     }
 
+    public List<Map<String, Object>> SearchMusic(String keys, int limit, int type){
 
+    }
 
     public String GetImgUrlById(int id) {
         ImageEntity entity = imageRepository.findOne(id);
-        return entity!=null?entity.getImageUri():null;
+        return entity != null ? entity.getImageUri() : null;
+    }
+
+    private Map<String, String> parseLyric(String lyric) {
+        Map<String, String> map = new HashMap<>();
+        lyric = lyric.trim();
+        String[] tokens = lyric.split("\\[|\\]");
+        for (int i = 1; i < tokens.length; ) {
+//            System.out.println(tokens[i] + "&&&" + tokens[i + 1]);
+            String[] times = tokens[i].split(":|[.]");
+//            System.out.println(times[0] + "!" + times[1] + "!" + times[2]);
+            Integer seconds = Integer.parseInt(times[0]) * 60
+                    + Integer.parseInt(times[1])
+                    + (Integer.parseInt(times[2]) >= 500 ? 1 : 0);
+            map.put(seconds.toString(), tokens[i + 1].trim());
+            i += 2;
+        }
+        return map;
     }
 }

@@ -30,6 +30,7 @@ public class AccountService extends MyService {
         UserEntity entity = new UserEntity();
         entity.setUserId(0);
         entity.setUserName(user_name);
+        entity.setImageId(0);
         entity.setPasswd(Encrypt.SHA512(passwd));
         entity.setRank(1);
         entity.setSex(sex.equals("M") ? "M" : "F");

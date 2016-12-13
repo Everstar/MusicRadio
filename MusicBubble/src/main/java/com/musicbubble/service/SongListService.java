@@ -61,4 +61,6 @@ public class SongListService extends MyService {
         }
         return list;
     }
+
+//    public int NumOfSongListByUserId()
 }

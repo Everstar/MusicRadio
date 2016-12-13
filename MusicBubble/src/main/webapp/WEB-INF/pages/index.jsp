@@ -27,6 +27,7 @@
 <br/>
 <button id="btn2">signin</button>
 <br/>
+<input type="number" id="music_id" value=""/>
 <button id="btn3">getLyric</button>
 <br/>
 <button id="btn4">search</button>
@@ -71,7 +72,7 @@
     });
 
     $('#btn3').click(function () {
-        var uri ="http://localhost:8080/api/lyric?id=" + 5134011;
+        var uri ="http://localhost:8080/api/lyric?id=" + $('#music_id').val();
         $.ajax({
             type : "get",
             dataType : "json",

@@ -21,7 +21,7 @@ public class ResourceController {
     @Autowired
     private ResourceService resourceService;
 
-    @RequestMapping(value = "/api/song", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/api/song", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> getMusicInfo(@RequestParam("id")String song_id){
         Map<String, String> map = resourceService.GetMusicInfoById(song_id);
         HttpStatus status = HttpStatus.OK;
@@ -44,14 +44,15 @@ public class ResourceController {
         return new ResponseEntity<Object>(map, status);
     }
 
-    @RequestMapping(value = "api/search", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<Object> searchMusic(@RequestParam("s") String key){
+
+    @RequestMapping(value = "api/search", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity<Object> searchMusic(@RequestParam("key") String key){
         return null;
     }
 
-    @RequestMapping(value = "api/lyric", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "api/lyric", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> getMusicLyric(@RequestParam("id")String song_id){
-        String map = resourceService.GetMusicLyric(song_id);
+        Map<String, String> map = resourceService.GetMusicLyric(song_id);
         HttpStatus status = HttpStatus.OK;
         if(map == null){
             status = HttpStatus.NOT_FOUND;
