@@ -1,5 +1,5 @@
 /**
- * Created by kevin on 12/2/2016.
+ * Created by tsengkasing on 12/2/2016.
  */
 import React, {Component} from 'react';
 import AppBar from 'material-ui/AppBar';
@@ -91,7 +91,7 @@ class DrawerUndocked extends React.Component {
                 break;
             case 'Music List' :
                 console.log('MusicList');
-                hashHistory.push('Home');
+                hashHistory.push('MusicList');
                 this.onTouchMenuItem(3);
                 break;
             case 'Friends' :
@@ -104,11 +104,13 @@ class DrawerUndocked extends React.Component {
                 hashHistory.push('Home');
                 this.onTouchMenuItem(5);
                 break;
+            default:
+                break;
         }
     };
 
     onSignOut = (event) => {
-        window.localStorage.removeItem('username');
+        window.localStorage.removeItem('musicradio');
         browserHistory.push('/');
         window.location.reload();
     };
@@ -127,7 +129,7 @@ class DrawerUndocked extends React.Component {
                     onRequestChange={(open) => this.setState({open})}
                 >
                     <div className="MenuBar-header" style={MenubarHeader_Background}>
-                        <Avatar src="img/profile_1.png" size={56} />
+                        <Avatar src="dynamic/img/avatar.png" size={56} />
                         <br/>
                         <span className="Nickname">{Auth.username}</span>
                     </div>
@@ -153,10 +155,6 @@ class DrawerUndocked extends React.Component {
  */
 class MenuBar extends Component {
 
-    constructor(props) {
-        super(props);
-    };
-
     state = {
         logged: false,
     };
@@ -164,7 +162,7 @@ class MenuBar extends Component {
     componentWillMount() {
         if(Auth.username != null)
             this.setState({logged : true});
-        if(window.location.hash != '#/'){
+        if(window.location.hash !== '#/'){
             // browserHistory.push('/');
             // window.location.reload();
         }

@@ -1,5 +1,5 @@
 /**
- * Created by kevin on 12/3/2016.
+ * Created by tsengkasing on 12/3/2016.
  */
 import React from 'react';
 
@@ -10,7 +10,7 @@ var Discover = React.createClass({
 
     componentWillMount: function() {
         let discover_js = document.createElement('script');
-        discover_js.src = './js/discover.js';
+        discover_js.src = 'dynamic/js/discover.js';
         document.body.appendChild(discover_js);
         this.setState({discover_js: discover_js});
     },

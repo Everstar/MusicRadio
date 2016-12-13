@@ -1,5 +1,5 @@
 /**
- * Created by kevin on 12/3/2016.
+ * Created by tsengkasing on 12/3/2016.
  */
 import React from 'react';
 import { browserHistory } from 'react-router'
@@ -8,6 +8,7 @@ import SwipeableViews from 'react-swipeable-views';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import SimpleDialog from '../Dialog/Dialog';
+import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import $ from 'jquery';
 import Auth from './Auth'
 import API from '../API'
@@ -23,6 +24,11 @@ const styles = {
         marginTop : '2%',
         padding: 10,
     },
+    radioButtonGroup: {
+        textAlign : 'center',
+        margin : '0 auto',
+        marginBottom: '16px'
+    }
 };
 
 export default class Sign extends React.Component {
@@ -36,7 +42,9 @@ export default class Sign extends React.Component {
             password : null,
 
             error_username : null,
-            error_password : null
+            error_password : null,
+
+            sex : 'male',
         };
     }
 
@@ -49,21 +57,22 @@ export default class Sign extends React.Component {
     //检查用户名是否存在
     checkUsername = (event) => {
         //如果用户名为空
-        if (event.target.value == '') {
+        if (event.target.value === '') {
             this.setState({error_username: 'This field is required'});
         }else {
             const URL = API.Account;
-            let callback = 'c'+Math.floor((Math.random()*100000000)+1);
             $.ajax({
                 url : URL,
-                type : 'POST',
-                jsonpCallback: callback, //specify callback name
+                type : 'GET',
                 contentType: 'application/json',
-                dataType: 'jsonp', //specify jsonp
+                dataType: 'text',
                 data : {
-                    username : this.state.username
+                    id : this.state.username
                 },
                 success : function(data, textStatus, jqXHR) {
+                    console.log(data);
+                    data = $.parseJSON(data);
+                    console.log(data);
                     if(data.result)
                         this.setState({error_username: null});
                     else
@@ -99,36 +108,40 @@ export default class Sign extends React.Component {
     // 登录
     onSignIn = () => {
 
+        if(this.state.error_username !== null) return;
+
         /*
         * 为了测试而存在
         */
-        if(this.state.username == 'test'){
+        if(this.state.username === 'test'){
             this.refs.dialog.handleOpen();
             //登录信息保存到本地
-            window.localStorage.setItem('username', this.state.username);
+            window.localStorage.setItem('musicradio', this.state.username);
             Auth.username = this.state.username;
             return;
         }
 
 
         const URL = API.SignIn;
-        let callback = 'c'+Math.floor((Math.random()*100000000)+1);
         $.ajax({
             url : URL,
             type : 'POST',
-            jsonpCallback: callback, //specify callback name
-            contentType: 'application/json',
-            dataType: 'jsonp', //specify jsonp
+            contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
+            dataType: 'text',
             data : {
                 username : this.state.username,
-                passwd : this.state.password
+                password : this.state.password
             },
             success : function(data, textStatus, jqXHR) {
+                console.log(data);
+                data = $.parseJSON(data);
                 if(data.result){
                     this.refs.dialog.handleOpen();
                     //登录信息保存到本地
-                    window.localStorage.setItem('username', this.state.username);
+                    window.localStorage.setItem('musicradio', this.state.username);
+                    window.localStorage.setItem('musicradio_token', data.token);
                     Auth.username = this.state.username;
+                    Auth.token = data.token;
                 }
                 else this.setState({error_password: 'password not matched'});
             }.bind(this),
@@ -142,18 +155,18 @@ export default class Sign extends React.Component {
     onSignUp = () => {
         console.log("SignUp");
         const URL = API.SignUp;
-        let callback = 'c'+Math.floor((Math.random()*100000000)+1);
         $.ajax({
             url : URL,
             type : 'POST',
-            jsonpCallback: callback, //specify callback name
             contentType: 'application/json',
-            dataType: 'jsonp', //specify jsonp
             data : {
                 username : this.state.username,
-                passwd : this.state.password
+                password : this.state.password,
+                gender : this.state.sex
             },
             success : function(data, textStatus, jqXHR) {
+                console.log(data);
+                data = $.parseJSON(data);
                 if(data.result) {
                     this.refs.dialog.setContent('Sign Up success!', 'You can sign in now.');
                     this.refs.dialog.handleOpen();
@@ -164,6 +177,10 @@ export default class Sign extends React.Component {
                 console.log(xhr.status + '\n' + textStatus + '\n');
             }
         });
+    };
+
+    selectSex = (event) => {
+        this.setState({sex : event.target.value});
     };
 
     render() {
@@ -224,6 +241,16 @@ export default class Sign extends React.Component {
                                    errorText={this.state.error_password}
                                    onChange={this.inputPassword}/>
                         <br/><br/>
+                        <RadioButtonGroup name="sex" valueSelected={this.state.sex} onChange={this.selectSex} className="inputForm" style={styles.radioButtonGroup}>
+                            <RadioButton
+                                value="male"
+                                label="Male"
+                            />
+                            <RadioButton
+                                value="female"
+                                label="Female"
+                            />
+                        </RadioButtonGroup>
 
                         <RaisedButton label="Register"
                                       primary={true}

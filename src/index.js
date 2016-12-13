@@ -6,6 +6,7 @@ import Sign from './account/Sign'
 import Discover from './Discover'
 import Home from './Home'
 import HotList from './HotList'
+import MusicList from './MusicList'
 import './index.css';
 
 
@@ -22,6 +23,7 @@ ReactDOM.render((
             <Route path="/Discover" component={Discover}/>
             <Route path="/Home" component={Home}/>
             <Route path="/HotList" component={HotList}/>
+            <Route path="/MusicList" component={MusicList}/>
         </Route>
     </Router>
 ), document.getElementById("root"));

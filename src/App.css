@@ -31,11 +31,16 @@
 
 .Nickname {
   line-height: 2.15;
-  color: white;
+  color: black;
 }
 
 .hiddenOverflow {
   overflow-x: hidden;
+  overflow-y: visible;
+}
+
+.DiscoverOverFlowY {
+  overflow-y: hidden;
 }
 
 .againstMyself {
@@ -57,3 +62,4 @@
 .inputForm {
   width: 256px;
 }
+

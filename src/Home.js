@@ -1,5 +1,5 @@
 /**
- * Created by kevin on 12/8/2016.
+ * Created by tsengkasing on 12/8/2016.
  */
 import React from 'react';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
@@ -49,13 +49,10 @@ export default class Home extends React.Component {
     //获取用户信息
     getUserInfo = () => {
         const URL = API.Info;
-        let callback = 'c'+Math.floor((Math.random()*100000000)+1);
         $.ajax({
             url : URL,
             type : 'POST',
-            jsonpCallback: callback, //specify callback name
             contentType: 'application/json',
-            dataType: 'jsonp', //specify jsonp
             data : {
                 username : this.state.username
             },
@@ -64,7 +61,7 @@ export default class Home extends React.Component {
                     exp : data.exp,
                     exp_max : data.exp_max,
                     level : data.level,
-                    gender : data.gender == 'M' ? 'Male' : 'Female',
+                    gender : data.gender === 'M' ? 'Male' : 'Female',
                     ctr_songlist: data.ctr_songlist,
                     liked_songlist: data.liked_songlist,
                     friends_num: data.friends_num,
@@ -76,18 +73,39 @@ export default class Home extends React.Component {
         });
     };
 
+    getFriens = () => {
+        document.cookie = 'cookie=' + Auth.token;
+        //'Cookie' : document.cookie
+        const URL = API.Friends;
+        $.ajax({
+            url : URL,
+            type : 'GET',
+            contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
+            dataType: 'text',
+            headers: {'Cookie' : Auth.token},
+            success : function(data, textStatus, jqXHR) {
+                console.log(data);
+            }.bind(this),
+            error : function(xhr, textStatus) {
+                console.log(xhr.status + '\n' + textStatus + '\n');
+            }
+        });
+    };
+
     componentWillMount() {
         //this.getUserInfo();
+        this.getFriens();
     };
 
     render() {
         return (
             <div style={{maxWidth: '535px', margin:'0 auto'}}>
-                <Card containerStyle={{margin: 16}}>
+                <Card containerStyle={{margin: 16}}
+                      style={{background : 'transparent'}}>
                     <CardHeader
                         title={Auth.username}
                         subtitle={this.state.gender}
-                        avatar="img/profile_1.png"
+                        avatar="dynamic/img/profile_1.png"
                         actAsExpander={true}
                     />
                     <div style={{width: '96%', margin:'0 5% 0 5%'}}>Lv{this.state.level}<LinearProgress mode="determinate" value={this.state.exp} max={this.state.exp_max}  /></div>l
@@ -100,24 +118,24 @@ export default class Home extends React.Component {
                 <Chip
                     style={styles.chip}
                 >
-                    <Avatar src="img/profile_1.png" />
+                    <Avatar src="dynamic/img/avatar.png" />
                     happyfarmergo create songlist drinkMe
                 </Chip>
                 <Chip
                     style={styles.chip}
                 >
-                    <Avatar src="img/profile_1.png" />
+                    <Avatar src="dynamic/img/avatar.png" />
                     happyfarmergo create songlist forgetYou
                 </Chip>
                 <Chip
                     style={styles.chip}
                 >
-                    <Avatar src="img/profile_1.png" />
+                    <Avatar src="dynamic/img/avatar.png" />
                     happyfarmergo liked songlist nothing
                 </Chip>                <Chip
                     style={styles.chip}
                 >
-                    <Avatar src="img/profile_1.png" />
+                    <Avatar src="dynamic/img/avatar.png" />
                     happyfarmergo commented songlist goodbye
                 </Chip>
                 <Divider style={{marginTop : '2%'}}/>

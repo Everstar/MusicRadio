@@ -1,5 +1,5 @@
 /**
- * Created by kevin on 12/9/2016.
+ * Created by tsengkasing on 12/9/2016.
  */
 import React from 'react';
 import {GridList, GridTile} from 'material-ui/GridList';
@@ -23,68 +23,68 @@ const styles = {
 
 const tilesData = [
     {
-        img_url: 'img/0.jpg',
+        img_url: 'dynamic/img/0.jpg',
         songlist_name: 'Breakfast',
         author: 'jill111',
         liked : 2048,
         featured: true,
     },
     {
-        img_url: 'img/1.jpg',
+        img_url: 'dynamic/img/1.jpg',
         songlist_name: 'Tasty burger',
         author: 'pashminu',
         liked : 1024,
     },
     {
-        img_url: 'img/2.jpg',
+        img_url: 'dynamic/img/2.jpg',
         songlist_name: 'Camera',
         author: 'Danson67',
         liked : 512,
     },
     {
-        img_url: 'img/3.jpg',
+        img_url: 'dynamic/img/3.jpg',
         songlist_name: 'Morning',
         author: 'fancycrave1',
         liked : 256,
     },
     {
-        img_url: 'img/4.jpg',
+        img_url: 'dynamic/img/4.jpg',
         songlist_name: 'Hats',
         author: 'Hans',
         liked : 128,
     },
     {
-        img_url: 'img/5.jpg',
+        img_url: 'dynamic/img/5.jpg',
         songlist_name: 'Honey',
         author: 'fancycravel',
         liked : 64,
     },
     {
-        img_url: 'img/6.jpg',
+        img_url: 'dynamic/img/6.jpg',
         songlist_name: 'Vegetables',
         author: 'jill111',
         liked : 16,
     },
     {
-        img_url: 'img/7.jpg',
+        img_url: 'dynamic/img/7.jpg',
         songlist_name: 'Water plant',
         author: 'BkrmadtyaKarki',
         liked : 8,
     },
     {
-        img_url: 'img/8.jpg',
+        img_url: 'dynamic/img/8.jpg',
         songlist_name: 'Nothing on you',
         author: 'happyfarmergo',
         liked : 4,
     },
     {
-        img_url: 'img/9.jpg',
+        img_url: 'dynamic/img/9.jpg',
         songlist_name: 'goodbye',
         author: 'captain',
         liked : 2,
     },
     {
-        img_url: 'img/10.jpg',
+        img_url: 'dynamic/img/10.jpg',
         songlist_name: 'dream me',
         author: 'everstar',
         liked : 1,
@@ -152,7 +152,7 @@ class HotList extends React.Component {
                         cols={tile.featured ? 2 : 1}
                         rows={tile.featured ? 2 : 1}
                     >
-                        <img src={tile.img_url} />
+                        <img alt="居然找不到图片" src={tile.img_url} />
                     </GridTile>
                 ))}
             </GridList>
