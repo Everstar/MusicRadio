@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,8 +47,12 @@ public class ResourceController {
 
 
     @RequestMapping(value = "api/search", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-    public ResponseEntity<Object> searchMusic(@RequestParam("key") String key){
-        return null;
+    public ResponseEntity<Object> searchMusic(@RequestParam("key") String keys, @RequestParam("num") int num) {
+        System.out.println(keys + " " + num);
+        List<Map<String, Object>> list = resourceService.SearchMusic(keys, num, 1);
+        HttpStatus status = HttpStatus.OK;
+        if (list == null || list.isEmpty()) status = HttpStatus.NOT_FOUND;
+        return new ResponseEntity<Object>(list, status);
     }
 
     @RequestMapping(value = "api/lyric", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")

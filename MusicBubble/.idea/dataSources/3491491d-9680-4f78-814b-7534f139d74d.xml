@@ -148,7 +148,6 @@ list_id</columns>
     <column id="45" parent="9" name="song_id">
       <mandatory>1</mandatory>
       <data-type>int(10) unsigned|0</data-type>
-      <sequence-identity>1</sequence-identity>
     </column>
     <column id="46" parent="9" name="song_name">
       <mandatory>1</mandatory>
@@ -246,16 +245,19 @@ list_id</columns>
       <data-type>int(11)|0</data-type>
       <default-expression>&apos;0&apos;</default-expression>
     </column>
-    <index id="71" parent="11" name="user_id_UNIQUE">
+    <column id="71" parent="11" name="list_id">
+      <data-type>int(11)|0</data-type>
+    </column>
+    <index id="72" parent="11" name="user_id_UNIQUE">
       <columns>user_id</columns>
       <desc-columns></desc-columns>
       <unique>1</unique>
     </index>
-    <key id="72" parent="11" name="PRIMARY">
+    <key id="73" parent="11" name="PRIMARY">
       <columns>user_id</columns>
       <primary>1</primary>
     </key>
-    <key id="73" parent="11" name="user_id_UNIQUE">
+    <key id="74" parent="11" name="user_id_UNIQUE">
       <columns>user_id</columns>
       <underlying-index>user_id_UNIQUE</underlying-index>
     </key>

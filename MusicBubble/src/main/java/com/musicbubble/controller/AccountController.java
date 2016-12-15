@@ -1,6 +1,7 @@
 package com.musicbubble.controller;
 
 import com.musicbubble.service.AccountService;
+import com.musicbubble.service.SongListService;
 import com.musicbubble.tools.DESUtil;
 import com.musicbubble.tools.DateTimeUtil;
 import com.musicbubble.tools.Encrypt;
@@ -20,6 +21,8 @@ import java.util.Map;
 public class AccountController implements Serializable {
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private SongListService songListService;
 
     @RequestMapping(value = "/account", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<Object> validateAccount(@RequestParam("id") String id) {
@@ -36,7 +39,12 @@ public class AccountController implements Serializable {
         String sex = data.get("gender").trim();
         System.out.println(username + " " + password + " " + sex);
         Map<String, Object> map = new HashMap<>();
-        boolean res = accountService.SignUp(username, password, sex);
+        int user_id = accountService.SignUp(username, password, sex);
+        boolean res = user_id != -1;
+        if (res) {
+            Integer list_id = songListService.CreateSongList(user_id, "我喜爱的歌曲", "");
+            accountService.SetDefaultSongList(user_id, list_id);
+        }
         map.put("result", res);
         HttpStatus status = res ? HttpStatus.CREATED : HttpStatus.NOT_ACCEPTABLE;
         return new ResponseEntity<Object>(map, status);
@@ -59,7 +67,7 @@ public class AccountController implements Serializable {
 
         HttpStatus status = HttpStatus.OK;
         try {
-            String encrypted = DESUtil.encrypt(accountService.Exists(username) +'|' + tokenTime, DESUtil.getKey());
+            String encrypted = DESUtil.encrypt(accountService.Exists(username) + '|' + tokenTime, DESUtil.getKey());
             map.put("token", encrypted);
 
             System.out.println("token " + encrypted);

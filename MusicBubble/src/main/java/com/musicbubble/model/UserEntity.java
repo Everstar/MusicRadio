@@ -3,7 +3,7 @@ package com.musicbubble.model;
 import javax.persistence.*;
 
 /**
- * Created by happyfarmer on 2016/12/9.
+ * Created by happyfarmer on 12/15/2016.
  */
 @Entity
 @Table(name = "user", schema = "db_03", catalog = "")
@@ -15,6 +15,7 @@ public class UserEntity {
     private String sex;
     private Integer rank;
     private Integer experience;
+    private Integer listId;
 
     @Id
     @Column(name = "user_id", nullable = false)
@@ -86,6 +87,16 @@ public class UserEntity {
         this.experience = experience;
     }
 
+    @Basic
+    @Column(name = "list_id", nullable = true)
+    public Integer getListId() {
+        return listId;
+    }
+
+    public void setListId(Integer listId) {
+        this.listId = listId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -100,6 +111,7 @@ public class UserEntity {
         if (sex != null ? !sex.equals(entity.sex) : entity.sex != null) return false;
         if (rank != null ? !rank.equals(entity.rank) : entity.rank != null) return false;
         if (experience != null ? !experience.equals(entity.experience) : entity.experience != null) return false;
+        if (listId != null ? !listId.equals(entity.listId) : entity.listId != null) return false;
 
         return true;
     }
@@ -113,6 +125,7 @@ public class UserEntity {
         result = 31 * result + (sex != null ? sex.hashCode() : 0);
         result = 31 * result + (rank != null ? rank.hashCode() : 0);
         result = 31 * result + (experience != null ? experience.hashCode() : 0);
+        result = 31 * result + (listId != null ? listId.hashCode() : 0);
         return result;
     }
 }

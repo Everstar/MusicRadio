@@ -8,7 +8,9 @@ import java.util.Date;
  * Created by happyfarmer on 2016/12/9.
  */
 public class DateTimeUtil {
-    private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
+    public static final int MomentInterval = 7 * 24 * 3600;
+
+    private static final String dateFormat = "yyyy-MM-dd HH:mm:ss";
 
     public static String makeExpireTime(int seconds){
         long currentTime = System.currentTimeMillis();

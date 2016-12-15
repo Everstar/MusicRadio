@@ -21,4 +21,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer>{
     @Query("update UserEntity u set u.experience = u.experience + ?2 where u.userName = ?1")
     int incExperience(String userName, int exp);
 
+    @Modifying
+    @Query("update UserEntity u set u.listId = ?2 where u.userId = ?1")
+    int setListId(int user_id, int list_id);
+
 }

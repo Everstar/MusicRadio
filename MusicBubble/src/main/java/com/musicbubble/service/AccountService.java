@@ -24,9 +24,9 @@ public class AccountService extends MyService {
         return entity != null ? entity.getUserId() : -1;
     }
 
-    public boolean SignUp(String user_name, String passwd, String sex) {
+    public int SignUp(String user_name, String passwd, String sex) {
         if (user_name.length() > 100 || passwd.length() > 20 || (!sex.equals("M") && !sex.equals("F")))
-            return false;
+            return -1;
         UserEntity entity = new UserEntity();
         entity.setUserId(0);
         entity.setUserName(user_name);
@@ -35,8 +35,8 @@ public class AccountService extends MyService {
         entity.setRank(1);
         entity.setSex(sex.equals("M") ? "M" : "F");
         entity.setExperience(0);
-        userRepository.save(entity);
-        return true;
+        entity = userRepository.save(entity);
+        return entity.getUserId();
     }
 
     public boolean SignIn(String user_name, String passwd) {
@@ -48,6 +48,10 @@ public class AccountService extends MyService {
 //        userRepository.incExperience(user_name, 10);
 
         return true;
+    }
+
+    public void SetDefaultSongList(int user_id, int list_id){
+        userRepository.setListId(user_id, list_id);
     }
 
     public String GetUserNameById(int user_id) {
@@ -67,6 +71,10 @@ public class AccountService extends MyService {
             e.printStackTrace();
         }
         return user_id;
+    }
+
+    public UserEntity findOne(int user_id){
+        return userRepository.findOne(user_id);
     }
 
 }
