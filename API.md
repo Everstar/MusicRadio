@@ -43,6 +43,32 @@ example ：{bool} 表示bool值
     *token* : {String}
     }
 
+* 上传头像
+	@cookie
+	[POST]
+    UrlPattern = "/avator"
+    data = {
+    *imgFile* : {file}
+    }
+
+
+### 喜爱/点赞
+
+* 点赞歌单
+	@cookie
+	[POST]
+    UrlPattern = "/likesonglist"
+    data = {
+    *songlist_id* : {Integer}
+    }
+
+* 喜爱歌曲
+	@cookie
+    [POST]
+    UrlPattern = "/likesong"
+    data = {
+    *song_id* : {Integer}
+    }
 
 ### 歌单
 
@@ -67,6 +93,78 @@ example ：{bool} 表示bool值
         ...
     ]
     }
+
+* 歌单管理
+	1. 创建歌单
+		[POST]
+        UrlPattern = "/newlist"
+        data = {
+        *songlist_name*: {String},
+        *description* :｛String},
+        }
+        返回JSON{
+        *songlist_id* : {Integer}
+        }
+	1. 删除歌单
+		[POST]
+        UrlPattern = "/deletelist"
+        data = {
+        *`_id* : {Integer}
+        }
+        返回JSON{
+        *result*:{bool}
+        }
+	1. 更改歌单名称和描述
+		[POST]
+        UrlPattern = "/changelist"
+        data = {
+        *songlist_id* : {Integer},
+        *songlist_name*: {String},
+        *description* :｛String},
+        }
+        返回JSON{
+        *result*:{bool}
+        }
+	1. 增加歌曲
+		[POST]
+        UrlPattern = "/addsong"
+        data = {
+        *songlist_id* : {Integer},
+        *songType* : {String}, <%= file | 网易云音乐歌曲ID%>,
+        *songFile* : {file},
+        *songID* : {String},
+        *imgType* : {String}, <%= file | url%> ,
+        *imgFile* : {file},
+        *imgUrl*  : {Url},
+        }
+        返回JSON{
+        *result*:{bool}
+        }
+	1. 删除歌曲
+		[POST]
+        UrlPattern = "/removesong"
+        data = {
+        *songlist_id* : {Integer},
+        *song_id* : {Integer}
+        }
+        返回JSON{
+        *result*:{bool}
+        }
+	1. 更改歌曲背景图
+		[POST]
+        UrlPattern = "/changesong"
+        data = {
+        *songlist_id* : {Integer},
+        *song_id* : {Integer}
+        *imgType* : {String}, <%= file | url%> ,
+        *imgFile* : {file},
+        *imgUrl*  : {Url},
+        }
+
+
+
+###推荐系统
+
 
 ### 社交
 * 用户信息相关
