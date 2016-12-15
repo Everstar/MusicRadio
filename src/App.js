@@ -13,9 +13,11 @@ const App = React.createClass({
     //初始化
     getInitialState() {
         let username = window.localStorage.getItem('musicradio');
+        let token = window.localStorage.getItem('musicradio_token');
         if(username != null) {
             console.log('登录状态存在:' + username);
             Auth.username = username;
+            Auth.token = token;
         }
         return {
             logged : false,

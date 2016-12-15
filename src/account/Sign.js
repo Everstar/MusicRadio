@@ -64,6 +64,10 @@ export default class Sign extends React.Component {
             $.ajax({
                 url : URL,
                 type : 'GET',
+                headers : {
+                    'Token' : Auth.token,
+                    'target' : 'remote',
+                },
                 contentType: 'application/json',
                 dataType: 'text',
                 data : {
@@ -126,6 +130,10 @@ export default class Sign extends React.Component {
         $.ajax({
             url : URL,
             type : 'POST',
+            headers : {
+                'Token' : Auth.token,
+                'target' : 'remote',
+            },
             contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
             dataType: 'text',
             data : {

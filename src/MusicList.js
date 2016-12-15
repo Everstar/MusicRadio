@@ -4,7 +4,8 @@
 import React from 'react';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ContentAdd from 'material-ui/svg-icons/content/add';
 import {Table, TableBody, TableFooter, TableHeader, TableHeaderColumn, TableRow, TableRowColumn}
     from 'material-ui/Table';
 import TextField from 'material-ui/TextField';
@@ -14,6 +15,8 @@ import ContentRemoveCircleOutline from 'material-ui/svg-icons/content/remove-cir
 import Dialog from 'material-ui/Dialog';
 import AutoComplete from 'material-ui/AutoComplete';
 import Toggle from 'material-ui/Toggle';
+import API from './API';
+import $ from 'jquery';
 
 const styles = {
     cardSize : {
@@ -45,7 +48,14 @@ const styles = {
     },
     toggle : {
         marginTop: 8,
-    }
+    },
+    floatingButton : {
+        marginRight: 20,
+        marginBottom : 20,
+        position : 'fixed',
+        right : 0,
+        bottom : 0,
+    },
 };
 
 const tableData = [
@@ -72,6 +82,111 @@ const tableData = [
     },
 ];
 
+//创建新乐单
+class NewMusicListDialog extends React.Component {
+    state = {
+        open: false,
+        songlist_name : "",
+        description : "",
+
+        error_text : null,
+    };
+
+    handleOpen = () => {
+        this.setState({open: true});
+    };
+
+    handleClose = () => {
+        this.setState({open: false});
+    };
+
+    handleSubmit = () => {
+        const URL = API.NewList;
+        if(this.state.songlist_name == "") {
+            this.setState({error_text: "This field is required"});
+            return;
+        }else
+            this.setState({error_text: null});
+
+        $.ajax({
+            url : URL,
+            type : 'POST',
+            data : {
+                songlist_name: this.state.songlist_name,
+                description: this.state.description,
+            },
+            success : function(data, textStatus, jqXHR) {
+                data = $.parseJSON(data);
+                if(data.songlist_id != null)
+                    window.location.reload();
+                else
+                    alert('Fail');
+            }.bind(this),
+            error : function(xhr, textStatus) {
+                console.log(xhr.status + '\n' + textStatus + '\n');
+            }
+        });
+        console.log('createlist \nname :' + this.state.songlist_name + '\ndescription : ' + this.state.description );
+        this.handleClose();
+    };
+
+    inputName = (event) => {
+        this.setState({
+            songlist_name : event.target.value,
+            error_text: null
+        });
+    };
+
+    inputDescription = (event) => {
+        this.setState({description : event.target.value});
+    };
+
+    render() {
+        const actions = [
+            <FlatButton
+                label="Cancel"
+                primary={true}
+                onTouchTap={this.handleClose}
+            />,
+            <FlatButton
+                label="Submit"
+                primary={true}
+                keyboardFocused={true}
+                onTouchTap={this.handleSubmit}
+            />,
+        ];
+
+        return (
+            <div>
+                <Dialog
+                    title="Create song list"
+                    actions={actions}
+                    modal={false}
+                    open={this.state.open}
+                    onRequestClose={this.handleClose}
+                >
+                    <TextField
+                        hintText="Song List Name"
+                        floatingLabelText="song list name"
+                        value={this.state.songlist_name}
+                        onChange={this.inputName}
+                        errorText={this.state.error_text}
+                    /><br />
+                    <TextField
+                        hintText="description"
+                        floatingLabelText="Description"
+                        multiLine={true}
+                        rows={2}
+                        value={this.state.description}
+                        onChange={this.inputDescription}
+                    />
+                </Dialog>
+            </div>
+        );
+    }
+}
+
+//增加音乐
 class AddMusicItemDialog extends React.Component {
     state = {
         open: false,
@@ -175,6 +290,7 @@ class AddMusicItemDialog extends React.Component {
     }
 }
 
+//展示乐单
 class MusicListItem extends React.Component {
 
     constructor(props) {
@@ -340,6 +456,11 @@ export default class MusicList extends React.Component {
     };
 
 
+    newListQuery = () => {
+        this.refs.newListDialog.handleOpen();
+    };
+
+
     render() {
         return (
             <div style={{textAlign: 'center'}}>
@@ -354,6 +475,10 @@ export default class MusicList extends React.Component {
                         stared={list.stared}
                     />
                 ))}
+                <FloatingActionButton style={styles.floatingButton} onTouchTap={this.newListQuery}>
+                    <ContentAdd />
+                </FloatingActionButton>
+                <NewMusicListDialog ref="newListDialog" />
             </div>
         );
     };

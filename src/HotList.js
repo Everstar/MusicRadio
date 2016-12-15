@@ -107,17 +107,14 @@ class HotList extends React.Component {
 
     loadData() {
         const URL = API.HotList;
-        let callback = 'c'+Math.floor((Math.random()*100000000)+1);
         $.ajax({
             url : URL,
             type : 'GET',
-            jsonpCallback: callback, //specify callback name
-            contentType: 'application/json',
-            dataType: 'jsonp', //specify jsonp
             data : {
-                num : 10
+                num : 11
             },
             success : function(data, textStatus, jqXHR) {
+                data = $.parseJSON(data);
                 data.result[0].featured = true;
                 this.setState({songlist : data.result})
             }.bind(this),
