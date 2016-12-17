@@ -80,6 +80,7 @@ public class ResourceService extends MyService {
     }
 
     public List<Map<String, Object>> SearchMusic(String keys, int limit, int type){
+        return null;
 
     }
 

@@ -9,7 +9,6 @@
       <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact" />
       <secret-storage>master_key</secret-storage>
       <user-name>T03</user-name>
-      <introspection-scope>DB_03:</introspection-scope>
       <resolve-scope>DB_03:</resolve-scope>
     </data-source>
     <data-source name="musicPU/Hibernate" uuid="3491491d-9680-4f78-814b-7534f139d74d">
@@ -20,7 +19,6 @@
       <case-sensitivity plain-identifiers="lower" quoted-identifiers="lower" />
       <user-name>T03</user-name>
       <user-password>dfc6dfdcdff5dfc0dfc3dfc4dff5dfc2dfdfdfcb</user-password>
-      <introspection-scope>DB_03:</introspection-scope>
       <resolve-scope>DB_03:</resolve-scope>
     </data-source>
   </component>
