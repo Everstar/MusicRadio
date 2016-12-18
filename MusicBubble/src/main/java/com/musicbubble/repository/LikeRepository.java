@@ -12,6 +12,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface LikeRepository extends JpaRepository<SongListEntity, Integer> {
     @Modifying
     @Query("update SongListEntity s set s.likes = s.likes + 1 where s.listId = ?1")
-    boolean songListLiked(int listId);
+    boolean likeSongList(int listId);
 
 }

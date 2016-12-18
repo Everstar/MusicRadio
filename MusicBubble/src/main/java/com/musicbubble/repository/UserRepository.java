@@ -17,6 +17,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer>{
     @Query("select u.passwd from UserEntity u where u.userName = ?1")
     String findPasswdByUserName(String userName);
 
+    @Query("select u.listId from UserEntity u where u.userId=?1")
+    int findListIdByUserId(int userId);
+
     @Modifying
     @Query("update UserEntity u set u.experience = u.experience + ?2 where u.userName = ?1")
     int incExperience(String userName, int exp);

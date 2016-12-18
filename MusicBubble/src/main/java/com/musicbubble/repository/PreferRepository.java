@@ -24,4 +24,5 @@ public interface PreferRepository extends JpaRepository<PreferEntity, PreferEnti
 
 
 
+
 }
