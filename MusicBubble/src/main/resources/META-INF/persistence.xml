@@ -3,20 +3,21 @@
 
     <persistence-unit name="musicPU">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
-        <class>com.musicbubble.model.UserEntity</class>
+        <class>com.musicbubble.model.SongEntity</class>
         <properties>
-            <property name="hibernate.connection.url" value="jdbc:mysql://10.60.42.203:8888/DB_03"/>
-            <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
-            <property name="hibernate.connection.username" value="T03"/>
-            <property name="hibernate.connection.password" value="rfQelnj0"/>
-            <!--<property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/DB_03"/>-->
+            <!--<property name="hibernate.connection.url" value="jdbc:mysql://10.60.42.203:8888/DB_03"/>-->
             <!--<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>-->
-            <!--<property name="hibernate.connection.username" value="root"/>-->
-            <!--<property name="hibernate.connection.password" value="lv_jin_hua"/>-->
+            <!--<property name="hibernate.connection.username" value="T03"/>-->
+            <!--<property name="hibernate.connection.password" value="rfQelnj0"/>-->
+            <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/DB_03"/>
+            <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
+            <property name="hibernate.connection.username" value="root"/>
+            <property name="hibernate.connection.password" value="lv_jin_hua"/>
             <property name="hibernate.archive.autodetection" value="class"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
             <property name="hbm2ddl.auto" value="update"/>
+            <property name="hibernate.connection.release_mode" value="auto"/>
         </properties>
     </persistence-unit>
 </persistence>

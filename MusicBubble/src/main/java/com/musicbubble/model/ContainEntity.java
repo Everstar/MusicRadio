@@ -3,10 +3,10 @@ package com.musicbubble.model;
 import javax.persistence.*;
 
 /**
- * Created by happyfarmer on 2016/12/3.
+ * Created by happyfarmer on 12/16/2016.
  */
 @Entity
-@Table(name = "Contain", schema = "DB_03", catalog = "")
+@Table(name = "contain", schema = "db_03", catalog = "")
 @IdClass(ContainEntityPK.class)
 public class ContainEntity {
     private int listId;

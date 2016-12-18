@@ -3,6 +3,7 @@ package com.musicbubble.service;
 import com.musicbubble.model.PreferEntity;
 import com.musicbubble.repository.LikeRepository;
 import com.musicbubble.repository.PreferRepository;
+import com.musicbubble.service.base.MyService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Timestamp;

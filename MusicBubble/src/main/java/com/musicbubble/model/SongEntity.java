@@ -1,29 +1,40 @@
 package com.musicbubble.model;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 
 /**
- * Created by happyfarmer on 2016/12/3.
+ * Created by happyfarmer on 12/17/2016.
  */
 @Entity
-@Table(name = "Song", schema = "DB_03", catalog = "")
+@Table(name = "song", schema = "db_03", catalog = "")
 public class SongEntity {
     private int songId;
+    private Integer neteaseId;
     private String songName;
     private String authorName;
-    private Timestamp lastTime;
+    private Integer lastTime;
     private String songUri;
     private String songType;
 
     @Id
     @Column(name = "song_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getSongId() {
         return songId;
     }
 
     public void setSongId(int songId) {
         this.songId = songId;
+    }
+
+    @Basic
+    @Column(name = "netease_id", nullable = true)
+    public Integer getNeteaseId() {
+        return neteaseId;
+    }
+
+    public void setNeteaseId(Integer neteaseId) {
+        this.neteaseId = neteaseId;
     }
 
     @Basic
@@ -37,7 +48,7 @@ public class SongEntity {
     }
 
     @Basic
-    @Column(name = "author_name", nullable = false, length = 100)
+    @Column(name = "author_name", nullable = true, length = 100)
     public String getAuthorName() {
         return authorName;
     }
@@ -48,11 +59,11 @@ public class SongEntity {
 
     @Basic
     @Column(name = "last_time", nullable = true)
-    public Timestamp getLastTime() {
+    public Integer getLastTime() {
         return lastTime;
     }
 
-    public void setLastTime(Timestamp lastTime) {
+    public void setLastTime(Integer lastTime) {
         this.lastTime = lastTime;
     }
 
@@ -81,14 +92,15 @@ public class SongEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SongEntity that = (SongEntity) o;
+        SongEntity entity = (SongEntity) o;
 
-        if (songId != that.songId) return false;
-        if (songName != null ? !songName.equals(that.songName) : that.songName != null) return false;
-        if (authorName != null ? !authorName.equals(that.authorName) : that.authorName != null) return false;
-        if (lastTime != null ? !lastTime.equals(that.lastTime) : that.lastTime != null) return false;
-        if (songUri != null ? !songUri.equals(that.songUri) : that.songUri != null) return false;
-        if (songType != null ? !songType.equals(that.songType) : that.songType != null) return false;
+        if (songId != entity.songId) return false;
+        if (neteaseId != null ? !neteaseId.equals(entity.neteaseId) : entity.neteaseId != null) return false;
+        if (songName != null ? !songName.equals(entity.songName) : entity.songName != null) return false;
+        if (authorName != null ? !authorName.equals(entity.authorName) : entity.authorName != null) return false;
+        if (lastTime != null ? !lastTime.equals(entity.lastTime) : entity.lastTime != null) return false;
+        if (songUri != null ? !songUri.equals(entity.songUri) : entity.songUri != null) return false;
+        if (songType != null ? !songType.equals(entity.songType) : entity.songType != null) return false;
 
         return true;
     }
@@ -96,6 +108,7 @@ public class SongEntity {
     @Override
     public int hashCode() {
         int result = songId;
+        result = 31 * result + (neteaseId != null ? neteaseId.hashCode() : 0);
         result = 31 * result + (songName != null ? songName.hashCode() : 0);
         result = 31 * result + (authorName != null ? authorName.hashCode() : 0);
         result = 31 * result + (lastTime != null ? lastTime.hashCode() : 0);

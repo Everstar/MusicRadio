@@ -4,10 +4,10 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 /**
- * Created by happyfarmer on 2016/12/3.
+ * Created by happyfarmer on 12/16/2016.
  */
 @Entity
-@Table(name = "SongList", schema = "DB_03", catalog = "")
+@Table(name = "songlist", schema = "db_03", catalog = "")
 public class SongListEntity {
     private int listId;
     private String listName;
@@ -19,6 +19,7 @@ public class SongListEntity {
 
     @Id
     @Column(name = "list_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getListId() {
         return listId;
     }

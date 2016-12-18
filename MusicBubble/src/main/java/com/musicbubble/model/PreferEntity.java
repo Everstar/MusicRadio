@@ -4,10 +4,10 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 /**
- * Created by happyfarmer on 2016/12/3.
+ * Created by happyfarmer on 12/16/2016.
  */
 @Entity
-@Table(name = "Prefer", schema = "DB_03", catalog = "")
+@Table(name = "prefer", schema = "db_03", catalog = "")
 @IdClass(PreferEntityPK.class)
 public class PreferEntity {
     private int userId;

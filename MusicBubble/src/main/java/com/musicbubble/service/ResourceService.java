@@ -2,6 +2,7 @@ package com.musicbubble.service;
 
 import com.musicbubble.model.ImageEntity;
 import com.musicbubble.repository.ImageRepository;
+import com.musicbubble.service.base.MyService;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;

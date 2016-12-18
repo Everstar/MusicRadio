@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
  * Created by DELL on 2016/12/18.
  */
 public interface LikeSongRepository extends JpaRepository<UserEntity,Integer> {
-    @Query("select u.listId  from UserEntity u where u.userId=?1")
+    //@Query("select u.listId  from UserEntity u where u.userId=?1")
 
 
 }

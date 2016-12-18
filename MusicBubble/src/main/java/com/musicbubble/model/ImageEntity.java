@@ -3,10 +3,10 @@ package com.musicbubble.model;
 import javax.persistence.*;
 
 /**
- * Created by happyfarmer on 2016/12/3.
+ * Created by happyfarmer on 12/16/2016.
  */
 @Entity
-@Table(name = "Image", schema = "DB_03", catalog = "")
+@Table(name = "image", schema = "db_03", catalog = "")
 public class ImageEntity {
     private int imageId;
     private String imageType;
@@ -14,6 +14,7 @@ public class ImageEntity {
 
     @Id
     @Column(name = "image_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getImageId() {
         return imageId;
     }
@@ -33,7 +34,7 @@ public class ImageEntity {
     }
 
     @Basic
-    @Column(name = "image_uri", nullable = true, length = -1)
+    @Column(name = "image_uri", nullable = true, length = 255)
     public String getImageUri() {
         return imageUri;
     }
