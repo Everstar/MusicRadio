@@ -105,7 +105,7 @@ example ：{bool} 表示bool值
         返回JSON{
         *songlist_id* : {Integer}
         }
-	1. 删除歌单
+	2. 删除歌单
 		[POST]
         UrlPattern = "/deletelist"
         data = {
@@ -114,33 +114,23 @@ example ：{bool} 表示bool值
         返回JSON{
         *result*:{bool}
         }
-	1. 更改歌单名称和描述
+
+	3. 更改歌单信息
 		[POST]
         UrlPattern = "/changelist"
         data = {
         *songlist_id* : {Integer},
+        *image_file* : {Stream},
+        *image_url* : {String},
+        *image_id* : {Integer}原来的图片ID
         *songlist_name*: {String},
         *description* :｛String},
         }
         返回JSON{
         *result*:{bool}
         }
-	1. 增加歌曲
-		[POST]
-        UrlPattern = "/addsong"
-        data = {
-        *songlist_id* : {Integer},
-        *songType* : {String}, <%= file | 网易云音乐歌曲ID%>,
-        *songFile* : {file},
-        *songID* : {String},
-        *imgType* : {String}, <%= file | url%> ,
-        *imgFile* : {file},
-        *imgUrl*  : {Url},
-        }
-        返回JSON{
-        *result*:{bool}
-        }
-	1. 删除歌曲
+
+	4. 删除歌曲
 		[POST]
         UrlPattern = "/removesong"
         data = {
@@ -150,17 +140,57 @@ example ：{bool} 表示bool值
         返回JSON{
         *result*:{bool}
         }
-	1. 更改歌曲背景图
+	5. 更改歌曲背景图
 		[POST]
         UrlPattern = "/changesong"
         data = {
         *songlist_id* : {Integer},
-        *song_id* : {Integer}
-        *imgType* : {String}, <%= file | url%> ,
-        *imgFile* : {file},
-        *imgUrl*  : {Url},
+        *song_id* : {Integer},
+        *image_file* : {Stream},
+        *image_url* : {String}
+        *image_id* : {Integer}原来的图片ID
         }
-
+        返回JSON{
+        *result*:{bool}
+        }
+	6. 增加歌曲
+		情景一：网易云搜索歌曲(歌曲记录未必存在)
+        情景二：别人的歌单(歌曲记录已经存在)
+        情景三：本地上传
+		1. 情景一
+		[POST]
+        UrlPattern = "/addsong/netease"
+         data = {
+        *songlist_id* : {Integer},
+        *netease_id* : {Integer},
+        *song_name* : {String},
+        *song_artists* : {String}.
+        *mp3Url* : {String},
+        *duration* : {Integer}
+        }
+        返回JSON{
+        *song_id*:{Integer}
+        }
+		2. 情景二
+		[POST]
+        UrlPattern = "/addsong/songlist"
+        data = {
+        *songlist_id* : {Integer},
+        *song_id* : {Integer}
+        }
+        返回JSON{
+        *result*:{bool}
+        }
+        3. 情景三
+        [POST]
+        UrlPattern = "/addsong/upload"
+        data = {
+        *songlist_id* : {Integer},
+        *song_file* : {Stream}
+        }
+        返回JSON{
+        *song_id*:{Integer}
+        }
 
 
 ###推荐系统
@@ -203,6 +233,16 @@ example ：{bool} 表示bool值
         ...
     ]
     }
+    * 关注他人
+    @cookie
+    [POST]
+    UrlPattern = "/follow"
+    data={
+    *user_id* : {Integer}
+    }
+    返回JSON{
+    *result* : {bool}
+    }
 
 * 动态
 	1. 用户动态
@@ -226,7 +266,7 @@ example ：{bool} 表示bool值
 
 ### 音乐
 
-* 网易云相关
+* 网易云相关 以下song\_id实际上均为netease\_id
 	* 根据音乐ID返回音乐信息
 	[GET]
 	UrlPattern = "/api/song?id={String}"
