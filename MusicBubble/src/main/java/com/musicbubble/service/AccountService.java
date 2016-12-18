@@ -36,6 +36,7 @@ public class AccountService extends MyService {
         entity.setSex(sex.equals("M") ? "M" : "F");
         entity.setExperience(0);
         userRepository.save(entity);
+
         return true;
     }
 
