@@ -3,7 +3,7 @@ package com.musicbubble.model;
 import javax.persistence.*;
 
 /**
- * Created by happyfarmer on 12/15/2016.
+ * Created by happyfarmer on 12/16/2016.
  */
 @Entity
 @Table(name = "user", schema = "db_03", catalog = "")
@@ -19,6 +19,7 @@ public class UserEntity {
 
     @Id
     @Column(name = "user_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getUserId() {
         return userId;
     }

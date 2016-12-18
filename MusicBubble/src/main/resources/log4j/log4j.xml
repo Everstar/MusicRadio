@@ -15,7 +15,7 @@
     </root>
 
     <category name="org.springframework">
-        <priority value="debug" />
+        <priority value="info" />
         <appender-ref ref="CONSOLE" />
     </category>
 </log4j:configuration>

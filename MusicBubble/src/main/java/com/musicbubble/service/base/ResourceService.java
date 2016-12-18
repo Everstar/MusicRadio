@@ -1,11 +1,17 @@
-package com.musicbubble.service;
+package com.musicbubble.service.base;
 
 import com.musicbubble.model.ImageEntity;
+import com.musicbubble.model.SongEntity;
 import com.musicbubble.repository.ImageRepository;
+import com.musicbubble.repository.SongRepository;
+import com.musicbubble.service.base.MyService;
+import com.musicbubble.tools.Const;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.*;
 import java.net.*;
@@ -23,6 +29,8 @@ public class ResourceService extends MyService {
 
     @Autowired
     private ImageRepository imageRepository;
+    @Autowired
+    private SongRepository songRepository;
 
     private String getOutputFromURL(String uri) throws MalformedURLException, IOException, Exception {
         URL url = new URL(uri);
@@ -84,6 +92,44 @@ public class ResourceService extends MyService {
         return lyric;
     }
 
+    public List<Map<String, Object>> GetPlaylistInfo(String id){
+        String uri = new String("http://music.163.com/api/playlist/detail?id=" + id);
+        List<Map<String, Object>> list = new ArrayList<>();
+        try {
+            String res = getOutputFromURL(uri);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNode = mapper.readTree(res).path("result");
+            JsonNode tracks = rootNode.path("tracks");
+
+            //歌单信息
+            Map<String, Object> map = new HashMap<>();
+            map.put("name", rootNode.path("name").asText());
+            map.put("description", rootNode.path("description").asText());
+            list.add(map);
+
+            //歌曲信息
+            for(int index = 0; ;index++){
+                JsonNode song = tracks.get(index);
+                if(song == null)break;
+
+                map = new HashMap<>();
+                map.put("name", song.path("name").asText());
+                map.put("id", song.path("id").asInt());
+                map.put("artists", song.path("artists").get(0).path("name").asText());
+                map.put("duration", song.path("duration").asInt());
+                map.put("mp3Url", song.path("mp3Url").asText());
+                map.put("type", "1");
+                list.add(map);
+            }
+        }catch (MalformedURLException e) {
+            System.err.println(uri + "is not a valid url");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
     //中英文都可以识别
     public List<Map<String, Object>> SearchMusic(String keys, int limit, int type) {
         String uri = new String("http://music.163.com/api/search/get/web?csrf_token=");
@@ -126,13 +172,65 @@ public class ResourceService extends MyService {
     }
 
     public String GetImgUrlById(int id) {
+
         ImageEntity entity = imageRepository.findOne(id);
         return entity != null ? entity.getImageUri() : null;
     }
 
+    @Transactional
+    public int CreateImage(String url, String type) {
+        if ((!type.equals("0") && !type.equals("1")) || url == null)
+            return 0;
+        ImageEntity entity = new ImageEntity();
+        entity.setImageType(type);
+        entity.setImageUri(url);
+        entity = imageRepository.saveAndFlush(entity);
+        return entity.getImageId();
+    }
+
+    @Transactional
+    public int CreateSong(String song_url, String type, String song_name, String song_artists, int netease_id, int duration) {
+        if (!type.equals("0") && !type.equals("1"))
+            return 0;
+        SongEntity entity = new SongEntity();
+        entity.setSongName(song_name);
+        entity.setNeteaseId(netease_id);
+        entity.setAuthorName(song_artists);
+        entity.setSongUri(song_url);
+        entity.setSongType(type);
+        entity.setLastTime(duration);
+        entity = songRepository.saveAndFlush(entity);
+
+        return entity.getSongId();
+    }
+
+
+    public int SaveUploadResource(CommonsMultipartFile file, String type) {
+        int id = 0;
+        boolean isImage = type.equals("image");
+        try {
+            String path = isImage ? Const.RESOURCE_ROOT_IMAGE : Const.RESOURCE_ROOT_MUSIC;
+            path += file.getOriginalFilename();
+            File resourceFile = new File(path);
+            if (!resourceFile.exists())
+                resourceFile.mkdir();
+
+            file.transferTo(resourceFile);
+
+            if (isImage) {
+                id = CreateImage(path, "0");
+            } else {
+                id = CreateSong(path, "0", getRealName(file.getOriginalFilename()), null, 0, 0);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return id;
+    }
+
     //还有许多歌词格式需要测试
     private Map<String, String> parseLyric(String lyric) {
-        if(lyric.length()==0)return null;
+        if (lyric.length() == 0) return null;
         Map<String, String> map = new HashMap<>();
         String[] tokens = lyric.split("\\[|\\]");
 
@@ -173,4 +271,10 @@ public class ResourceService extends MyService {
         }
         return list;
     }
+
+    private String getRealName(String originalName) {
+        String[] tokens = originalName.split("[.]");
+        return tokens[0];
+    }
 }
+

@@ -3,10 +3,10 @@ package com.musicbubble.model;
 import javax.persistence.*;
 
 /**
- * Created by happyfarmer on 2016/12/3.
+ * Created by happyfarmer on 12/16/2016.
  */
 @Entity
-@Table(name = "Follow", schema = "DB_03", catalog = "")
+@Table(name = "follow", schema = "db_03", catalog = "")
 public class FollowEntity {
     private int fId;
     private Integer userId;
@@ -14,6 +14,7 @@ public class FollowEntity {
 
     @Id
     @Column(name = "f_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getfId() {
         return fId;
     }

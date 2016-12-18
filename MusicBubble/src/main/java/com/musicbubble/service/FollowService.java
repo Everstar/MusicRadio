@@ -2,9 +2,10 @@ package com.musicbubble.service;
 
 import com.musicbubble.model.*;
 import com.musicbubble.repository.FollowRepository;
-import com.musicbubble.repository.ImageRepository;
 import com.musicbubble.repository.PreferRepository;
-import com.musicbubble.repository.UserRepository;
+import com.musicbubble.service.base.AccountService;
+import com.musicbubble.service.base.MyService;
+import com.musicbubble.service.base.ResourceService;
 import com.musicbubble.tools.CommonUtil;
 import com.musicbubble.tools.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,16 @@ public class FollowService extends MyService {
     @Autowired
     private PreferRepository preferRepository;
 
+    public boolean AddFollows(int user_id, int follow_id){
+        if(user_id == follow_id)
+            return false;
+        FollowEntity entity = new FollowEntity();
+        entity.setUserId(user_id);
+        entity.setFollowId(follow_id);
+        followRepository.save(entity);
+        return true;
+    }
+
     public List<Map<String, Object>> GetFollows(int user_id) {
         List<Integer> followsList = followRepository.findFollowId(user_id);
         List<Map<String, Object>> list = new ArrayList<>();
@@ -42,7 +53,7 @@ public class FollowService extends MyService {
             map.put("id", f_id);
 
             map.put("username", accountService.GetUserNameById(f_id));
-            map.put("avator_url", resourceService.GetImgUrlById(f_id));
+            map.put("avator_url", resourceService.GetImgUrlById(accountService.GetImage(f_id)));
 
             list.add(map);
         }
@@ -50,7 +61,7 @@ public class FollowService extends MyService {
     }
 
     public Map<String, Object> GetUserInfo(int user_id) {
-        Map<String, Object> map = null;
+        Map<String, Object> map = new HashMap<>();
         UserEntity userEntity = accountService.findOne(user_id);
         if (userEntity != null) {
             map.put("id", userEntity.getUserId());
@@ -59,7 +70,7 @@ public class FollowService extends MyService {
             map.put("gender", userEntity.getSex());
             map.put("exp", userEntity.getExperience());
 
-            map.put("avator_url", resourceService.GetImgUrlById(userEntity.getUserId()));
+            map.put("avator_url", resourceService.GetImgUrlById(accountService.GetImage(userEntity.getUserId())));
             map.put("ctr_songlist", songListService.NumOfSongListByUserId(userEntity.getUserId()));
             map.put("liked_songlist", songListService.NumOfLikeListByUserId(userEntity.getUserId()));
             map.put("friends_num", followRepository.countFollow(userEntity.getUserId()));

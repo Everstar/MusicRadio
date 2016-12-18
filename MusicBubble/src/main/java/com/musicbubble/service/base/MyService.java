@@ -1,4 +1,4 @@
-package com.musicbubble.service;
+package com.musicbubble.service.base;
 
 import org.springframework.stereotype.Component;
 

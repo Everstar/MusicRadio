@@ -18,8 +18,9 @@
 
     <context:component-scan base-package="com.musicbubble.controller com.musicbubble.service"/>
 
-    <mvc:default-servlet-handler/>
+    <!--<mvc:resources location="/resources/" mapping="/resources/**"/>-->
 
+    <mvc:default-servlet-handler/>
     <mvc:annotation-driven/>
 
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"></bean>
@@ -53,6 +54,13 @@
         <property name="prefix" value="/WEB-INF/pages/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="104857600"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="maxInMemorySize" value="40960"/>
+    </bean>
+
 
     <jpa:repositories base-package="com.musicbubble.repository"/>
 

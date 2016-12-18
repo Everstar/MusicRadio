@@ -27,7 +27,7 @@ public class DateTimeUtil {
     }
 
     public static boolean expires(String timeStr){
-        return getExpireTime(timeStr).before(new Date());
+        return getExpireTime(timeStr).before(new Date(System.currentTimeMillis()));
     }
 
 }

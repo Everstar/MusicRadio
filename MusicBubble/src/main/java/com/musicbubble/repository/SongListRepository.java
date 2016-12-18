@@ -20,8 +20,10 @@ public interface SongListRepository extends JpaRepository<SongListEntity, Intege
     @Query("select s from SongListEntity s order by s.likes desc")
     Page<SongListEntity> findHotlist(Pageable pageable);
 
-    @Query("select s from SongListEntity s where s.userId = ?1")
     List<SongListEntity> findByUserId(int user_id);
+
+    @Query("select s.listId from SongListEntity s where s.userId = ?1 and s.listName='MyFavorite'")
+    int findFavoriteSongList(int user_id);
 
     @Query("select count(*) from SongListEntity s where s.userId = ?1")
     int countList(int user_id);
@@ -30,6 +32,6 @@ public interface SongListRepository extends JpaRepository<SongListEntity, Intege
     List<SongListEntity> findSongListByUserIdAndTime(int user_id, Timestamp timestamp);
 
     @Modifying
-    @Query("update SongListEntity s set s.listName = ?2 , s.profile = ?3 where s.listId = ?1")
-    int updateListInfo(int list_id, String name, String desc);
+    @Query("update SongListEntity s set s.listName = ?2 , s.profile = ?3 , s.imageId = ?4 where s.listId = ?1")
+    int updateListInfo(int list_id, String name, String desc, int image_id);
 }
