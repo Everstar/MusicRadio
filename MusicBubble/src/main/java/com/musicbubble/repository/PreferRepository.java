@@ -1,6 +1,10 @@
 package com.musicbubble.repository;
 
 import com.musicbubble.model.PreferEntity;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+
 import com.musicbubble.model.PreferEntityPK;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,6 +21,8 @@ public interface PreferRepository extends JpaRepository<PreferEntity, PreferEnti
 
     @Query("select p from PreferEntity p where p.userId = ?1 and p.preferTime > ?2")
     List<PreferEntity> findPreferByUserIdAndTime(int user_id, Timestamp timestamp);
+
+
 
 
 }

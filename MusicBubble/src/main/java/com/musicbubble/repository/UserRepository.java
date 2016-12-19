@@ -24,6 +24,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer>{
     @Query("update UserEntity u set u.rank = u.rank + 1 where u.userId = ?1")
     int incRank(int user_id);
 
+    @Query("select u.listId from UserEntity u where u.userId=?1")
+    int findListIdByUserId(int userId);
+
     @Modifying
     @Query("update UserEntity u set u.lastSignin = ?2 where u.userId = ?1")
     int updateTime(int user_id, Timestamp timestamp);

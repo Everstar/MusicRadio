@@ -19,6 +19,8 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
+
+
 /**
  * Created by happyfarmer on 2016/12/6.
  */
@@ -49,10 +51,15 @@ public class AccountService extends MyService {
         entity.setRank(1);
         entity.setSex(sex.equals("M") ? "M" : "F");
         entity.setExperience(0);
+<<<<<<< HEAD
         entity.setLastSignin(new Timestamp(2000));
+=======
+
+>>>>>>> tmp
         entity = userRepository.saveAndFlush(entity);
 
         return entity.getUserId();
+
     }
 
     @Transactional
