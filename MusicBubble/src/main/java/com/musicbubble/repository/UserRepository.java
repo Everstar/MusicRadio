@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+
 /**
  * Created by happyfarmer on 2016/12/3.
  */
@@ -14,12 +16,17 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer>{
 
     UserEntity findByUserName(String userName);
 
-    @Query("select u.passwd from UserEntity u where u.userName = ?1")
-    String findPasswdByUserName(String userName);
+    @Modifying
+    @Query("update UserEntity u set u.experience = u.experience + ?2 where u.userId = ?1")
+    int incExperience(int user_id, int exp);
 
     @Modifying
-    @Query("update UserEntity u set u.experience = u.experience + ?2 where u.userName = ?1")
-    int incExperience(String userName, int exp);
+    @Query("update UserEntity u set u.rank = u.rank + 1 where u.userId = ?1")
+    int incRank(int user_id);
+
+    @Modifying
+    @Query("update UserEntity u set u.lastSignin = ?2 where u.userId = ?1")
+    int updateTime(int user_id, Timestamp timestamp);
 
     @Modifying
     @Query("update UserEntity u set u.listId = ?2 where u.userId = ?1")

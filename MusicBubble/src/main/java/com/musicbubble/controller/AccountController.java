@@ -46,12 +46,12 @@ public class AccountController implements Serializable {
 
         Map<String, Object> map = new HashMap<>();
         int user_id = accountService.SignUp(username, password, sex);
-        System.out.println("user_id : " + user_id);
-        boolean res = user_id != -1;
+        System.out.println("user_id :" + user_id);
+        boolean res = user_id != 0;
 
         if (res) {
             int list_id = songListService.CreateSongList(user_id, "MyFavorite", "");
-            System.out.println("list_id" + list_id);
+            System.out.println("list_id :" + list_id);
             accountService.SetDefaultSongList(user_id, list_id);
         }
         map.put("result", res);

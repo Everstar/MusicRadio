@@ -74,7 +74,7 @@ public class FollowService extends MyService {
             map.put("ctr_songlist", songListService.NumOfSongListByUserId(userEntity.getUserId()));
             map.put("liked_songlist", songListService.NumOfLikeListByUserId(userEntity.getUserId()));
             map.put("friends_num", followRepository.countFollow(userEntity.getUserId()));
-            map.put("exp_max", CommonUtil.calExp(userEntity.getRank()));
+            map.put("exp_max", CommonUtil.MaxExp(userEntity.getRank()));
 
         }
         return map;

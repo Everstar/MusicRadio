@@ -8,6 +8,11 @@ import com.musicbubble.service.base.MyService;
 import com.musicbubble.tools.Const;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.jaudiotagger.audio.mp3.MP3AudioHeader;
+import org.jaudiotagger.audio.mp3.MP3File;
+import org.jaudiotagger.tag.id3.AbstractID3v2Tag;
+import org.jaudiotagger.tag.id3.ID3v22Tag;
+import org.jaudiotagger.tag.id3.ID3v24Frames;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -220,9 +225,17 @@ public class ResourceService extends MyService {
             if (isImage) {
                 id = CreateImage(path, "0");
             } else {
-                id = CreateSong(path, "0", getRealName(file.getOriginalFilename()), null, 0, 0);
+                Map<String, String> song_info = parseMp3(path);
+                id = CreateSong(path, "0",
+                        song_info.get("song_name"),
+                        song_info.get("artists"),
+                        0,
+                        Integer.parseInt(song_info.get("duration")));
             }
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+        catch (Exception e){
             e.printStackTrace();
         }
         return id;
@@ -272,9 +285,22 @@ public class ResourceService extends MyService {
         return list;
     }
 
-    private String getRealName(String originalName) {
-        String[] tokens = originalName.split("[.]");
-        return tokens[0];
+    private Map<String, String> parseMp3(String path){
+        Map<String, String> map = new HashMap<>();
+        try {
+            MP3File mp3File = new MP3File(path);
+            AbstractID3v2Tag tag = mp3File.getID3v2Tag();
+            String song_name = tag.getFirst(ID3v24Frames.FRAME_ID_TITLE);
+            String artists = tag.getFirst(ID3v24Frames.FRAME_ID_ARTIST);
+            MP3AudioHeader audioHeader = mp3File.getMP3AudioHeader();
+            Integer duration = (int) (audioHeader.getPreciseTrackLength() * 1000);
+            map.put("song_name", song_name);
+            map.put("artists", artists);
+            map.put("duration", duration.toString());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return map;
     }
 }
 

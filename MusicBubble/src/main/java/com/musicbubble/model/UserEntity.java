@@ -1,9 +1,10 @@
 package com.musicbubble.model;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 /**
- * Created by happyfarmer on 12/16/2016.
+ * Created by happyfarmer on 12/18/2016.
  */
 @Entity
 @Table(name = "user", schema = "db_03", catalog = "")
@@ -16,6 +17,7 @@ public class UserEntity {
     private Integer rank;
     private Integer experience;
     private Integer listId;
+    private Timestamp lastSignin;
 
     @Id
     @Column(name = "user_id", nullable = false)
@@ -98,6 +100,16 @@ public class UserEntity {
         this.listId = listId;
     }
 
+    @Basic
+    @Column(name = "last_signin", nullable = true)
+    public Timestamp getLastSignin() {
+        return lastSignin;
+    }
+
+    public void setLastSignin(Timestamp lastSignin) {
+        this.lastSignin = lastSignin;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -113,6 +125,7 @@ public class UserEntity {
         if (rank != null ? !rank.equals(entity.rank) : entity.rank != null) return false;
         if (experience != null ? !experience.equals(entity.experience) : entity.experience != null) return false;
         if (listId != null ? !listId.equals(entity.listId) : entity.listId != null) return false;
+        if (lastSignin != null ? !lastSignin.equals(entity.lastSignin) : entity.lastSignin != null) return false;
 
         return true;
     }
@@ -127,6 +140,7 @@ public class UserEntity {
         result = 31 * result + (rank != null ? rank.hashCode() : 0);
         result = 31 * result + (experience != null ? experience.hashCode() : 0);
         result = 31 * result + (listId != null ? listId.hashCode() : 0);
+        result = 31 * result + (lastSignin != null ? lastSignin.hashCode() : 0);
         return result;
     }
 }

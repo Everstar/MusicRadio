@@ -2,6 +2,7 @@ package com.musicbubble.service.base;
 
 import com.musicbubble.model.UserEntity;
 import com.musicbubble.repository.UserRepository;
+import com.musicbubble.tools.CommonUtil;
 import com.musicbubble.tools.DESUtil;
 import com.musicbubble.tools.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.Calendar;
 
 /**
  * Created by happyfarmer on 2016/12/6.
@@ -32,8 +36,10 @@ public class AccountService extends MyService {
 
     @Transactional
     public int SignUp(String user_name, String passwd, String sex) {
-        if (user_name.length() > 100 || passwd.length() > 20 || (!sex.equals("M") && !sex.equals("F")))
-            return -1;
+        if (user_name.length() > 100
+                || passwd.length() > 20
+                || (!sex.equals("M") && !sex.equals("F")))
+            return 0;
 
         UserEntity entity = new UserEntity();
         entity.setUserId(0);
@@ -43,24 +49,35 @@ public class AccountService extends MyService {
         entity.setRank(1);
         entity.setSex(sex.equals("M") ? "M" : "F");
         entity.setExperience(0);
+        entity.setLastSignin(new Timestamp(2000));
         entity = userRepository.saveAndFlush(entity);
+
         return entity.getUserId();
     }
 
     @Transactional
     public boolean SignIn(String user_name, String passwd) {
-        String password = userRepository.findPasswdByUserName(user_name);
+        UserEntity entity = userRepository.findByUserName(user_name);
+        if (entity == null)
+            return false;
+        String password = entity.getPasswd();
         if (!password.equals(Encrypt.SHA512(passwd))) {
             System.out.println("password invalid");
             return false;
         }
-        userRepository.incExperience(user_name, 10);
+        Timestamp cur = getDayBegin();
+        System.out.println(cur.toString());
+
+        if (entity.getLastSignin().before(cur))
+            updateExperience(entity.getUserId(), 10);
+
+        userRepository.updateTime(entity.getUserId(), new Timestamp(System.currentTimeMillis()));
 
         return true;
     }
 
     @Transactional
-    public void SetDefaultSongList(int user_id, int list_id){
+    public void SetDefaultSongList(int user_id, int list_id) {
         userRepository.setListId(user_id, list_id);
     }
 
@@ -69,7 +86,7 @@ public class AccountService extends MyService {
         return userEntity == null ? null : userEntity.getUserName();
     }
 
-    public int GetImage(int user_id){
+    public int GetImage(int user_id) {
         UserEntity userEntity = userRepository.findOne(user_id);
         return userEntity == null ? null : userEntity.getImageId();
     }
@@ -89,8 +106,8 @@ public class AccountService extends MyService {
                 System.out.println("expires");
                 HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
                 Cookie[] cookies = request.getCookies();
-                for (Cookie cookie : cookies){
-                    if(cookie.getName().equals("token"))
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals("token"))
                         cookie.setMaxAge(0);//删除Cookie
                 }
             }
@@ -100,9 +117,24 @@ public class AccountService extends MyService {
         return user_id;
     }
 
+    public void updateExperience(int user_id, int exp){
+        userRepository.incExperience(user_id, exp);
+        UserEntity entity = userRepository.findOne(user_id);
+        if(entity.getExperience() >= CommonUtil.MaxExp(entity.getRank()))
+            userRepository.incRank(entity.getUserId());
+    }
 
-    public UserEntity findOne(int user_id){
+    public UserEntity findOne(int user_id) {
         return userRepository.findOne(user_id);
+    }
+
+    private Timestamp getDayBegin(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 001);
+        return new Timestamp(calendar.getTimeInMillis());
     }
 
 }

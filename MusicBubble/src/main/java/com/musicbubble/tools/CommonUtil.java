@@ -5,7 +5,7 @@ package com.musicbubble.tools;
  */
 public class CommonUtil {
     public static int[] exp = new int[]{100, 1500, 4500, 10000, 45000, 100000};
-    public static int calExp(int level){
+    public static int MaxExp(int level){
         assert level >= 1 && level <= 6;
         return exp[level - 1];
     }

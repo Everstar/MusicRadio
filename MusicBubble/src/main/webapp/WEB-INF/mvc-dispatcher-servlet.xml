@@ -21,6 +21,7 @@
     <!--<mvc:resources location="/resources/" mapping="/resources/**"/>-->
 
     <mvc:default-servlet-handler/>
+
     <mvc:annotation-driven/>
 
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"></bean>

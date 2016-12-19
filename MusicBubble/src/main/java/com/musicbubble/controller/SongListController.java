@@ -122,6 +122,7 @@ public class SongListController implements Serializable {
 //    }
 
 
+    //tested
     @RequestMapping(value = "/changelist", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> changeSongList(@CookieValue("token") String token
             , @RequestParam("image_file") CommonsMultipartFile image, HttpServletRequest request) {
