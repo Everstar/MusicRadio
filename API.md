@@ -52,7 +52,7 @@ example ：{bool} 表示bool值
     }
 
 
-### 喜爱/点赞
+### 喜爱/点赞/评论
 
 * 点赞歌单
 	@cookie
@@ -67,8 +67,31 @@ example ：{bool} 表示bool值
     [POST]
     UrlPattern = "/likesong"
     data = {
+    *songlist_id* : {Integer}歌曲所在的歌单
     *song_id* : {Integer}
     }
+
+* 评论歌单
+	@cookie
+	[POST]
+    UrlPattern = "/addcomment"
+    data={
+    *songlist_id* : {Integer},
+    *content* : {String}
+    }
+    返回JSON{
+    *comment_id* : {Integer}
+    }
+* 查看所有评论
+	[GET]
+    UrlPattern = "/comment?id={Integer}"
+    返回JSON[{
+    *user_id*  : {Integer},
+    *avator_url* : {String},
+    *content* : {String},
+    *time* : {String}
+    *likes* : {Integer}
+    }]
 
 ### 歌单
 
@@ -166,7 +189,9 @@ example ：{bool} 表示bool值
         *song_name* : {String},
         *song_artists* : {String}.
         *mp3Url* : {String},
-        *duration* : {Integer}
+        *duration* : {Integer},
+        *language* : {String},(zh-cn|en-us|ja-jp|fr-fr|ko-kr)
+        *styles* : {String}(1~21位01串)
         }
         返回JSON{
         *song_id*:{Integer}
@@ -186,12 +211,24 @@ example ：{bool} 表示bool值
         UrlPattern = "/addsong/upload"
         data = {
         *songlist_id* : {Integer},
-        *song_file* : {Stream}
+        *song_file* : {Stream},
+        *language* : {String},
+        *styles* : {String}
         }
         返回JSON{
         *song_id*:{Integer}
         }
 
+	7. 获取歌单的歌曲信息
+	[GET]
+    UrlPattern = "/songlist/one?id={Integer}"
+    返回JSON{
+    *song_id* : {Integer},
+    *song_name* : {String},
+    *artists* : {String},
+    *duration* : {Integer},
+    *mp3Url* : {String}
+    }
 
 ###推荐系统
 
