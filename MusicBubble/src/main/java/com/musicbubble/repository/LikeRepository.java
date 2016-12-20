@@ -10,8 +10,9 @@ import org.springframework.data.jpa.repository.Query;
  * Created by DELL on 2016/12/17.
  */
 public interface LikeRepository extends JpaRepository<SongListEntity, Integer> {
+
     @Modifying
     @Query("update SongListEntity s set s.likes = s.likes + 1 where s.listId = ?1")
-    boolean likeSongList(int listId);
+    void likeSongList(int listId);
 
 }

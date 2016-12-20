@@ -46,6 +46,22 @@ public class SongListService extends MyService {
         return list;
     }
 
+    public List<Map<String, Object>> GetSongsBySongListId(int list_id){
+        List<Map<String, Object>> list = new ArrayList<>();
+        List<ContainEntity> entities = containRepository.findByListId(list_id);
+        for (ContainEntity c : entities){
+            Map<String, Object> map = new HashMap<>();
+            SongEntity entity = songRepository.findOne(c.getSongId());
+            map.put("song_id", entity.getSongId());
+            map.put("song_name", entity.getSongName());
+            map.put("artists", entity.getAuthorName());
+            map.put("duration", entity.getLastTime());
+            map.put("mp3Url", entity.getSongUri());
+            list.add(map);
+        }
+        return list;
+    }
+
     public int NumOfSongListByUserId(int user_id) {
         int num = songListRepository.countList(user_id);
         return num;
@@ -102,16 +118,6 @@ public class SongListService extends MyService {
         return true;
     }
 
-    public Map<String, Object> GetSongListInfo(int list_id){
-        SongListEntity entity = songListRepository.findOne(list_id);
-        if(entity == null)
-            return null;
-        Map<String, Object> map = new HashMap<>();
-        map.put("songlist_name", entity.getListName());
-        map.put("description", entity.getProfile());
-        map.put("image_id", entity.getImageId());
-        return map;
-    }
 
     public boolean AddSongToList(int list_id, int song_id){
         System.out.println("list_id :" + list_id + "|song_id :" + song_id);
@@ -153,18 +159,21 @@ public class SongListService extends MyService {
         return new PageRequest(pageNumber - 1, pagzSize, null);
     }
 
-    private List<Map<String, Object>> fillSongList(List<SongListEntity> songs) {
+    private List<Map<String, Object>> fillSongList(List<SongListEntity> lists) {
         List<Map<String, Object>> list = new ArrayList<>();
-        for (SongListEntity s : songs) {
+        for (SongListEntity s : lists) {
             Map<String, Object> map = new HashMap<>();
             map.put("list_id", s.getListId());
             map.put("songlist_name", s.getListName());
             map.put("author_id", s.getUserId());
+            map.put("description", s.getProfile());
             map.put("liked", s.getLikes());
             UserEntity userEntity = userRepository.findOne(s.getUserId());
             ImageEntity imageEntity = imageRepository.findOne(s.getImageId());
             map.put("author", userEntity == null ? null : userEntity.getUserName());
             map.put("img_url", imageEntity == null ? null : imageEntity.getImageUri());
+
+            map.put("songs", GetSongsBySongListId(s.getListId()));
             list.add(map);
         }
         return list;

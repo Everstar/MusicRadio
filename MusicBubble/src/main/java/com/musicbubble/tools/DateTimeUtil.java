@@ -1,5 +1,7 @@
 package com.musicbubble.tools;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,4 +32,8 @@ public class DateTimeUtil {
         return getExpireTime(timeStr).before(new Date(System.currentTimeMillis()));
     }
 
+    public static String GetTimeStampString(Timestamp timestamp){
+        DateFormat format = new SimpleDateFormat(dateFormat);
+        return format.format(timestamp);
+    }
 }

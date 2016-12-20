@@ -13,13 +13,21 @@
     <param-value>classpath:/log4j/log4j.xml</param-value>
   </context-param>
 
+  <context-param>
+    <param-name>webAppRootKey</param-name>
+    <param-value>web.root</param-value>
+
+  </context-param>
+  <listener>
+    <listener-class>org.springframework.web.util.WebAppRootListener</listener-class>
+  </listener>
+
   <listener>
     <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
   </listener>
+
   <listener>
-    <listener-class>
-      org.springframework.web.context.request.RequestContextListener
-    </listener-class>
+    <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
   </listener>
 
   <servlet>

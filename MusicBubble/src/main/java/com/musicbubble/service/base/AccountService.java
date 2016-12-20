@@ -51,11 +51,7 @@ public class AccountService extends MyService {
         entity.setRank(1);
         entity.setSex(sex.equals("M") ? "M" : "F");
         entity.setExperience(0);
-<<<<<<< HEAD
         entity.setLastSignin(new Timestamp(2000));
-=======
-
->>>>>>> tmp
         entity = userRepository.saveAndFlush(entity);
 
         return entity.getUserId();
@@ -86,6 +82,11 @@ public class AccountService extends MyService {
     @Transactional
     public void SetDefaultSongList(int user_id, int list_id) {
         userRepository.setListId(user_id, list_id);
+    }
+
+    public int FindDefaultSongList(int user_id){
+        UserEntity entity = userRepository.findOne(user_id);
+        return entity.getListId();
     }
 
     public String GetUserNameById(int user_id) {

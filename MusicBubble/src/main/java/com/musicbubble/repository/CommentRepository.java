@@ -15,4 +15,7 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Integer>
 
     @Query("select c from CommentEntity c where c.userId = ?1 and c.commentTime > ?2")
     List<CommentEntity> findCommentByUserIdAndTime(int user_id, Timestamp timestamp);
+
+
+    List<CommentEntity> findByListId(int list_id);
 }

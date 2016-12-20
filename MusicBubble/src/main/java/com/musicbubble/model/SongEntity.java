@@ -3,7 +3,7 @@ package com.musicbubble.model;
 import javax.persistence.*;
 
 /**
- * Created by happyfarmer on 12/17/2016.
+ * Created by happyfarmer on 12/20/2016.
  */
 @Entity
 @Table(name = "song", schema = "db_03", catalog = "")
@@ -15,6 +15,8 @@ public class SongEntity {
     private Integer lastTime;
     private String songUri;
     private String songType;
+    private String language;
+    private String styles;
 
     @Id
     @Column(name = "song_id", nullable = false)
@@ -87,6 +89,26 @@ public class SongEntity {
         this.songType = songType;
     }
 
+    @Basic
+    @Column(name = "language", nullable = true, length = 45)
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    @Basic
+    @Column(name = "styles", nullable = true, length = 45)
+    public String getStyles() {
+        return styles;
+    }
+
+    public void setStyles(String styles) {
+        this.styles = styles;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -101,6 +123,8 @@ public class SongEntity {
         if (lastTime != null ? !lastTime.equals(entity.lastTime) : entity.lastTime != null) return false;
         if (songUri != null ? !songUri.equals(entity.songUri) : entity.songUri != null) return false;
         if (songType != null ? !songType.equals(entity.songType) : entity.songType != null) return false;
+        if (language != null ? !language.equals(entity.language) : entity.language != null) return false;
+        if (styles != null ? !styles.equals(entity.styles) : entity.styles != null) return false;
 
         return true;
     }
@@ -114,6 +138,8 @@ public class SongEntity {
         result = 31 * result + (lastTime != null ? lastTime.hashCode() : 0);
         result = 31 * result + (songUri != null ? songUri.hashCode() : 0);
         result = 31 * result + (songType != null ? songType.hashCode() : 0);
+        result = 31 * result + (language != null ? language.hashCode() : 0);
+        result = 31 * result + (styles != null ? styles.hashCode() : 0);
         return result;
     }
 }

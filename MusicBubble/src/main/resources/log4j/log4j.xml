@@ -10,12 +10,12 @@
         </filter>
     </appender>
     <root>
-        <priority value="debug"/>
+        <priority value="OFF"/>
         <appender-ref ref="CONSOLE"/>
     </root>
 
     <category name="org.springframework">
-        <priority value="WARN" />
+        <priority value="OFF" />
         <appender-ref ref="CONSOLE" />
     </category>
 </log4j:configuration>

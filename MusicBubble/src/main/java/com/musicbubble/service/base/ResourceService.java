@@ -16,8 +16,11 @@ import org.jaudiotagger.tag.id3.ID3v24Frames;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.Charset;
@@ -194,7 +197,7 @@ public class ResourceService extends MyService {
     }
 
     @Transactional
-    public int CreateSong(String song_url, String type, String song_name, String song_artists, int netease_id, int duration) {
+    public int CreateSong(String song_url, String type, String song_name, String song_artists, int netease_id, int duration, String lang,  String styles) {
         if (!type.equals("0") && !type.equals("1"))
             return 0;
         SongEntity entity = new SongEntity();
@@ -204,18 +207,21 @@ public class ResourceService extends MyService {
         entity.setSongUri(song_url);
         entity.setSongType(type);
         entity.setLastTime(duration);
+        entity.setStyles(styles);
+        entity.setLanguage(lang);
         entity = songRepository.saveAndFlush(entity);
 
         return entity.getSongId();
     }
 
 
-    public int SaveUploadResource(CommonsMultipartFile file, String type) {
+    public int SaveUploadResource(CommonsMultipartFile file, String type, String lang, String styles) {
         int id = 0;
         boolean isImage = type.equals("image");
         try {
-            String path = isImage ? Const.RESOURCE_ROOT_IMAGE : Const.RESOURCE_ROOT_MUSIC;
-            path += file.getOriginalFilename();
+            String rootPath = System.getProperty("web.root");
+            String relativePath = "resources" + File.separatorChar + (isImage ? "images" : "musics");
+            String path = rootPath +  relativePath + File.separatorChar + file.getOriginalFilename();
             File resourceFile = new File(path);
             if (!resourceFile.exists())
                 resourceFile.mkdir();
@@ -230,7 +236,9 @@ public class ResourceService extends MyService {
                         song_info.get("song_name"),
                         song_info.get("artists"),
                         0,
-                        Integer.parseInt(song_info.get("duration")));
+                        Integer.parseInt(song_info.get("duration")),
+                        lang,
+                        styles);
             }
         } catch (IOException e) {
             e.printStackTrace();
