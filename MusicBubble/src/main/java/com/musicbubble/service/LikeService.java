@@ -5,12 +5,14 @@ import com.musicbubble.model.PreferEntity;
 import com.musicbubble.repository.*;
 import com.musicbubble.service.base.MyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 
 /**
  * Created by DELL on 2016/12/17.
  */
+@Service
 public class LikeService extends MyService {
     @Autowired
     private LikeRepository likeRepository;
