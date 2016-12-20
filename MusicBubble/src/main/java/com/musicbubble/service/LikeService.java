@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 /**
  * Created by DELL on 2016/12/17.
  */
-@Service
+
 public class LikeService extends MyService {
     @Autowired
     private LikeRepository likeRepository;

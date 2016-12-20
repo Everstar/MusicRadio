@@ -15,7 +15,7 @@ import java.util.function.ObjDoubleConsumer;
 /**
  * Created by DELL on 2016/12/17.
  */
-@RestController
+
 class LikeController {
     @Autowired
     private LikeService likeService;
