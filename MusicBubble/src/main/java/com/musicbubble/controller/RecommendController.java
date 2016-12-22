@@ -1,7 +1,8 @@
 package com.musicbubble.controller;
 
 import Jama.Matrix;
-import com.musicbubble.service.RecommandService;
+import com.musicbubble.service.RecommendService;
+import com.musicbubble.service.RecordService;
 import com.musicbubble.service.SongListService;
 import com.musicbubble.service.base.AccountService;
 import org.json.JSONArray;
@@ -30,14 +31,16 @@ import static java.lang.System.in;
  * Created by DELL on 2016/12/19.
  */
 @Controller
-public class RecommandController {
+public class RecommendController {
 
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private RecordService recordService;
 
     @Autowired
-    private RecommandService recommandService;
+    private RecommendService recommendService;
 
     private class SongMes{
         private int song_id;
@@ -79,37 +82,49 @@ public class RecommandController {
         public double[] getUser_feaVec(){return this.user_feaVec;}
     }
 
-    @RequestMapping(value="/recommandSong",method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
-    public ResponseEntity<Object> recommandSong(@CookieValue(value = "token",required = true)String token,@RequestBody int data){
+    @RequestMapping(value="/recommendSong",method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    public ResponseEntity<Object> recommendSong(@CookieValue(value = "token",required = true)String token,@RequestBody int data){
+        //cookie验证
         int user_id = accountService.IdentifyUser(token);
         if (user_id == -1) return new ResponseEntity<Object>(null, HttpStatus.UNAUTHORIZED);
 
+        //得到要求推荐的用户特征向量
+        List<Integer> user_fea=recordService.getOneUserStyle(user_id);
 
-        /*1. {"type_1": integer;"type_2": integer; "type_3": integer; .....}
-        2.{"songlist_id": integer......}
-*/
-        List<Integer> user_fea=new ArrayList<>() /*recommandService.getUserFeaVec(user_id)*/;
+        //得到备选歌曲的特征向量
+        List<String> songStyle=recommendService.getRangeOfSongById(100*(data-1)+1,100*data);
 
-        List<String> songStyle=recommandService.getRangeOfSongById(100*(data-1)+1,100*data);
-
+        //将备选歌曲的特征向量存到用于推荐算法的数据结构中
         SongMes[] songMes=this.getSongVec(songStyle,data);
 
-        List<Integer> recommandList=this.kNearer_song(user_fea,songMes);
-       //songListService.
+        //采用K临近算法得到推荐序列
+        List<Integer> recommendList=this.kNearer_song(user_fea,songMes);
 
-        return new ResponseEntity<Object>(recommandList,HttpStatus.OK);
+
+        return new ResponseEntity<Object>(recommendList,HttpStatus.OK);
 
     }
 
-   /* @RequestMapping(value="/recommandUser",method = RequestMethod.POST,produces = "application/json;charset=UTF-8n")
-    public ResponseEntity<Object> recommandUser(@CookieValue(value="token",required = true)String token,@RequestBody int data){
+    @RequestMapping(value="/recommendUser",method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    public ResponseEntity<Object> recommendUser(@CookieValue(value="token",required = true)String token,@RequestBody int data){
         int user_id = accountService.IdentifyUser(token);
         if (user_id == -1) return new ResponseEntity<Object>(null, HttpStatus.UNAUTHORIZED);
 
+        //得到要求推荐的用户的特征向量
+        List<Integer> user_fea=recordService.getOneUserStyle(user_id);
 
-        return new ResponseEntity<Object>(null,HttpStatus.OK);
+        //得到其他备选用户的特征向量
+        List<List<Integer>> other_fea=recordService.getRangeUserStyle(100*(data-1)+1,100*data);
+
+        //将其他备选用户特征向量存储于用于推荐算法中的数据结构中
+        UserMes[] userMes=this.getUserVec(other_fea,data,user_id);
+
+        //通过k临近算法得到推荐用户
+        List<Integer> recommandList=this.kNearer_user(user_fea,userMes);
+
+
+        return new ResponseEntity<Object>(recommandList,HttpStatus.OK);
     }
-*/
 
 
 
@@ -202,11 +217,11 @@ public class RecommandController {
         //Matrix m1=new Matrix(songlist_vec1,songlist_vec1.length);
 
         //double module=getModuleofVec(m1);
-        List<Integer> recommandList=kNearer_song(list,songMes);
+        List<Integer> recommendList=kNearer_song(list,songMes);
 
         //double[] result=kNearer(list,songListMes1);
 
-        return new ResponseEntity<Object>(testJSONArray(),HttpStatus.OK);
+        return new ResponseEntity<Object>(recommendList,HttpStatus.OK);
 
 
 
@@ -215,28 +230,6 @@ public class RecommandController {
 
     }
 
-    private List<Integer> testJSONArray(){
-        String jsonArray="[11,22,33,44,55]";
-
-
-        //JSONArray jsonArray1=new JSONArray(jsonArray);
-
-        JSONArray jsonArray1=new JSONArray(jsonArray);
-
-        List<Integer> testJson=new ArrayList<>();
-
-        for(int i=0;i<5;i++){
-            testJson.add(jsonArray1.getInt(i));
-        }
-
-        return testJson;
-
-
-
-
-
-
-    }
 
     // 100 ( i - 1 ) + 1~~~100 i
 
@@ -259,10 +252,39 @@ public class RecommandController {
             listMes.setSong_feaVec(songVec);
             listMes.setSong_id(100*(startId-1)+1+i);
 
+            songListMes[i]=listMes;
+
+            i++;
+
         }
 
         return songListMes;
     }
+
+    private UserMes[] getUserVec(List<List<Integer>> otherFea,int startId,int user_id){
+
+        UserMes[] userMes=new UserMes[otherFea.size()];
+
+        int i=0;
+        for(List<Integer> fea:otherFea) {
+
+            //如果请求推荐的用户自己也在备选用户中，在备选用户中忽略他的ID
+            if (100 * (startId - 1) + i + 1 == user_id) {
+                i++;
+                continue;
+            } else {
+                UserMes userMes1 = new UserMes();
+                userMes1.setUser_feaVec(list2FeactureVec(fea));
+                userMes1.setUser_id(100 * (startId - 1) + i + 1);
+
+                userMes[i] = userMes1;
+
+                i++;
+            }
+        }
+        return userMes;
+    }
+
     private void qSort(UserMes[] userMes,int low,int high){
         if(low<high){
             int i=low,j=high;
@@ -317,16 +339,14 @@ public class RecommandController {
     }
 
 
-    /*选取前4个*/
+    /*推荐歌曲K临近算法*/
     private List<Integer> kNearer_song(List<Integer> user_fea, SongMes[] songlist_fea){
 
         double[] user_feaVec=list2FeactureVec(user_fea);
 
-
         int i=0;
 
         Matrix user_matrix=new Matrix(user_feaVec,user_feaVec.length);
-
 
 
         for(SongMes song_mes : songlist_fea){
@@ -354,19 +374,22 @@ public class RecommandController {
 
         this.qSort(songlist_fea,0,songlist_fea.length-1);
 
-        List<Integer> recommandList=new ArrayList<>();
+        List<Integer> recommendList=new ArrayList<>();
 
-        for(int j=0;j<5;j++){
-            recommandList.add(songlist_fea[j].getSong_id());
+        int recommendNumber=i/10 +1;
+
+        for(int j=0;j<recommendNumber;j++){
+            recommendList.add(songlist_fea[j].getSong_id());
         }
 
-        return recommandList;
+        return recommendList;
 
         //return result_value;
 
 
     }
 
+    /*推荐用户K临近算法*/
     private List<Integer> kNearer_user(List<Integer> user_fea,UserMes[] userMes){
 
         double[] user_feaVec=list2FeactureVec(user_fea);
@@ -385,13 +408,15 @@ public class RecommandController {
 
         this.qSort(userMes,0,userMes.length);
 
-        List<Integer> recommandList=new ArrayList<>();
+        List<Integer> recommendList=new ArrayList<>();
 
-        for(int j=0;j<5;j++){
-            recommandList.add(userMes[j].getUser_id());
+        int recommendNumber=i/10 +1;
+
+        for(int j=0;j<recommendNumber;j++){
+            recommendList.add(userMes[j].getUser_id());
         }
 
-        return recommandList;
+        return recommendList;
     }
 
     //pass test
