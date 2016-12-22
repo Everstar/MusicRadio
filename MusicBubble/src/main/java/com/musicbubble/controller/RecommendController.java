@@ -352,9 +352,9 @@ public class RecommendController {
         for(SongMes song_mes : songlist_fea){
 
 
-            Matrix songlist_matrix=new Matrix(song_mes.getSong_feaVec(),song_mes.getSong_feaVec().length);
+            Matrix song_matrix=new Matrix(song_mes.getSong_feaVec(),song_mes.getSong_feaVec().length);
 
-            double[] result_value=songlist_matrix.arrayTimes(user_matrix).getColumnPackedCopy();
+            double[] result_value=song_matrix.arrayTimes(user_matrix).getColumnPackedCopy();
 
             double value=0;
 
@@ -363,9 +363,9 @@ public class RecommendController {
             }
 
 
-            double songlist_module=getModuleofVec(songlist_matrix);
+            double song_module=getModuleofVec(song_matrix);
 
-            double angle_value=value/songlist_module;
+            double angle_value=value/song_module;
 
             song_mes.setAngle_value(angle_value);
 
