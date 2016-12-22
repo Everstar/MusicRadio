@@ -6,7 +6,6 @@ import React from 'react'
 class Auth extends React.Component{
 
     static username = null;
-    static token = null;
 
     static render() {
         return null;

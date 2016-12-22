@@ -2,14 +2,14 @@
  * Created by tsengkasing on 12/3/2016.
  */
 import React from 'react';
-import { browserHistory } from 'react-router'
+import { hashHistory } from 'react-router'
 import {Tabs, Tab} from 'material-ui/Tabs'
 import SwipeableViews from 'react-swipeable-views';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import SimpleDialog from '../Dialog/Dialog';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import $ from 'jquery';
+import SimpleDialog from './Dialog';
 import Auth from './Auth'
 import API from '../API'
 
@@ -44,7 +44,7 @@ export default class Sign extends React.Component {
             error_username : null,
             error_password : null,
 
-            sex : 'male',
+            sex : 'M',
         };
     }
 
@@ -55,7 +55,7 @@ export default class Sign extends React.Component {
     };
 
     //检查用户名是否存在
-    checkUsername = (event) => {
+    checkUsernameExist = (event) => {
         //如果用户名为空
         if (event.target.value === '') {
             this.setState({error_username: 'This field is required'});
@@ -65,22 +65,47 @@ export default class Sign extends React.Component {
                 url : URL,
                 type : 'GET',
                 headers : {
-                    'Token' : Auth.token,
-                    'target' : 'remote',
+                    'target' : 'api',
                 },
                 contentType: 'application/json',
-                dataType: 'text',
                 data : {
                     id : this.state.username
                 },
                 success : function(data, textStatus, jqXHR) {
-                    console.log(data);
-                    data = $.parseJSON(data);
-                    console.log(data);
                     if(data.result)
                         this.setState({error_username: null});
                     else
                         this.setState({error_username: 'Username not existed'});
+                }.bind(this),
+                error : function(xhr, textStatus) {
+                    console.log(xhr.status + '\n' + textStatus + '\n');
+                }
+            });
+        }
+    };
+
+    //检查用户名是否存在
+    checkUsernameNotExist = (event) => {
+        //如果用户名为空
+        if (event.target.value === '') {
+            this.setState({error_username: 'This field is required'});
+        }else {
+            const URL = API.Account;
+            $.ajax({
+                url : URL,
+                type : 'GET',
+                headers : {
+                    'target' : 'api',
+                },
+                contentType: 'application/json',
+                data : {
+                    id : this.state.username
+                },
+                success : function(data, textStatus, jqXHR) {
+                    if(data.result)
+                        this.setState({error_username: 'This username is already used!'});
+                    else
+                        this.setState({error_username: null});
                 }.bind(this),
                 error : function(xhr, textStatus) {
                     console.log(xhr.status + '\n' + textStatus + '\n');
@@ -105,8 +130,7 @@ export default class Sign extends React.Component {
 
     //重定向
     redirectPage = () => {
-        browserHistory.push('/');
-        window.location.reload();
+        hashHistory.push('/Home');
     };
 
     // 登录
@@ -126,55 +150,50 @@ export default class Sign extends React.Component {
         }
 
 
+        let data ={ username : this.state.username, password : this.state.password };
         const URL = API.SignIn;
         $.ajax({
             url : URL,
             type : 'POST',
             headers : {
-                'Token' : Auth.token,
-                'target' : 'remote',
+                'target' : 'api',
             },
-            contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
-            dataType: 'text',
-            data : {
-                username : this.state.username,
-                password : this.state.password
-            },
+            contentType: 'application/json;charset=UTF-8',
+            data : JSON.stringify(data),
             success : function(data, textStatus, jqXHR) {
                 console.log(data);
-                data = $.parseJSON(data);
                 if(data.result){
                     this.refs.dialog.handleOpen();
-                    //登录信息保存到本地
                     window.localStorage.setItem('musicradio', this.state.username);
-                    window.localStorage.setItem('musicradio_token', data.token);
                     Auth.username = this.state.username;
-                    Auth.token = data.token;
                 }
-                else this.setState({error_password: 'password not matched'});
             }.bind(this),
             error : function(xhr, textStatus) {
+                this.setState({error_password: 'password not matched'});
                 console.log(xhr.status + '\n' + textStatus + '\n');
-            }
+            }.bind(this)
         });
     };
 
     // 注册
     onSignUp = () => {
-        console.log("SignUp");
         const URL = API.SignUp;
+        let data = {
+            username : this.state.username,
+            password : this.state.password,
+            gender : this.state.sex
+        };
+        console.log(data);
         $.ajax({
             url : URL,
             type : 'POST',
-            contentType: 'application/json',
-            data : {
-                username : this.state.username,
-                password : this.state.password,
-                gender : this.state.sex
+            headers : {
+                'target' : 'api',
             },
+            contentType: 'application/json;charset=UTF-8',
+            data : JSON.stringify(data),
+            dataType:'json',
             success : function(data, textStatus, jqXHR) {
-                console.log(data);
-                data = $.parseJSON(data);
                 if(data.result) {
                     this.refs.dialog.setContent('Sign Up success!', 'You can sign in now.');
                     this.refs.dialog.handleOpen();
@@ -214,7 +233,7 @@ export default class Sign extends React.Component {
                                    floatingLabelText="username"
                                    type="text"
                                    errorText={this.state.error_username}
-                                   onBlur={this.checkUsername}
+                                   onBlur={this.checkUsernameExist}
                                    onChange={this.inputUsername}/>
                         <br/>
                         <TextField hintText="password"
@@ -239,8 +258,9 @@ export default class Sign extends React.Component {
                         <TextField hintText="username"
                                    floatingLabelText="username"
                                    type="text"
+                                   id="signup"
                                    errorText={this.state.error_username}
-                                   onBlur={this.checkUsername}
+                                   onBlur={this.checkUsernameNotExist}
                                    onChange={this.inputUsername}/>
                         <br/>
                         <TextField hintText="password"
@@ -251,11 +271,11 @@ export default class Sign extends React.Component {
                         <br/><br/>
                         <RadioButtonGroup name="sex" valueSelected={this.state.sex} onChange={this.selectSex} className="inputForm" style={styles.radioButtonGroup}>
                             <RadioButton
-                                value="male"
+                                value="M"
                                 label="Male"
                             />
                             <RadioButton
-                                value="female"
+                                value="F"
                                 label="Female"
                             />
                         </RadioButtonGroup>

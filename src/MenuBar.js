@@ -13,6 +13,7 @@ import Divider from 'material-ui/Divider';
 import Avatar from 'material-ui/Avatar';
 import {IndexLink, Link, browserHistory, hashHistory}from 'react-router';
 import Auth from './account/Auth'
+import API from './API'
 
 
 class Signin extends React.Component {
@@ -51,7 +52,7 @@ class DrawerUndocked extends React.Component {
         this.state = {
             open: false,
 
-            menuItem_status : [true, false, false, false, false, false]
+            menuItem_status : [false, false, false, false, false, false]
 
         };
     }
@@ -70,39 +71,39 @@ class DrawerUndocked extends React.Component {
     };
 
     onclick = (event) => {
-        // this.props.onSwitch(event.target.innerHTML);
-        console.log(this.props.onSwitch);
+        if(window.location.hash === '#/' + event.target.innerHTML )
+            return;
 
         switch (event.target.innerHTML) {
             case 'Discover' :
                 console.log('Discover');
+                API.title = 'Discover';
                 hashHistory.push('Discover');
-                this.onTouchMenuItem(0);
                 break;
             case 'Hot List' :
                 console.log('HotList');
+                API.title = 'HotList';
                 hashHistory.push('HotList');
-                this.onTouchMenuItem(1);
                 break;
             case 'Home' :
                 console.log('Home');
+                API.title = 'Home';
                 hashHistory.push('Home');
-                this.onTouchMenuItem(2);
                 break;
-            case 'Music List' :
-                console.log('MusicList');
-                hashHistory.push('MusicList');
-                this.onTouchMenuItem(3);
+            case 'Song List' :
+                console.log('SongList');
+                API.title = 'SongList';
+                hashHistory.push('SongList');
                 break;
-            case 'Friends' :
-                console.log('Friends');
-                hashHistory.push('Home');
-                this.onTouchMenuItem(4);
+            case 'Following' :
+                console.log('Following');
+                API.title = 'Following';
+                hashHistory.push('Following');
                 break;
             case 'Message' :
                 console.log('Message');
+                API.title = 'Message';
                 hashHistory.push('Home');
-                this.onTouchMenuItem(5);
                 break;
             default:
                 break;
@@ -138,8 +139,8 @@ class DrawerUndocked extends React.Component {
                     <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Hot List" disabled={this.state.menuItem_status[1]}/>
                     <Divider />
                     <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Home" disabled={this.state.menuItem_status[2]}/>
-                    <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Music List" disabled={this.state.menuItem_status[3]}/>
-                    <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Friends" disabled={this.state.menuItem_status[4]}/>
+                    <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Song List" disabled={this.state.menuItem_status[3]}/>
+                    <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Following" disabled={this.state.menuItem_status[4]}/>
                     <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Message" disabled={this.state.menuItem_status[5]}/>
                     <Divider />
                     <MenuItem onTouchTap={this.handleClose} onClick={this.onSignOut} primaryText="Sign Out"/>
@@ -162,11 +163,19 @@ class MenuBar extends Component {
     componentWillMount() {
         if(Auth.username != null)
             this.setState({logged : true});
-        if(window.location.hash !== '#/'){
-            // browserHistory.push('/');
-            // window.location.reload();
-        }
+        // if(window.location.hash !== '#/'){
+        //     browserHistory.push('/');
+        //     window.location.reload();
+        // }
     };
+
+    shouldComponentUpdate(){
+        if(Auth.username != null) {
+            this.setState({logged: true});
+            return true;
+        }
+        return false;
+    }
 
     //回首页
     toMainPage = () => {
@@ -180,12 +189,12 @@ class MenuBar extends Component {
     changeTitle = (title) => {
         this.setState({title : title});
     };
-
+    // title={window.location.hash.substr(2) || 'Music Radio'}
     render() {
         return (
             <div>
                 <AppBar
-                    title={window.location.hash.substr(2) || 'Music Radio'}
+                    title={API.title}
                     iconElementLeft={this.state.logged ? <DrawerUndocked onSwitch={this.changeTitle} /> : <IndexLink to="/" activeClassName="active" onlyActiveOnIndex={true}>
                         <IconButton iconStyle={{color:'white'}} tooltip="Discover" touch={true} onClick={this.toMainPage} ><AvMusicVideo /></IconButton>
                     </IndexLink>}

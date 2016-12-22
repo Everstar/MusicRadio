@@ -1,16 +1,15 @@
 /**
- * Created by tsengkasing on 12/8/2016.
+ * Created by tsengkasing on 12/16/2016.
  */
 import React from 'react';
-import {Card, CardHeader,} from 'material-ui/Card';
+import {Card, CardHeader} from 'material-ui/Card';
 import LinearProgress from 'material-ui/LinearProgress'
 import Divider from 'material-ui/Divider';
 import {List, ListItem} from 'material-ui/List';
 import TextField from 'material-ui/TextField';
-import Paper from 'material-ui/Paper';
+import Chip from 'material-ui/Chip';
 import Avatar from 'material-ui/Avatar';
 import $ from 'jquery';
-import Auth from './account/Auth';
 import API from './API'
 
 const styles = {
@@ -25,14 +24,7 @@ const styles = {
     autoWidth: {
         width : 'auto',
         maxWidth : '64px',
-    },
-    paper : {
-        height: 80,
-        maxWidth: '835px',
-        marginBottom: 20,
-        textAlign: 'center',
-        // display: 'inline-block',
-    },
+    }
 };
 
 const moment_data = [
@@ -68,20 +60,24 @@ const moment_data = [
     },
 ];
 
-export default class Home extends React.Component {
+
+export default class User extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            exp: 50,
+            user_id : this.props.params.id,
+            username : '',
+            exp: 0,
             exp_max : 100,
             level : 1,
             gender : "male",
-            ctr_songlist : 16,
-            liked_songlist : 64,
-            following_num : 32,
+            ctr_songlist : 0,
+            liked_songlist : 0,
+            following_num : 0,
             moments : [],
         };
+        console.log(this.props.params.id);
     };
 
     //获取用户信息
@@ -89,14 +85,18 @@ export default class Home extends React.Component {
         const URL = API.Info;
         $.ajax({
             url : URL,
-            type : 'POST',
+            type : 'GET',
             contentType: 'application/json',
+            dataType: 'json',
             headers : {
                 'target' : 'api',
             },
+            data : {
+                id : this.state.user_id
+            },
             success : function(data, textStatus, jqXHR) {
-                console.log(data);
                 this.setState({
+                    username : data.username,
                     exp : data.exp,
                     exp_max : data.exp_max,
                     level : data.level,
@@ -112,34 +112,9 @@ export default class Home extends React.Component {
         });
     };
 
-    changeAvatar = () => {
-        console.log('changeAvatar');
-    };
-
-    getMoments = () => {
-        const URL = API.Moment;
-        $.ajax({
-            url : URL,
-            type : 'POST',
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json',
-            headers : {
-                'target' : 'api',
-            },
-            success : function(data, textStatus, jqXHR) {
-                // this.setState({following_num : data.following_num});
-                console.log(data);
-            }.bind(this),
-            error : function(xhr, textStatus) {
-                console.log(xhr.status + '\n' + textStatus + '\n');
-            }
-        });
-    };
-
     componentWillMount() {
         this.getUserInfo();
-        this.getMoments();
-        // this.setState({moments : moment_data});
+        // this.setState({moments : moment_data, username : this.props.params.id});
     };
 
     render() {
@@ -148,13 +123,12 @@ export default class Home extends React.Component {
                 <Card containerStyle={{margin: 16}}
                       style={{background : 'transparent'}}>
                     <CardHeader
-                        title={Auth.username}
-                        titleStyle={{fontSize:'3.5vh'}}
+                        title={this.state.username}
                         subtitle={this.state.gender}
-                        subtitleStyle={{fontSize:'2.75vh'}}
-                        avatar={<Avatar src="dynamic/img/profile_1.png" size={100} onTouchTap={this.changeAvatar} />}
+                        avatar="dynamic/img/avatar.png"
+                        actAsExpander={true}
                     />
-                    <div style={{width: '96%', margin:'0 auto'}}>
+                    <div style={{width: '96%', margin:'10px'}}>
                         Lv{this.state.level}<LinearProgress mode="determinate" value={this.state.exp} max={this.state.exp_max} />
                     </div>
                     <List>
@@ -164,12 +138,13 @@ export default class Home extends React.Component {
                     </List>
                 </Card>
                 {this.state.moments.map((moment, index) => (
-                    <Paper style={styles.paper} zDepth={1} key={index} >
-                        <ListItem
-                            primaryText={<p>{moment.username} {moment.operation} songlist {moment.songlist}</p>}
-                            leftAvatar={<Avatar src={moment.avatar} style={{left:'16%', top:'16px'}} size={50} />}
-                        />
-                    </Paper>
+                    <Chip
+                        key={index}
+                        style={styles.chip}
+                    >
+                        <Avatar src={moment.avatar} />
+                        {moment.username} {moment.operation} songlist {moment.songlist}
+                    </Chip>
                 ))}
                 <Divider style={{marginTop : '2%'}}/>
             </div>

@@ -3,8 +3,7 @@
  */
 import React from 'react';
 import {GridList, GridTile} from 'material-ui/GridList';
-import IconButton from 'material-ui/IconButton';
-import StarBorder from 'material-ui/svg-icons/toggle/star-border';
+import { hashHistory } from 'react-router'
 import $ from 'jquery';
 import API from './API'
 
@@ -100,7 +99,7 @@ class HotList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            songlist : null,
+            songlist : [],
         };
     }
 
@@ -110,13 +109,18 @@ class HotList extends React.Component {
         $.ajax({
             url : URL,
             type : 'GET',
+            headers : {
+                'target' : 'api',
+            },
+            contentType: 'application/json;charset=UTF-8',
+            dataType:'json',
             data : {
                 num : 11
             },
             success : function(data, textStatus, jqXHR) {
-                data = $.parseJSON(data);
-                data.result[0].featured = true;
-                this.setState({songlist : data.result})
+                console.log(data);
+                data[0].featured = true;
+                this.setState({songlist : data})
             }.bind(this),
             error : function(xhr, textStatus) {
                 console.log(xhr.status + '\n' + textStatus + '\n');
@@ -126,7 +130,12 @@ class HotList extends React.Component {
 
 
     componentWillMount() {
-        //this.loadData();
+        this.loadData();
+        // this.setState({songlist : tilesData});
+    };
+
+    redirect = (event) => {
+        hashHistory.push('/songlist/' + event.target.id);
     };
 
     render() {
@@ -137,19 +146,20 @@ class HotList extends React.Component {
                 padding={1}
                 style={styles.gridList}
             >
-                {tilesData.map((tile) => (
+                {this.state.songlist.map((tile, index) => (
                     <GridTile
-                        key={tile.img_url}
+                        key={index}
                         title={<span>{tile.songlist_name}&nbsp;<b style={{color : 'yellow'}}>{tile.liked}</b></span>}
                         subtitle={<span>by <b>{tile.author}</b></span>}
-                        actionIcon={<IconButton><StarBorder color="white" /></IconButton>}
                         actionPosition="left"
                         titlePosition="top"
                         titleBackground="linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)"
                         cols={tile.featured ? 2 : 1}
                         rows={tile.featured ? 2 : 1}
+                        onTouchTap={this.redirect}
+                        id={tile.list_id}
                     >
-                        <img alt="居然找不到图片" src={tile.img_url} />
+                        <img alt="居然找不到图片" src={tile.img_url || 'dynamic/img/6.png'} />
                     </GridTile>
                 ))}
             </GridList>

@@ -97,6 +97,7 @@ $(function(){
   // For window resizes
   var update_window = function() {
       var header = $('#area').parent().parent().children()[0];
+      if(header == null) return;
       width = window.innerWidth || element.clientWidth || drawingArea.clientWidth;
       height = (window.innerHeight - header.clientHeight)|| (element.clientHeight - header.clientHeight) || (drawingArea.clientHeight - header.clientHeight);
       svg.attr("width", width).attr("height", height);
