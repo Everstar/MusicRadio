@@ -5,10 +5,7 @@ import com.musicbubble.service.base.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -25,11 +22,11 @@ public class RecordController {
     private RecordService recordService;
 
     @RequestMapping(value = "/record", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public ResponseEntity<Object> recordTaste(@CookieValue("token") String token, HttpServletRequest request){
+    public ResponseEntity<Object> recordTaste(@CookieValue("token") String token, @RequestBody Map<String, Integer> data){
         int user_id = accountService.IdentifyUser(token);
         if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
-        int song_id = Integer.parseInt(request.getParameter("song_id"));
+        int song_id = data.get("song_id");
         boolean res = recordService.recordPlayMusic(user_id, song_id);
         Map<String, Object> map = new HashMap<>();
         HttpStatus status = res ? HttpStatus.OK : HttpStatus.NOT_MODIFIED;

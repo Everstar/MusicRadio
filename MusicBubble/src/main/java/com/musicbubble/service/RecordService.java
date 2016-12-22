@@ -1,13 +1,14 @@
 package com.musicbubble.service;
 
 import com.musicbubble.model.SongEntity;
-import com.musicbubble.model.TastelanguageEntity;
-import com.musicbubble.model.TastestyleEntity;
-import com.musicbubble.repository.LanguageRepository;
+import com.musicbubble.model.TasteEntity;
 import com.musicbubble.repository.SongRepository;
-import com.musicbubble.repository.StyleRepository;
+import com.musicbubble.repository.TasteRepository;
+import com.musicbubble.service.base.Languages;
 import com.musicbubble.service.base.MyService;
+import com.musicbubble.service.base.Styles;
 import com.musicbubble.tools.Const;
+import com.musicbubble.tools.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,9 +22,7 @@ import java.util.Vector;
 public class RecordService extends MyService {
 
     @Autowired
-    private StyleRepository styleRepository;
-    @Autowired
-    private LanguageRepository languageRepository;
+    private TasteRepository tasteRepository;
     @Autowired
     private SongRepository songRepository;
 
@@ -32,61 +31,51 @@ public class RecordService extends MyService {
         SongEntity entity = songRepository.findOne(song_id);
         if (entity == null) return false;
 
-        String language = entity.getLanguage();
-        String style = entity.getStyles();
+        String song_language = entity.getLanguage();
+        String song_style = entity.getStyles();
 
-        int index = Const.LANGUAGES.indexOf(language);
-        Integer[] langs = new Integer[Const.LANGUAGES.size()];
-        Integer[] styles = new Integer[Const.SONG_STYLE_LENGTH];
-        if (index >= 0 && index <= langs.length - 1) {
-            langs[index] += 1;
-        }
+        TasteEntity tasteEntity = tasteRepository.findOne(user_id);
+        Languages languages = JsonUtil.langFromJson(tasteEntity.getLanguage());
+        languages.updateLanguage(song_language);
+        Styles styles = JsonUtil.styleFromJson(tasteEntity.getStyle());
+        styles.updateStyle(song_style);
 
-        for (int i = 0; i < Const.SONG_STYLE_LENGTH; ++i) {
-            if (style.charAt(i) == '1') {
-                styles[i] += 1;
-            }
-        }
+        String lang = JsonUtil.jsonFromObject(languages);
+        String style = JsonUtil.jsonFromObject(styles);
 
-        languageRepository.update(langs[0], langs[1], langs[2], langs[3], langs[4], user_id);
-//        styleRepository.update(styles);
+        tasteRepository.update(user_id, lang, style);
+
+        return true;
+    }
+
+    @Transactional
+    public boolean CreateTaste(int user_id) {
+        TasteEntity entity = new TasteEntity();
+        entity.setUserId(user_id);
+        entity.setLanguage(Const.DEFAULT_LANGUAGE);
+        entity.setStyle(Const.DEFAULT_STYLE);
+        tasteRepository.save(entity);
         return true;
     }
 
     private Vector<Integer> parseLanguage(int user_id, String language) {
         Vector<Integer> vector = new Vector<>();
-        TastelanguageEntity entity = languageRepository.findOne(user_id);
-        vector.add(entity.getLang1());
-        vector.add(entity.getLang2());
-        vector.add(entity.getLang3());
-        vector.add(entity.getLang4());
+        Languages languages = JsonUtil.langFromJson(language);
+
+        for (int i = 0; i < Const.SONG_LANG_LENGTH; ++i) {
+            vector.add(languages.getLangs()[i]);
+        }
         return vector;
     }
 
     private Vector<Integer> parseStyle(int user_id, String style) {
         Vector<Integer> vector = new Vector<>();
-        TastestyleEntity entity = styleRepository.findOne(user_id);
-        vector.add(entity.getTaste1());
-        vector.add(entity.getTaste2());
-        vector.add(entity.getTaste3());
-        vector.add(entity.getTaste4());
-        vector.add(entity.getTaste5());
-        vector.add(entity.getTaste6());
-        vector.add(entity.getTaste7());
-        vector.add(entity.getTaste8());
-        vector.add(entity.getTaste9());
-        vector.add(entity.getTaste10());
-        vector.add(entity.getTaste11());
-        vector.add(entity.getTaste12());
-        vector.add(entity.getTaste13());
-        vector.add(entity.getTaste14());
-        vector.add(entity.getTaste15());
-        vector.add(entity.getTaste16());
-        vector.add(entity.getTaste17());
-        vector.add(entity.getTaste18());
-        vector.add(entity.getTaste19());
-        vector.add(entity.getTaste20());
-        vector.add(entity.getTaste21());
+        Styles styles = JsonUtil.styleFromJson(style);
+
+        for (int i = 0; i < Const.SONG_STYLE_LENGTH; ++i) {
+            vector.add(styles.getStyles()[i]);
+        }
+
         return vector;
     }
 }

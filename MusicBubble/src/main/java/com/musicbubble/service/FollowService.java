@@ -109,12 +109,16 @@ public class FollowService extends MyService {
     public List<Map<String, Object>>GetPreferPagesByUserId(int user_id, int page_size){
         List<Map<String, Object>> moments = new ArrayList<>();
         PageRequest request = buildPageRequest(1, page_size);
-        final String user_name = accountService.GetUserNameById(user_id);
+        UserEntity entity = accountService.findOne(user_id);
+        String user_name = entity.getUserName();
+        String avator_url = resourceService.GetImgUrlById(entity.getImageId());
+
         List<PreferEntity> prefers = preferRepository.findPreferByUserId(user_id, request).getContent();
         for (PreferEntity p : prefers){
             Map<String, Object> map = new HashMap<>();
             map.put("id", user_id);
             map.put("username", user_name);
+            map.put("avator_url", avator_url);
             map.put("type", "like");
             map.put("time", DateTimeUtil.GetTimeStampString(p.getPreferTime()));
             map.put("songlist_id", p.getListId());
@@ -127,12 +131,15 @@ public class FollowService extends MyService {
     public List<Map<String, Object>>GetCreatePagesByUserId(int user_id, int page_size){
         List<Map<String, Object>> moments = new ArrayList<>();
         PageRequest request = buildPageRequest(1, page_size);
-        final String user_name = accountService.GetUserNameById(user_id);
+        UserEntity entity = accountService.findOne(user_id);
+        String user_name = entity.getUserName();
+        String avator_url = resourceService.GetImgUrlById(entity.getImageId());
         List<SongListEntity> songs = songListService.GetSongListByUserIdAndPage(user_id, request);
         for(SongListEntity s : songs){
             Map<String, Object> map = new HashMap<>();
             map.put("id", user_id);
             map.put("username", user_name);
+            map.put("avator_url", avator_url);
             map.put("type", "create");
             map.put("time", DateTimeUtil.GetTimeStampString(s.getCreateTime()));
             map.put("songlist_id", s.getListId());
@@ -145,12 +152,15 @@ public class FollowService extends MyService {
     public List<Map<String, Object>>GetCommentPagesByUserId(int user_id, int page_size){
         List<Map<String, Object>> moments = new ArrayList<>();
         PageRequest request = buildPageRequest(1, page_size);
-        final String user_name = accountService.GetUserNameById(user_id);
+        UserEntity entity = accountService.findOne(user_id);
+        String user_name = entity.getUserName();
+        String avator_url = resourceService.GetImgUrlById(entity.getImageId());
         List<CommentEntity> comments = songListService.GetCommentByUserIdAndPage(user_id, request);
         for(CommentEntity c : comments){
             Map<String, Object> map = new HashMap<>();
             map.put("id", user_id);
             map.put("username", user_name);
+            map.put("avator_url", avator_url);
             map.put("type", "comment");
             map.put("time", DateTimeUtil.GetTimeStampString(c.getCommentTime()));
             map.put("songlist_id", c.getListId());

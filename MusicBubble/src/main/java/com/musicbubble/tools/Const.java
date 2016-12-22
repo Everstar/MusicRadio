@@ -11,6 +11,9 @@ public class Const {
     private static final String[] LANG = new String[]{"zh-cn", "en-us", "ja-jp", "fr-fr", "ko-kr"};
     public static final List LANGUAGES = Arrays.asList(LANG);
     public static final int SONG_STYLE_LENGTH = 21;
+    public static final int SONG_LANG_LENGTH = 5;
+    public static final String DEFAULT_LANGUAGE = "{\"langs\":[0,0,0,0,0]}";
+    public static final String DEFAULT_STYLE = "{\"styles\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}";
     public static boolean CheckStyle(String style) {
         if(style.length() > 21)
             return false;
