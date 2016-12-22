@@ -74,7 +74,7 @@ public class AccountController implements Serializable {
         }
 
         //set expire time;
-        String tokenTime = DateTimeUtil.makeExpireTime(3600);
+        String tokenTime = DateTimeUtil.makeExpireTime(24 * 3600);
 
         HttpStatus status = HttpStatus.OK;
         try {
@@ -83,7 +83,7 @@ public class AccountController implements Serializable {
 
             Cookie cookie = new Cookie("token", encrypted);
             cookie.setPath("/");
-            cookie.setMaxAge(3600);
+            cookie.setMaxAge(24 * 3600);
             HttpServletResponse response = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getResponse();
             response.addCookie(cookie);
         } catch (Exception e) {

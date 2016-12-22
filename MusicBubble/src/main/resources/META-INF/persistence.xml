@@ -3,13 +3,13 @@
 
     <persistence-unit name="musicPU">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
-        <class>com.musicbubble.model.SongEntity</class>
-        <class>com.musicbubble.model.StyleEntity</class>
+        <class>com.musicbubble.model.TastelanguageEntity</class>
+        <class>com.musicbubble.model.TastestyleEntity</class>
         <properties>
             <property name="hibernate.connection.url" value="jdbc:mysql://10.60.42.203:8888/DB_03"/>
             <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
-            <property name="hibernate.connection.username" value="T03"/>
-            <property name="hibernate.connection.password" value="rfQelnj0"/>
+            <property name="hibernate.connection.username"/>
+            <property name="hibernate.connection.password"/>
             <!--<property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/DB_03"/>-->
             <!--<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>-->
             <!--<property name="hibernate.connection.username" value="root"/>-->

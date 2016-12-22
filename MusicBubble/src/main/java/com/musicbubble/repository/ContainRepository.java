@@ -21,6 +21,9 @@ public interface ContainRepository extends JpaRepository<ContainEntity, ContainE
 
     List<ContainEntity> findByListId(int listId);
 
+    @Query("select c.songId from ContainEntity c where c.listId = ?1")
+    List<Integer> findSongIdsByListId(int listId);
+
     @Modifying
     @Query("delete from ContainEntity c where c.listId = ?1")
     void deleteByListId(int list_id);

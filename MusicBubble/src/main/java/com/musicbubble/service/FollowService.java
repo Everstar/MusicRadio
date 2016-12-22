@@ -9,6 +9,8 @@ import com.musicbubble.service.base.ResourceService;
 import com.musicbubble.tools.CommonUtil;
 import com.musicbubble.tools.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -80,45 +82,16 @@ public class FollowService extends MyService {
         return map;
     }
 
-    //maybe error
     public List<Map<String, Object>> MomentOfOne(int user_id) {
+        final int page_size = 5;
         List<Map<String, Object>> moments = new ArrayList<>();
 
-        List<PreferEntity> prefers = preferRepository.findPreferByUserIdAndTime(user_id, new Timestamp(System.currentTimeMillis() - DateTimeUtil.MomentInterval));
-        for (PreferEntity p : prefers){
-            Map<String, Object> map = new HashMap<>();
-            map.put("type", "like");
-            map.put("time", p.getPreferTime());
-            map.put("songlist_name", songListService.GetSongListNameById(p.getListId()));
-            moments.add(map);
-        }
-
-        List<SongListEntity> songs = songListService.GetSongListByUserIdAndTime(user_id, new Timestamp(System.currentTimeMillis() - DateTimeUtil.MomentInterval));
-        for(SongListEntity s : songs){
-            Map<String, Object> map = new HashMap<>();
-            map.put("type", "create");
-            map.put("time", s.getCreateTime());
-            map.put("songlist_name", s.getListName());
-            moments.add(map);
-        }
-
-        List<CommentEntity> comments = songListService.GetCommentByUserIdAndTime(user_id, new Timestamp(System.currentTimeMillis() - DateTimeUtil.MomentInterval));
-        for(CommentEntity c : comments){
-            Map<String, Object> map = new HashMap<>();
-            map.put("type", "comment");
-            map.put("time", c.getCommentTime());
-            map.put("songlist_name", songListService.GetSongListNameById(c.getListId()));
-            moments.add(map);
-        }
-
-        moments.sort(new Comparator<Map<String, Object>>() {
-            @Override
-            public int compare(Map<String, Object> o1, Map<String, Object> o2) {
-                Timestamp t1 = (Timestamp) o1.get("time");
-                Timestamp t2 = (Timestamp) o2.get("time");
-                return t1.before(t2) ? 1 : -1;
-            }
-        });
+        List<Map<String, Object>> list = GetPreferPagesByUserId(user_id, page_size);
+        moments.addAll(list);
+        list = GetCommentPagesByUserId(user_id, page_size);
+        moments.addAll(list);
+        list = GetCreatePagesByUserId(user_id, page_size);
+        moments.addAll(list);
 
         return moments;
     }
@@ -131,5 +104,64 @@ public class FollowService extends MyService {
             moments.addAll(part);
         }
         return moments;
+    }
+
+    public List<Map<String, Object>>GetPreferPagesByUserId(int user_id, int page_size){
+        List<Map<String, Object>> moments = new ArrayList<>();
+        PageRequest request = buildPageRequest(1, page_size);
+        final String user_name = accountService.GetUserNameById(user_id);
+        List<PreferEntity> prefers = preferRepository.findPreferByUserId(user_id, request).getContent();
+        for (PreferEntity p : prefers){
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", user_id);
+            map.put("username", user_name);
+            map.put("type", "like");
+            map.put("time", DateTimeUtil.GetTimeStampString(p.getPreferTime()));
+            map.put("songlist_id", p.getListId());
+            map.put("songlist_name", songListService.GetSongListNameById(p.getListId()));
+            moments.add(map);
+        }
+        return moments;
+    }
+
+    public List<Map<String, Object>>GetCreatePagesByUserId(int user_id, int page_size){
+        List<Map<String, Object>> moments = new ArrayList<>();
+        PageRequest request = buildPageRequest(1, page_size);
+        final String user_name = accountService.GetUserNameById(user_id);
+        List<SongListEntity> songs = songListService.GetSongListByUserIdAndPage(user_id, request);
+        for(SongListEntity s : songs){
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", user_id);
+            map.put("username", user_name);
+            map.put("type", "create");
+            map.put("time", DateTimeUtil.GetTimeStampString(s.getCreateTime()));
+            map.put("songlist_id", s.getListId());
+            map.put("songlist_name", s.getListName());
+            moments.add(map);
+        }
+        return moments;
+    }
+
+    public List<Map<String, Object>>GetCommentPagesByUserId(int user_id, int page_size){
+        List<Map<String, Object>> moments = new ArrayList<>();
+        PageRequest request = buildPageRequest(1, page_size);
+        final String user_name = accountService.GetUserNameById(user_id);
+        List<CommentEntity> comments = songListService.GetCommentByUserIdAndPage(user_id, request);
+        for(CommentEntity c : comments){
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", user_id);
+            map.put("username", user_name);
+            map.put("type", "comment");
+            map.put("time", DateTimeUtil.GetTimeStampString(c.getCommentTime()));
+            map.put("songlist_id", c.getListId());
+            map.put("songlist_name", songListService.GetSongListNameById(c.getListId()));
+            moments.add(map);
+        }
+
+        return moments;
+    }
+
+    private PageRequest buildPageRequest(int pageNumber, int pagzSize) {
+        return new PageRequest(pageNumber - 1, pagzSize, null);
     }
 }

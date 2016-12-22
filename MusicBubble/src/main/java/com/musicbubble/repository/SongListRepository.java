@@ -30,8 +30,11 @@ public interface SongListRepository extends JpaRepository<SongListEntity, Intege
     @Query("select count(*) from SongListEntity s where s.userId = ?1")
     int countList(int user_id);
 
-    @Query("select s from SongListEntity s where s.userId = ?1 and s.createTime > ?2")
-    List<SongListEntity> findSongListByUserIdAndTime(int user_id, Timestamp timestamp);
+    @Query("select s from SongListEntity s where s.userId = ?1")
+    Page<SongListEntity> findSongListByUserIdAndPage(int user_id, Pageable pageable);
+
+    @Query("select s from SongListEntity s order by s.createTime desc")
+    Page<SongListEntity> findNearestSongList(Pageable pageable);
 
     @Modifying
     @Query("update SongListEntity s set s.listName = ?2 , s.profile = ?3 , s.imageId = ?4 where s.listId = ?1")

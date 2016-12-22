@@ -1,10 +1,23 @@
 package com.musicbubble.tools;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by happyfarmer on 2016/12/11.
  */
 public class Const {
     public static final int HOT_LIST_SIZE = 10;
-    public static final String RESOURCE_ROOT_IMAGE = "I:\\resources\\images\\";
-    public static final String RESOURCE_ROOT_MUSIC = "I:\\resources\\musics\\";
+    private static final String[] LANG = new String[]{"zh-cn", "en-us", "ja-jp", "fr-fr", "ko-kr"};
+    public static final List LANGUAGES = Arrays.asList(LANG);
+    public static final int SONG_STYLE_LENGTH = 21;
+    public static boolean CheckStyle(String style) {
+        if(style.length() > 21)
+            return false;
+        for (char c : style.toCharArray()) {
+            if (c != '0' && c != '1')
+                return false;
+        }
+        return true;
+    }
 }
