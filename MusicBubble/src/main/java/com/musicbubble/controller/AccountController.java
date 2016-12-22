@@ -1,5 +1,6 @@
 package com.musicbubble.controller;
 
+import com.musicbubble.service.RecordService;
 import com.musicbubble.service.base.AccountService;
 import com.musicbubble.service.SongListService;
 import com.musicbubble.tools.DESUtil;
@@ -27,6 +28,8 @@ public class AccountController implements Serializable {
     private AccountService accountService;
     @Autowired
     private SongListService songListService;
+    @Autowired
+    private RecordService recordService;
 
     @RequestMapping(value = "/account", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<Object> validateAccount(@RequestParam("id") String id) {
@@ -53,6 +56,7 @@ public class AccountController implements Serializable {
             int list_id = songListService.CreateSongList(user_id, "MyFavorite", "");
             System.out.println("list_id :" + list_id);
             accountService.SetDefaultSongList(user_id, list_id);
+            recordService.CreateTaste(user_id);
         }
         map.put("result", res);
         HttpStatus status = res ? HttpStatus.CREATED : HttpStatus.NOT_ACCEPTABLE;
@@ -74,7 +78,7 @@ public class AccountController implements Serializable {
         }
 
         //set expire time;
-        String tokenTime = DateTimeUtil.makeExpireTime(3600);
+        String tokenTime = DateTimeUtil.makeExpireTime(24 * 3600);
 
         HttpStatus status = HttpStatus.OK;
         try {
@@ -83,7 +87,7 @@ public class AccountController implements Serializable {
 
             Cookie cookie = new Cookie("token", encrypted);
             cookie.setPath("/");
-            cookie.setMaxAge(3600);
+            cookie.setMaxAge(24 * 3600);
             HttpServletResponse response = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getResponse();
             response.addCookie(cookie);
         } catch (Exception e) {

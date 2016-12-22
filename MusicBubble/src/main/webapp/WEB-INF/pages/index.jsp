@@ -2,6 +2,8 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="kiben" content="no-cache">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -50,6 +52,8 @@
 <form name="upload" action="/addsong/upload" method="post" enctype="multipart/form-data">
     file:<input type="file" name="song_file"/><br/>
     songlist_id:<input type="number" name="songlist_id"/><br/>
+    language:<input type="text" name="language"/><br/>
+    styles:<input type="text" name="styles"/><br/>
     <input type="submit" value="upload"/>
 </form>
 

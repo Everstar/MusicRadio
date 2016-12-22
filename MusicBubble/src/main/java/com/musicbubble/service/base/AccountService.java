@@ -86,6 +86,11 @@ public class AccountService extends MyService {
         userRepository.setListId(user_id, list_id);
     }
 
+    public int FindDefaultSongList(int user_id){
+        UserEntity entity = userRepository.findOne(user_id);
+        return entity.getListId();
+    }
+
     public String GetUserNameById(int user_id) {
         UserEntity userEntity = userRepository.findOne(user_id);
         return userEntity == null ? null : userEntity.getUserName();

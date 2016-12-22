@@ -66,7 +66,7 @@ public class FollowController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-    //数据多了再测
+    //tested
     @RequestMapping(value = "/moment", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> getMomentOfOne(@CookieValue("token") String token, @RequestParam("id") int id){
         int user_id = accountService.IdentifyUser(token);
@@ -76,6 +76,7 @@ public class FollowController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
+    //tested
     @RequestMapping(value = "/moment", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> getMomentOfOne(@CookieValue("token") String token){
         int user_id = accountService.IdentifyUser(token);
@@ -84,5 +85,7 @@ public class FollowController {
         List<Map<String, Object>> list = followService.MomentOfFollow(user_id);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
+
+
 
 }

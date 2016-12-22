@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 /**
  * Created by happyfarmer on 2016/12/3.
  */
-public interface UserRepository extends JpaRepository<UserEntity, Integer>{
+public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
     UserEntity findByUserName(String userName);
 
@@ -24,7 +24,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer>{
     @Query("update UserEntity u set u.rank = u.rank + 1 where u.userId = ?1")
     int incRank(int user_id);
 
-    @Query("select u.listId from UserEntity u where u.userId=?1")
+    @Query("select u.listId from UserEntity u where u.userId = ?1")
     int findListIdByUserId(int userId);
 
     @Modifying

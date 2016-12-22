@@ -6,6 +6,7 @@ import com.musicbubble.service.base.MyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,18 +33,50 @@ public class SongListService extends MyService {
     private CommentRepository commentRepository;
     @Autowired
     private ContainRepository containRepository;
+    @Autowired
+    private PreferRepository preferRepository;
 
     public List<Map<String, Object>> GetHotList(int page_size) {
         PageRequest request = buildPageRequest(1, page_size);
         Page<SongListEntity> songs = songListRepository.findHotlist(request);
-        List<Map<String, Object>> list = fillSongList(songs.getContent());
+        List<Map<String, Object>> list = fillSongList(0, songs.getContent());
         return list;
     }
 
-    public List<Map<String, Object>> GetSongListByUserId(int user_id) {
-        List<SongListEntity> songs = songListRepository.findByUserId(user_id);
-        List<Map<String, Object>> list = fillSongList(songs);
+    public List<Map<String, Object>> GetSongListByUserId(int own_id, int follow_id) {
+        List<SongListEntity> songs = songListRepository.findByUserId(own_id);
+        List<Map<String, Object>> list = fillSongList(follow_id == 0 ? own_id : follow_id, songs);
         return list;
+    }
+
+    public List<Map<String, Object>> GetSongsBySongListId(int list_id) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        List<ContainEntity> entities = containRepository.findByListId(list_id);
+        List<Integer> ids = containRepository.findSongIdsByListId(list_id);
+        List<SongEntity> songs = songRepository.findAll(ids);
+
+        for (int index = 0; index < ids.size(); ++index) {
+            Map<String, Object> map = new HashMap<>();
+            SongEntity songEntity = songs.get(index);
+            ContainEntity containEntity = entities.get(index);
+            map.put("song_id", songEntity.getSongId());
+            map.put("image_id", containEntity.getImageId());
+            ImageEntity imageEntity = imageRepository.findOne(containEntity.getImageId());
+            map.put("image_url", imageEntity == null ? null : imageEntity.getImageUri());
+            map.put("song_name", songEntity.getSongName());
+            map.put("artists", songEntity.getAuthorName());
+            map.put("duration", songEntity.getLastTime());
+            map.put("mp3Url", songEntity.getSongUri());
+            list.add(map);
+        }
+        return list;
+    }
+
+
+    public String GetSongUrl(int song_id){
+        SongEntity entity = songRepository.findOne(song_id);
+        return entity!=null?entity.getSongUri():null;
+
     }
 
     public int NumOfSongListByUserId(int user_id) {
@@ -65,14 +98,16 @@ public class SongListService extends MyService {
         return listEntity == null ? null : listEntity.getListName();
     }
 
-    public List<SongListEntity> GetSongListByUserIdAndTime(int user_id, Timestamp s) {
-        List<SongListEntity> list = songListRepository.findSongListByUserIdAndTime(user_id, s);
-        return list;
+    public List<SongListEntity> GetSongListByUserIdAndPage(int user_id, Pageable pageable) {
+        return songListRepository.findSongListByUserIdAndPage(user_id, pageable).getContent();
     }
 
-    public List<CommentEntity> GetCommentByUserIdAndTime(int user_id, Timestamp s) {
-        List<CommentEntity> list = commentRepository.findCommentByUserIdAndTime(user_id, s);
-        return list;
+    public List<CommentEntity> GetCommentByUserIdAndPage(int user_id, Pageable pageable) {
+        return commentRepository.findCommentByUserIdAndPage(user_id, pageable).getContent();
+    }
+
+    public List<SongListEntity> GetNearestSongList(Pageable pageable){
+        return songListRepository.findNearestSongList(pageable).getContent();
     }
 
     @Transactional
@@ -102,20 +137,10 @@ public class SongListService extends MyService {
         return true;
     }
 
-    public Map<String, Object> GetSongListInfo(int list_id){
-        SongListEntity entity = songListRepository.findOne(list_id);
-        if(entity == null)
-            return null;
-        Map<String, Object> map = new HashMap<>();
-        map.put("songlist_name", entity.getListName());
-        map.put("description", entity.getProfile());
-        map.put("image_id", entity.getImageId());
-        return map;
-    }
 
-    public boolean AddSongToList(int list_id, int song_id){
+    public boolean AddSongToList(int list_id, int song_id) {
         System.out.println("list_id :" + list_id + "|song_id :" + song_id);
-        if(song_id == 0 || list_id == 0)
+        if (song_id == 0 || list_id == 0)
             return false;
         ContainEntity entity = new ContainEntity();
         entity.setSongId(song_id);
@@ -125,20 +150,21 @@ public class SongListService extends MyService {
         return true;
     }
 
+    @Transactional
     public boolean ChangeSongListInfo(int list_id, String name, String desc, int image_id) {
         int res = songListRepository.updateListInfo(list_id, name, desc, image_id);
         return res == 1;
     }
 
     @Transactional
-    public boolean ChangeSongImage(int list_id, int song_id, int image_id){
+    public boolean ChangeSongImage(int list_id, int song_id, int image_id) {
         containRepository.updateSongImage(list_id, song_id, image_id);
         return true;
     }
 
-    public int SongExists(int netease_id){
+    public int SongExists(int netease_id) {
         SongEntity entity = songRepository.findByNeteaseId(netease_id);
-        return entity==null ? 0 : entity.getSongId();
+        return entity == null ? 0 : entity.getSongId();
     }
 
     public boolean DeleteSong(int list_id, int song_id) {
@@ -153,18 +179,29 @@ public class SongListService extends MyService {
         return new PageRequest(pageNumber - 1, pagzSize, null);
     }
 
-    private List<Map<String, Object>> fillSongList(List<SongListEntity> songs) {
+    private List<Map<String, Object>> fillSongList(int user_id, List<SongListEntity> lists) {
         List<Map<String, Object>> list = new ArrayList<>();
-        for (SongListEntity s : songs) {
+        for (SongListEntity s : lists) {
             Map<String, Object> map = new HashMap<>();
+
+            if (user_id != 0) {
+                PreferEntityPK entityPK = new PreferEntityPK();
+                entityPK.setListId(s.getListId());
+                entityPK.setUserId(user_id);
+                PreferEntity preferEntity = preferRepository.findOne(entityPK);
+                map.put("liked", preferEntity != null);
+            }
             map.put("list_id", s.getListId());
             map.put("songlist_name", s.getListName());
             map.put("author_id", s.getUserId());
-            map.put("liked", s.getLikes());
+            map.put("description", s.getProfile());
+            map.put("likes", s.getLikes());
             UserEntity userEntity = userRepository.findOne(s.getUserId());
             ImageEntity imageEntity = imageRepository.findOne(s.getImageId());
             map.put("author", userEntity == null ? null : userEntity.getUserName());
+            map.put("img_id", s.getImageId());
             map.put("img_url", imageEntity == null ? null : imageEntity.getImageUri());
+
             list.add(map);
         }
         return list;

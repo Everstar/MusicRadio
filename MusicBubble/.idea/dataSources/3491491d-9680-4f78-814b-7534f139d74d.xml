@@ -14,205 +14,238 @@
     <table id="9" parent="1" name="song"/>
     <table id="10" parent="1" name="songlist"/>
     <table id="11" parent="1" name="user"/>
-    <column id="12" parent="3" name="comment_id">
+    <table id="12" parent="1" name="style"/>
+    <table id="13" parent="1" name="taste"/>
+    <column id="14" parent="3" name="comment_id">
       <mandatory>1</mandatory>
       <data-type>int(10) unsigned|0</data-type>
       <sequence-identity>1</sequence-identity>
     </column>
-    <column id="13" parent="3" name="user_id">
+    <column id="15" parent="3" name="user_id">
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="14" parent="3" name="list_id">
+    <column id="16" parent="3" name="list_id">
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="15" parent="3" name="content">
+    <column id="17" parent="3" name="content">
       <data-type>mediumtext|0</data-type>
     </column>
-    <column id="16" parent="3" name="comment_time">
+    <column id="18" parent="3" name="comment_time">
       <data-type>timestamp|0</data-type>
     </column>
-    <column id="17" parent="3" name="likes">
+    <column id="19" parent="3" name="likes">
       <data-type>int(11)|0</data-type>
       <default-expression>&apos;0&apos;</default-expression>
     </column>
-    <key id="18" parent="3" name="PRIMARY">
+    <key id="20" parent="3" name="PRIMARY">
       <columns>comment_id</columns>
       <primary>1</primary>
     </key>
-    <column id="19" parent="4" name="list_id">
+    <column id="21" parent="4" name="list_id">
       <mandatory>1</mandatory>
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="20" parent="4" name="song_id">
+    <column id="22" parent="4" name="song_id">
       <mandatory>1</mandatory>
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="21" parent="4" name="image_id">
+    <column id="23" parent="4" name="image_id">
       <data-type>int(11)|0</data-type>
     </column>
-    <key id="22" parent="4" name="PRIMARY">
+    <key id="24" parent="4" name="PRIMARY">
       <columns>list_id
 song_id</columns>
       <primary>1</primary>
     </key>
-    <column id="23" parent="5" name="f_id">
+    <column id="25" parent="5" name="f_id">
       <mandatory>1</mandatory>
       <data-type>int(10) unsigned|0</data-type>
       <sequence-identity>1</sequence-identity>
     </column>
-    <column id="24" parent="5" name="user_id">
+    <column id="26" parent="5" name="user_id">
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="25" parent="5" name="follow_id">
+    <column id="27" parent="5" name="follow_id">
       <data-type>int(11)|0</data-type>
     </column>
-    <key id="26" parent="5" name="PRIMARY">
+    <key id="28" parent="5" name="PRIMARY">
       <columns>f_id</columns>
       <primary>1</primary>
     </key>
-    <column id="27" parent="6" name="image_id">
+    <column id="29" parent="6" name="image_id">
       <mandatory>1</mandatory>
       <data-type>int(10) unsigned|0</data-type>
       <sequence-identity>1</sequence-identity>
     </column>
-    <column id="28" parent="6" name="image_type">
+    <column id="30" parent="6" name="image_type">
       <data-type>char(1)|0</data-type>
       <default-expression>&apos;0&apos;</default-expression>
     </column>
-    <column id="29" parent="6" name="image_uri">
+    <column id="31" parent="6" name="image_uri">
       <data-type>varchar(255)|0</data-type>
     </column>
-    <key id="30" parent="6" name="PRIMARY">
+    <key id="32" parent="6" name="PRIMARY">
       <columns>image_id</columns>
       <primary>1</primary>
     </key>
-    <column id="31" parent="7" name="user1_id">
+    <column id="33" parent="7" name="user1_id">
       <mandatory>1</mandatory>
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="32" parent="7" name="user2_id">
+    <column id="34" parent="7" name="user2_id">
       <mandatory>1</mandatory>
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="33" parent="7" name="message_uri">
+    <column id="35" parent="7" name="message_uri">
       <data-type>varchar(255)|0</data-type>
     </column>
-    <key id="34" parent="7" name="PRIMARY">
+    <key id="36" parent="7" name="PRIMARY">
       <columns>user1_id
 user2_id</columns>
       <primary>1</primary>
     </key>
-    <column id="35" parent="8" name="user_id">
+    <column id="37" parent="8" name="user_id">
       <mandatory>1</mandatory>
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="36" parent="8" name="list_id">
+    <column id="38" parent="8" name="list_id">
       <mandatory>1</mandatory>
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="37" parent="8" name="prefer_time">
+    <column id="39" parent="8" name="prefer_time">
       <data-type>timestamp|0</data-type>
     </column>
-    <key id="38" parent="8" name="PRIMARY">
+    <key id="40" parent="8" name="PRIMARY">
       <columns>user_id
 list_id</columns>
       <primary>1</primary>
     </key>
-    <column id="39" parent="9" name="song_id">
+    <column id="41" parent="9" name="song_id">
       <mandatory>1</mandatory>
       <data-type>int(10) unsigned|0</data-type>
       <sequence-identity>1</sequence-identity>
     </column>
-    <column id="40" parent="9" name="netease_id">
+    <column id="42" parent="9" name="netease_id">
       <data-type>int(10) unsigned|0</data-type>
       <default-expression>&apos;0&apos;</default-expression>
     </column>
-    <column id="41" parent="9" name="song_name">
+    <column id="43" parent="9" name="song_name">
       <mandatory>1</mandatory>
       <data-type>varchar(100)|0</data-type>
     </column>
-    <column id="42" parent="9" name="author_name">
+    <column id="44" parent="9" name="author_name">
       <data-type>varchar(100)|0</data-type>
     </column>
-    <column id="43" parent="9" name="last_time">
+    <column id="45" parent="9" name="last_time">
       <data-type>int(11)|0</data-type>
       <default-expression>&apos;0&apos;</default-expression>
     </column>
-    <column id="44" parent="9" name="song_uri">
+    <column id="46" parent="9" name="song_uri">
       <mandatory>1</mandatory>
       <data-type>varchar(255)|0</data-type>
     </column>
-    <column id="45" parent="9" name="song_type">
+    <column id="47" parent="9" name="song_type">
       <data-type>char(1)|0</data-type>
       <default-expression>&apos;0&apos;</default-expression>
     </column>
-    <key id="46" parent="9" name="PRIMARY">
+    <column id="48" parent="9" name="language">
+      <data-type>varchar(45)|0</data-type>
+    </column>
+    <column id="49" parent="9" name="styles">
+      <data-type>varchar(45)|0</data-type>
+    </column>
+    <key id="50" parent="9" name="PRIMARY">
       <columns>song_id</columns>
       <primary>1</primary>
     </key>
-    <column id="47" parent="10" name="list_id">
+    <column id="51" parent="10" name="list_id">
       <mandatory>1</mandatory>
       <data-type>int(10) unsigned|0</data-type>
       <sequence-identity>1</sequence-identity>
     </column>
-    <column id="48" parent="10" name="list_name">
+    <column id="52" parent="10" name="list_name">
       <mandatory>1</mandatory>
       <data-type>varchar(100)|0</data-type>
     </column>
-    <column id="49" parent="10" name="likes">
+    <column id="53" parent="10" name="likes">
       <data-type>int(11)|0</data-type>
       <default-expression>&apos;0&apos;</default-expression>
     </column>
-    <column id="50" parent="10" name="image_id">
+    <column id="54" parent="10" name="image_id">
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="51" parent="10" name="profile">
+    <column id="55" parent="10" name="profile">
       <data-type>mediumtext|0</data-type>
     </column>
-    <column id="52" parent="10" name="user_id">
+    <column id="56" parent="10" name="user_id">
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="53" parent="10" name="create_time">
+    <column id="57" parent="10" name="create_time">
       <data-type>timestamp|0</data-type>
     </column>
-    <key id="54" parent="10" name="PRIMARY">
+    <key id="58" parent="10" name="PRIMARY">
       <columns>list_id</columns>
       <primary>1</primary>
     </key>
-    <column id="55" parent="11" name="user_id">
+    <column id="59" parent="11" name="user_id">
       <mandatory>1</mandatory>
       <data-type>int(10) unsigned|0</data-type>
       <sequence-identity>1</sequence-identity>
     </column>
-    <column id="56" parent="11" name="user_name">
+    <column id="60" parent="11" name="user_name">
       <data-type>varchar(100)|0</data-type>
     </column>
-    <column id="57" parent="11" name="passwd">
+    <column id="61" parent="11" name="passwd">
       <data-type>varchar(128)|0</data-type>
     </column>
-    <column id="58" parent="11" name="image_id">
+    <column id="62" parent="11" name="image_id">
       <data-type>int(11)|0</data-type>
       <default-expression>&apos;1&apos;</default-expression>
     </column>
-    <column id="59" parent="11" name="sex">
+    <column id="63" parent="11" name="sex">
       <data-type>char(1)|0</data-type>
     </column>
-    <column id="60" parent="11" name="rank">
+    <column id="64" parent="11" name="rank">
       <data-type>int(11)|0</data-type>
       <default-expression>&apos;1&apos;</default-expression>
     </column>
-    <column id="61" parent="11" name="experience">
+    <column id="65" parent="11" name="experience">
       <data-type>int(11)|0</data-type>
       <default-expression>&apos;0&apos;</default-expression>
     </column>
-    <column id="62" parent="11" name="list_id">
+    <column id="66" parent="11" name="list_id">
       <data-type>int(11)|0</data-type>
       <default-expression>&apos;0&apos;</default-expression>
     </column>
-    <column id="63" parent="11" name="last_signin">
+    <column id="67" parent="11" name="last_signin">
       <data-type>timestamp|0</data-type>
     </column>
-    <key id="64" parent="11" name="PRIMARY">
+    <key id="68" parent="11" name="PRIMARY">
+      <columns>user_id</columns>
+      <primary>1</primary>
+    </key>
+    <column id="69" parent="12" name="style_id">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="70" parent="12" name="style_name">
+      <data-type>varchar(45)|0</data-type>
+    </column>
+    <key id="71" parent="12" name="PRIMARY">
+      <columns>style_id</columns>
+      <primary>1</primary>
+    </key>
+    <column id="72" parent="13" name="user_id">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="73" parent="13" name="language">
+      <data-type>mediumtext|0</data-type>
+    </column>
+    <column id="74" parent="13" name="style">
+      <data-type>mediumtext|0</data-type>
+    </column>
+    <key id="75" parent="13" name="PRIMARY">
       <columns>user_id</columns>
       <primary>1</primary>
     </key>
