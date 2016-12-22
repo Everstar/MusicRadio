@@ -4,16 +4,20 @@ import Jama.Matrix;
 import com.musicbubble.service.RecommandService;
 import com.musicbubble.service.SongListService;
 import com.musicbubble.service.base.AccountService;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.xml.DocumentDefaultsDefinition;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.InterceptingAsyncClientHttpRequestFactory;
 import org.springframework.http.converter.xml.MarshallingHttpMessageConverter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
 
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -31,14 +35,52 @@ public class RecommandController {
     @Autowired
     private AccountService accountService;
 
-    @Autowired
-    private SongListService songListService;
 
     @Autowired
     private RecommandService recommandService;
 
-    @RequestMapping(value="/recommandSonglist",method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
-    public ResponseEntity<Object> recommandSongList(@CookieValue(value = "token",required = true)String token,@RequestBody List<String> data){
+    private class SongMes{
+        private int song_id;
+
+        private double angle_value;
+
+        private double[] song_feaVec;
+
+        public void setAngle_value(double angle_value){this.angle_value=angle_value;}
+
+        public void setSong_id(int song_id){this.song_id=song_id;}
+
+        public void setSong_feaVec(double[] song_feaVec){this.song_feaVec=song_feaVec;}
+
+        public int getSong_id(){return this.song_id;}
+
+        public double getAngle_value(){return this.angle_value;}
+
+        public double[] getSong_feaVec(){return this.song_feaVec;}
+    }
+
+    private class UserMes{
+        private int user_id;
+
+        private double distance_value;
+
+        private double[] user_feaVec;
+
+        public void setUser_id(int user_id){this.user_id=user_id;}
+
+        public void setDistance_value(double distance_value){this.distance_value=distance_value;}
+
+        public void setUser_feaVec(double[] user_feaVec){this.user_feaVec=user_feaVec;}
+
+        public int getUser_id(){return this.user_id;}
+
+        public double getDistance_value(){return this.distance_value;}
+
+        public double[] getUser_feaVec(){return this.user_feaVec;}
+    }
+
+    @RequestMapping(value="/recommandSong",method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    public ResponseEntity<Object> recommandSong(@CookieValue(value = "token",required = true)String token,@RequestBody int data){
         int user_id = accountService.IdentifyUser(token);
         if (user_id == -1) return new ResponseEntity<Object>(null, HttpStatus.UNAUTHORIZED);
 
@@ -46,44 +88,31 @@ public class RecommandController {
         /*1. {"type_1": integer;"type_2": integer; "type_3": integer; .....}
         2.{"songlist_id": integer......}
 */
+        List<Integer> user_fea=new ArrayList<>() /*recommandService.getUserFeaVec(user_id)*/;
 
+        List<String> songStyle=recommandService.getRangeOfSongById(100*(data-1)+1,100*data);
+
+        SongMes[] songMes=this.getSongVec(songStyle,data);
+
+        List<Integer> recommandList=this.kNearer_song(user_fea,songMes);
        //songListService.
 
+        return new ResponseEntity<Object>(recommandList,HttpStatus.OK);
+
+    }
+
+   /* @RequestMapping(value="/recommandUser",method = RequestMethod.POST,produces = "application/json;charset=UTF-8n")
+    public ResponseEntity<Object> recommandUser(@CookieValue(value="token",required = true)String token,@RequestBody int data){
+        int user_id = accountService.IdentifyUser(token);
+        if (user_id == -1) return new ResponseEntity<Object>(null, HttpStatus.UNAUTHORIZED);
+
+
         return new ResponseEntity<Object>(null,HttpStatus.OK);
-
     }
+*/
 
-    private class RecommandValue{
-        private final int songlistId;
-        private final double angleValue;
 
-        public RecommandValue(int songlistId,double angleValue)
-        {
-            this.songlistId=songlistId;
-            this.angleValue=angleValue;
-        }
 
-        public int getSongListId(){return this.songlistId;}
-
-       // public void setSongListId(int songListId){this.songlistId=songListId;}
-
-        public double getAngleValue(){return this.angleValue;}
-
-       // public void setAngleValue(double angleValue){this.angleValue=angleValue;}
-    }
-
-    private class SongListMes{
-        int songlist_id;
-        double[] songlist_feaVec;
-
-        public void setSonglist_id(int songlist_id){this.songlist_id=songlist_id;}
-
-        public void setSonglist_feaVec(double[] songlist_feaVec){this.songlist_feaVec=songlist_feaVec;}
-
-        public int getSonglist_id(){return this.songlist_id;}
-
-        public double[] getSonglist_feaVec(){return this.songlist_feaVec;}
-    }
 
     @RequestMapping(value = "/testMartix",method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> testMartix(){
@@ -126,25 +155,25 @@ public class RecommandController {
         songListMes1[0].setSonglist_feaVec(songlist_vec5);
         songListMes1[0].setSonglist_id(1);*/
 
-        SongListMes[] songListMes=new SongListMes[5];
+        SongMes[] songMes=new SongMes[5];
 
-        songListMes[0] =new SongListMes();
-        songListMes[1]=new SongListMes();
-        songListMes[2]=new SongListMes();
-        songListMes[3]=new SongListMes();
-        songListMes[4]=new SongListMes();
+        songMes[0] =new SongMes();
+        songMes[1]=new SongMes();
+        songMes[2]=new SongMes();
+        songMes[3]=new SongMes();
+        songMes[4]=new SongMes();
 
-        songListMes[0].setSonglist_id(1);
-        songListMes[1].setSonglist_id(2);
-        songListMes[2].setSonglist_id(3);
-        songListMes[3].setSonglist_id(4);
-        songListMes[4].setSonglist_id(5);
+        songMes[0].setSong_id(1);
+        songMes[1].setSong_id(2);
+        songMes[2].setSong_id(3);
+        songMes[3].setSong_id(4);
+        songMes[4].setSong_id(5);
 
-        songListMes[0].setSonglist_feaVec(song_vec1);
-        songListMes[1].setSonglist_feaVec(song_vec2);
-        songListMes[2].setSonglist_feaVec(song_vec3);
-        songListMes[3].setSonglist_feaVec(song_vec4);
-        songListMes[4].setSonglist_feaVec(song_vec5);
+        songMes[0].setSong_feaVec(song_vec1);
+        songMes[1].setSong_feaVec(song_vec2);
+        songMes[2].setSong_feaVec(song_vec3);
+        songMes[3].setSong_feaVec(song_vec4);
+        songMes[4].setSong_feaVec(song_vec5);
 
         List<Integer> list=new ArrayList<>();
 
@@ -173,11 +202,12 @@ public class RecommandController {
         //Matrix m1=new Matrix(songlist_vec1,songlist_vec1.length);
 
         //double module=getModuleofVec(m1);
-        List<Double> recommandList=kNearer(list,songListMes);
+        List<Integer> recommandList=kNearer_song(list,songMes);
 
         //double[] result=kNearer(list,songListMes1);
 
-        return new ResponseEntity<Object>(recommandList,HttpStatus.OK);
+        return new ResponseEntity<Object>(testJSONArray(),HttpStatus.OK);
+
 
 
 
@@ -185,55 +215,124 @@ public class RecommandController {
 
     }
 
-    private void qSort(RecommandValue[] recomandValue,int low,int high){
+    private List<Integer> testJSONArray(){
+        String jsonArray="[11,22,33,44,55]";
+
+
+        //JSONArray jsonArray1=new JSONArray(jsonArray);
+
+        JSONArray jsonArray1=new JSONArray(jsonArray);
+
+        List<Integer> testJson=new ArrayList<>();
+
+        for(int i=0;i<5;i++){
+            testJson.add(jsonArray1.getInt(i));
+        }
+
+        return testJson;
+
+
+
+
+
+
+    }
+
+    // 100 ( i - 1 ) + 1~~~100 i
+
+    private SongMes[] getSongVec(List<String> songStyle,int startId){
+
+        //the song id is between 100(startId-1)+1 to 100startId
+
+        SongMes[] songListMes=new SongMes[songStyle.size()];
+
+        int i=0;
+        for(String style:songStyle){
+            char[] charStyle=style.toCharArray();
+
+            double[] songVec=new double[charStyle.length];
+
+            for(int j=0;j<charStyle.length;j++){
+                songVec[j]=charStyle[j]-'0';
+            }
+            SongMes listMes=new SongMes();
+            listMes.setSong_feaVec(songVec);
+            listMes.setSong_id(100*(startId-1)+1+i);
+
+        }
+
+        return songListMes;
+    }
+    private void qSort(UserMes[] userMes,int low,int high){
         if(low<high){
             int i=low,j=high;
-            RecommandValue x=recomandValue[low];
+            UserMes x=userMes[low];
             while(i<j)
             {
-                while(i<j&&recomandValue[j].getAngleValue()<=x.getAngleValue()){
+                while(i<j&&userMes[j].getDistance_value()<=x.getDistance_value()){
                     j--;
                 }
                 if(i<j){
-                    recomandValue[i++]=recomandValue[j];
+                    userMes[i++]=userMes[j];
                 }
 
-                while(i<j&&recomandValue[i].getAngleValue()>x.getAngleValue()){
+                while(i<j&&userMes[i].getDistance_value()>x.getDistance_value()){
                     i++;
                 }
                 if(i<j){
-                    recomandValue[j--]=recomandValue[i];
+                    userMes[j--]=userMes[i];
                 }
             }
-            recomandValue[i]=x;
-            qSort(recomandValue,low,i-1);
-            qSort(recomandValue,i+1,high);
+            userMes[i]=x;
+            qSort(userMes,low,i-1);
+            qSort(userMes,i+1,high);
+        }
+    }
+
+    private void qSort(SongMes[] songMes,int low,int high){
+        if(low<high){
+            int i=low,j=high;
+            SongMes x=songMes[low];
+            while(i<j)
+            {
+                while(i<j&&songMes[j].getAngle_value()<=x.getAngle_value()){
+                    j--;
+                }
+                if(i<j){
+                    songMes[i++]=songMes[j];
+                }
+
+                while(i<j&&songMes[i].getAngle_value()>x.getAngle_value()){
+                    i++;
+                }
+                if(i<j){
+                    songMes[j--]=songMes[i];
+                }
+            }
+            songMes[i]=x;
+            qSort(songMes,low,i-1);
+            qSort(songMes,i+1,high);
         }
 
     }
 
 
     /*选取前4个*/
-    private List<Double> kNearer(List<Integer> user_fea, SongListMes[] songlist_fea){
+    private List<Integer> kNearer_song(List<Integer> user_fea, SongMes[] songlist_fea){
 
         double[] user_feaVec=list2FeactureVec(user_fea);
 
-        RecommandValue[] recommandValues=new RecommandValue[songlist_fea.length];
 
         int i=0;
 
         Matrix user_matrix=new Matrix(user_feaVec,user_feaVec.length);
-        //double user_module=getModuleofVec(user_matrix);
-
-        //Matrix songlist_matrix=new Matrix(songlist_fea[0].getSonglist_feaVec(),songlist_fea[0].getSonglist_feaVec().length);
-
-        //double[]result_value=songlist_matrix.arrayTimes(user_matrix).getColumnPackedCopy();
 
 
-        for(SongListMes songlist_mes : songlist_fea){
+
+        for(SongMes song_mes : songlist_fea){
 
 
-            Matrix songlist_matrix=new Matrix(songlist_mes.getSonglist_feaVec(),songlist_mes.getSonglist_feaVec().length);
+            Matrix songlist_matrix=new Matrix(song_mes.getSong_feaVec(),song_mes.getSong_feaVec().length);
 
             double[] result_value=songlist_matrix.arrayTimes(user_matrix).getColumnPackedCopy();
 
@@ -248,17 +347,17 @@ public class RecommandController {
 
             double angle_value=value/songlist_module;
 
-            recommandValues[i]=new RecommandValue(songlist_mes.songlist_id,angle_value);
+            song_mes.setAngle_value(angle_value);
 
-            i++;
+
         }
 
-        this.qSort(recommandValues,0,recommandValues.length-1);
+        this.qSort(songlist_fea,0,songlist_fea.length-1);
 
-        List<Double> recommandList=new ArrayList<>();
+        List<Integer> recommandList=new ArrayList<>();
 
         for(int j=0;j<5;j++){
-            recommandList.add(recommandValues[j].getAngleValue());
+            recommandList.add(songlist_fea[j].getSong_id());
         }
 
         return recommandList;
@@ -268,26 +367,32 @@ public class RecommandController {
 
     }
 
-    private double testArrayTimes()
-    {
-        double[] value1={8.0,2.0,3.0,6.0,0.0};
-        double[] value2={1.0,0.0,2.0,1.0,6.0};
+    private List<Integer> kNearer_user(List<Integer> user_fea,UserMes[] userMes){
 
-        Matrix m1=new Matrix(value1,value1.length);
-        Matrix m2=new Matrix(value2,value2.length);
+        double[] user_feaVec=list2FeactureVec(user_fea);
 
-        double[] result=m2.arrayTimes(m1).getColumnPackedCopy();
+        int i=0;
 
-        double value=0;
+        Matrix user_matrix=new Matrix(user_feaVec,user_feaVec.length);
 
-        for(double num:result){
-            value+=num;
+        for(UserMes otheruser_vec:userMes){
+            Matrix outeruser_matrix=new Matrix(otheruser_vec.getUser_feaVec(),otheruser_vec.getUser_feaVec().length);
+
+            Matrix distance_vec=outeruser_matrix.minus(user_matrix);
+
+            otheruser_vec.setDistance_value(this.getModuleofVec(distance_vec));
         }
 
-        return value;
+        this.qSort(userMes,0,userMes.length);
+
+        List<Integer> recommandList=new ArrayList<>();
+
+        for(int j=0;j<5;j++){
+            recommandList.add(userMes[j].getUser_id());
+        }
+
+        return recommandList;
     }
-
-
 
     //pass test
     private double getModuleofVec(Matrix m){
@@ -302,8 +407,7 @@ public class RecommandController {
         return  Math.sqrt(value);
     }
 
-    private double[] list2FeactureVec(List<Integer> list)
-    {
+    private double[] list2FeactureVec(List<Integer> list) {
         final int size=list.size();
         Object[] vec=list.toArray();
 
