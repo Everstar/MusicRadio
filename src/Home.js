@@ -14,10 +14,6 @@ import Auth from './account/Auth';
 import API from './API'
 
 const styles = {
-    chip: {
-        textAlign: 'center',
-        margin : '2% auto'
-    },
     wrapper: {
         display: 'flex',
         flexWrap: 'wrap',
@@ -27,52 +23,19 @@ const styles = {
         maxWidth : '64px',
     },
     paper : {
-        height: 80,
+        height: 128,
         maxWidth: '835px',
         marginBottom: 20,
         textAlign: 'center',
-        // display: 'inline-block',
     },
 };
-
-const moment_data = [
-    {
-        avatar : 'dynamic/img/avatar.png',
-        username : 'happyfarmergo',
-        operation : 'create',
-        songlist : 'drinkme',
-    },
-    {
-        avatar : 'dynamic/img/avatar.png',
-        username : 'happyfarmergo',
-        operation : 'create',
-        songlist : 'forgetYou',
-    },
-    {
-        avatar : 'dynamic/img/avatar.png',
-        username : 'happyfarmergo',
-        operation : 'create',
-        songlist : 'drinkme',
-    },
-    {
-        avatar : 'dynamic/img/avatar.png',
-        username : 'happyfarmergo',
-        operation : 'liked',
-        songlist : 'nothing',
-    },
-    {
-        avatar : 'dynamic/img/avatar.png',
-        username : 'happyfarmergo',
-        operation : 'comment',
-        songlist : 'goodbye',
-    },
-];
 
 export default class Home extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            avator_url : 'http://img.neverstar.top/default.jpg',
             exp: 50,
             exp_max : 100,
             level : 1,
@@ -97,6 +60,7 @@ export default class Home extends React.Component {
             success : function(data, textStatus, jqXHR) {
                 console.log(data);
                 this.setState({
+                    avator_url : data.avator_url,
                     exp : data.exp,
                     exp_max : data.exp_max,
                     level : data.level,
@@ -127,8 +91,8 @@ export default class Home extends React.Component {
                 'target' : 'api',
             },
             success : function(data, textStatus, jqXHR) {
-                // this.setState({following_num : data.following_num});
                 console.log(data);
+                this.setState({moments : data});
             }.bind(this),
             error : function(xhr, textStatus) {
                 console.log(xhr.status + '\n' + textStatus + '\n');
@@ -139,7 +103,6 @@ export default class Home extends React.Component {
     componentWillMount() {
         this.getUserInfo();
         this.getMoments();
-        // this.setState({moments : moment_data});
     };
 
     render() {
@@ -149,10 +112,10 @@ export default class Home extends React.Component {
                       style={{background : 'transparent'}}>
                     <CardHeader
                         title={Auth.username}
-                        titleStyle={{fontSize:'3.5vh'}}
+                        titleStyle={{fontSize:'3vh'}}
                         subtitle={this.state.gender}
-                        subtitleStyle={{fontSize:'2.75vh'}}
-                        avatar={<Avatar src="dynamic/img/profile_1.png" size={100} onTouchTap={this.changeAvatar} />}
+                        subtitleStyle={{fontSize:'2vh'}}
+                        avatar={<Avatar src={this.state.avator_url} size={100} onTouchTap={this.changeAvatar} />}
                     />
                     <div style={{width: '96%', margin:'0 auto'}}>
                         Lv{this.state.level}<LinearProgress mode="determinate" value={this.state.exp} max={this.state.exp_max} />
@@ -166,8 +129,9 @@ export default class Home extends React.Component {
                 {this.state.moments.map((moment, index) => (
                     <Paper style={styles.paper} zDepth={1} key={index} >
                         <ListItem
-                            primaryText={<p>{moment.username} {moment.operation} songlist {moment.songlist}</p>}
-                            leftAvatar={<Avatar src={moment.avatar} style={{left:'16%', top:'16px'}} size={50} />}
+                            primaryText={<p>{moment.username} <b>{moment.type.toUpperCase()}</b> {moment.songlist_name}</p>}
+                            secondaryText={moment.time}
+                            leftAvatar={<Avatar src={moment.avator_url} style={{left:'16%', top:'16px'}} size={50} />}
                         />
                     </Paper>
                 ))}

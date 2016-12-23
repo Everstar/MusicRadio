@@ -199,7 +199,7 @@ function playSound(size, type) {
 function playFromQueueExchange(){
   var event = eventQueue.shift();
   if(event != null && event.message != null && svg != null){
-    playSound(event.message.length*1.1, event.type);
+    //playSound(event.message.length*1.1, event.type);
     if(!document.hidden)
       drawEvent(event, svg);
   }

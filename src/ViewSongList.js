@@ -88,7 +88,7 @@ class ViewSongList extends React.Component {
         const index = event.target.getAttribute('about');
         const list = this.state.songlist[index];
         console.log(this.state.songlist[index]);
-        hashHistory.push('/songlist/' + list.list_id + '/' + list.songlist_name + '/' + list.author);
+        hashHistory.push('/songlist/' + list.list_id + '/' + list.songlist_name + '/' + list.author + '/' + list.img_id);
     };
 
     render() {

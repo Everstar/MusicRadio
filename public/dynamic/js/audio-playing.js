@@ -161,7 +161,7 @@ function play() {
     var nextPicPath;
 	switch (type) {
 		case 'song':
-            music_info = get_music_info(musicList[sequence].song_id);
+            music_info = get_local_music_info(musicList[sequence].song_id);
             nextPicPath = 'url(' + GetImageById(musicList[sequence].img_id) +') no-repeat center';
 			break;
 		case 'songlist':
@@ -174,7 +174,7 @@ function play() {
             nextPicPath = 'url(dynamic/img/' + sequence + '.jpg) no-repeat center';
 			break;
 	}
-
+	console.log(music_info);
 
 	$('#playing-area').css('background', nextPicPath);
 	$('#playing-area').css('background-size', 'cover');

@@ -18,7 +18,7 @@ class API {
 
     //喜爱/点赞
     static LikeSongList = URL + '/likesonglist';//success
-    static LikeSong = URL + '/likesong';
+    static LikeSong = URL + '/likesong';//success
 
     //歌单
     static HotList = URL + '/hotlist';//success
@@ -32,23 +32,26 @@ class API {
     static DeleteList = URL + '/deletelist';//success
     static ChangeList = URL + '/changelist';//success
     static RemoveSong = URL + '/removesong';//success
-    static ChangeSongImage = URL + '/changesong';
+    static ChangeSongImage = URL + '/changesong';//success
     static AddSongFromNetEase = URL + '/addsong/netease';//网易云success
-    static AddSongFromLike = URL + '/addsong/songlist';
+    static AddSongFromLike = URL + '/addsong/songlist';//deprecated
     static AddSongFromUpload = URL + '/addsong/upload';
 
     //社交
     static Info = URL + '/info';//自己success 他人success
     static Following = URL + '/follow';//success
-    static Follow = URL + '/follow';
+    static Follow = URL + '/follow';//success  关注多次？？？
 
-    static Moment = URL + '/moment';
+    static Moment = URL + '/moment';//success
+
+    static GetComments = URL + '/comment';//success
+    static AddComment = URL + '/addcomment';//success
 
     //音乐
     static SongInfo = URL + '/api/song';//success
     static SearchhSong = URL + '/api/search';//success
 
-    static ImageInfo = URL + '/img';
+    static ImageInfo = URL + '/img';//success
 
 
 }

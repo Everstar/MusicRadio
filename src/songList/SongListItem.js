@@ -14,6 +14,7 @@ import IconButton from 'material-ui/IconButton';
 import TextField from 'material-ui/TextField';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
 import ContentRemoveCircleOutline from 'material-ui/svg-icons/content/remove-circle-outline';
+import AvPlayCircleOutline from 'material-ui/svg-icons/av/play-circle-outline';
 import Toggle from 'material-ui/Toggle';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
@@ -321,7 +322,6 @@ class AddMusicItemDialog extends React.Component {
     state = {
         open: false,
         dataSource: [],
-        raw_dataSource : [],
         songlist_id : null,
         musicImportWay : false,
 
@@ -359,14 +359,14 @@ class AddMusicItemDialog extends React.Component {
             success : function(data, textStatus, jqXHR) {
                 this.setState({
                     error_text : null,
-                    // song_netease_id : value,
-                    raw_dataSource : data,
                     dataSource: data.map((song)=> (
                         {
                             textKey :
-                                song.song_name + " " + song.author + " 时长: " + (song.duration / 60000).toFixed(0) + "分" +
-                                ((song.duration / 1000) % 60).toFixed(0) + "秒",
-                            valueKey: song.song_id
+                                song.song_name + "|Artists:" + song.author + "|Duration: " + (song.duration / 60000).toFixed(0) + "m" +
+                                ((song.duration / 1000) % 60).toFixed(0) + "s",
+                            valueKey: song.song_id,
+                            duration : song.duration,
+                            name : song.song_name,
                         }
                     )),
                 });
@@ -438,11 +438,11 @@ class AddMusicItemDialog extends React.Component {
 
     handleMenuClose = (chosenRequest, index) => {
         console.log(chosenRequest);
-        console.log(this.state.dataSource[index]);
-        console.log('searchText' + this.state.searchText);
-        this.setState({song_netease_id: chosenRequest.valueKey,
-            searchText : this.state.raw_dataSource[index].song_name,
-            duration : this.state.raw_dataSource[index].duration,
+        console.log('searchText' + this.state.searchText + 'index:' + index);
+        this.setState({
+            song_netease_id: chosenRequest.valueKey,
+            searchText : chosenRequest.name,
+            duration : chosenRequest.duration,
         });
         console.log(this.state.song_netease_id);
         this.GetSongDetail();
@@ -509,17 +509,6 @@ class AddMusicItemDialog extends React.Component {
                         maxSearchResults={10}
                     />
                     <form id="addsong" method="post" encType="multipart/form-data" action={API.AddSongFromNetEase} target="uploadSongFrame">
-                        <input
-                            style={this.state.musicImportWay ? {visibility : 'visible'}:{visibility : 'collapse'}}
-                            disabled={this.state.musicImportWay ? '' : 'disabled'}
-                            name="song_file"
-                            placeholder="upload local song"
-                            type="file"
-                        />
-                        <input
-                            type="submit" name="Submit" value="Upload"
-                            style={this.state.musicImportWay ? {visibility : 'visible'}:{visibility : 'collapse'}}
-                        />
                         <input type="hidden" name="songlist_id" value={this.state.songlist_id}/>
                         <input type="hidden" name="netease_id" value={this.state.song_netease_id} />
                         <input type="hidden" name="song_name" value={this.state.song_name}/>
@@ -528,7 +517,14 @@ class AddMusicItemDialog extends React.Component {
                         <input type="hidden" name="duration" value={this.state.duration}/>
                         <input type="hidden" name="language" value={this.state.language}/>
                         <input type="hidden" name="styles" value={this.state.styles_binary}/>
-                        <input type="submit" value="upload" id="uploadLocalSong" style={{display : 'none'}}/>
+                        <input
+                            style={this.state.musicImportWay ? {visibility : 'visible', textAlign:'center'}:{visibility : 'collapse'}}
+                            disabled={this.state.musicImportWay ? '' : 'disabled'}
+                            name="song_file"
+                            placeholder="upload local song"
+                            type="file"
+                        />
+                        <br/>
                         <SelectField
                             name="language"
                             value={this.state.language}
@@ -561,6 +557,7 @@ class AddMusicItemDialog extends React.Component {
                             <Checkbox label="拉丁" checked={this.state.styles_source[19]} id="19" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
                             <Checkbox label="R&B/Soul" checked={this.state.styles_source[20]} id="20" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
                         </div>
+                        <input type="submit" value="upload" id="uploadLocalSong" style={{visibility : 'collapse'}}/>
                     </form>
 
 
@@ -578,6 +575,7 @@ export default class SongListItem extends React.Component {
         this.state = {
             expanded: false,
             song_list : [],
+            liked : this.props.liked,
         };
     }
 
@@ -668,8 +666,34 @@ export default class SongListItem extends React.Component {
         window.open('/radio.html?type=songlist&songlist_id=' + this.props.songlist_id);
     };
 
-    like = () => {
+    playSingle = (event) => {
+        const index = event.target.parentNode.parentNode.parentNode.getAttribute('alt');
+        const song = this.state.song_list[index];
+        console.log(song);
+        window.open('/radio.html?type=song&song_id=' + song.song_id + '&img_id=' + song.image_id);
+    };
+
+    like = (event) => {
         console.log('like!');
+        const URL = API.LikeSongList;
+        let data = {songlist_id : event.target.parentNode.parentNode.parentNode.getAttribute('alt')};
+        $.ajax({
+            url : URL,
+            type : 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            headers : {
+                'target' : 'api',
+            },
+            data : JSON.stringify(data),
+            success : function(data, textStatus, jqXHR) {
+                console.log(data);
+                if(data.result) this.setState({liked : true});
+            }.bind(this),
+            error : function(xhr, textStatus) {
+                console.log(xhr.status + '\n' + textStatus + '\n');
+            }
+        });
     };
 
     changeTitle = () => {
@@ -682,7 +706,7 @@ export default class SongListItem extends React.Component {
                 <CardHeader
                     title={this.props.title}
                     subtitle={'by ' + this.props.author}
-                    avatar={<IconButton onTouchTap={this.like}><StarBorder color={this.props.liked ? "yellow" : "black"} /></IconButton>}
+                    avatar={<IconButton onTouchTap={this.like} alt={this.props.songlist_id}><StarBorder color={this.state.liked ? "yellow" : "black"} /></IconButton>}
                     actAsExpander={true}
                     showExpandableButton={true}
                 />
@@ -706,7 +730,7 @@ export default class SongListItem extends React.Component {
                         adjustForCheckbox={false}
                     >
                         <TableRow>
-                            <TableHeaderColumn colSpan="4" tooltip="Song Information" style={{fontSize : '2.5vh'}}>
+                            <TableHeaderColumn colSpan="5" tooltip="Song Information" style={{fontSize : '2.5vh'}}>
                                 Song Information
                             </TableHeaderColumn>
                             <TableHeaderColumn colSpan="1" tooltip="Edit Title" style={{textAlign: 'center', fontSize : '2.5vh'}}>
@@ -714,6 +738,7 @@ export default class SongListItem extends React.Component {
                             </TableHeaderColumn>
                         </TableRow>
                         <TableRow>
+                            <TableHeaderColumn tooltip="play" style={styles.tableFont}>play</TableHeaderColumn>
                             <TableHeaderColumn tooltip="song_name" style={styles.tableFont}>Song</TableHeaderColumn>
                             <TableHeaderColumn tooltip="author" style={styles.tableFont}>Author</TableHeaderColumn>
                             <TableHeaderColumn tooltip="duration" style={styles.tableFont}>Duration</TableHeaderColumn>
@@ -726,6 +751,9 @@ export default class SongListItem extends React.Component {
                         displayRowCheckbox={false}>
                         {this.state.song_list.map((row, index) => (
                             <TableRow key={index}>
+                                <TableRowColumn style={styles.tableButton}>
+                                    <IconButton onTouchTap={this.playSingle} alt={index}><AvPlayCircleOutline/></IconButton>
+                                </TableRowColumn>
                                 <TableRowColumn style={styles.tableFont}>{row.song_name}</TableRowColumn>
                                 <TableRowColumn style={styles.tableFont}>{row.artists}</TableRowColumn>
                                 <TableRowColumn style={styles.tableDur}>{(row.duration / 60000).toFixed(0) + '分' + ((row.duration / 1000) % 60).toFixed(0) + '秒' }</TableRowColumn>

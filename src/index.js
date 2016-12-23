@@ -28,7 +28,7 @@ ReactDOM.render((
             <Route onEnter={() => {API.title = 'Music Radio'}}>
                 <Route path="/user/:id" component={User}/>
                 <Route path="/user/:id/songlist" component={ViewSongList}/>
-                <Route path="/songlist/:id(/:songlist_name/:author)" component={SongList}/>
+                <Route path="/songlist/:id(/:songlist_name/:author/:img_id)" component={SongList}/>
             </Route>
 
         </Route>

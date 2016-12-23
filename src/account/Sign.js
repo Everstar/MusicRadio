@@ -166,6 +166,7 @@ export default class Sign extends React.Component {
                     this.refs.dialog.handleOpen();
                     window.localStorage.setItem('musicradio', this.state.username);
                     Auth.username = this.state.username;
+                    Auth.Avator = this.getAvator();
                 }
             }.bind(this),
             error : function(xhr, textStatus) {
@@ -173,6 +174,28 @@ export default class Sign extends React.Component {
                 console.log(xhr.status + '\n' + textStatus + '\n');
             }.bind(this)
         });
+    };
+
+    getAvator = () => {
+        let avator_url = Auth.Avator;
+        const URL = API.Info;
+        $.ajax({
+            url : URL,
+            type : 'POST',
+            async : false,
+            contentType: 'application/json',
+            headers : {
+                'target' : 'api',
+            },
+            success : function(data, textStatus, jqXHR) {
+                console.log(data);
+                avator_url = data.avator_url;
+            }.bind(this),
+            error : function(xhr, textStatus) {
+                console.log(xhr.status + '\n' + textStatus + '\n');
+            }
+        });
+        return avator_url;
     };
 
     // 注册

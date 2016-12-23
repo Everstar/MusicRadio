@@ -52,7 +52,7 @@ class DrawerUndocked extends React.Component {
         this.state = {
             open: false,
 
-            menuItem_status : [false, false, false, false, false, false]
+            menuItem_status : [false, false, false, false, false, false],
 
         };
     }
@@ -130,7 +130,7 @@ class DrawerUndocked extends React.Component {
                     onRequestChange={(open) => this.setState({open})}
                 >
                     <div className="MenuBar-header" style={MenubarHeader_Background}>
-                        <Avatar src="dynamic/img/avatar.png" size={56} />
+                        <Avatar src={Auth.Avator} size={56} />
                         <br/>
                         <span className="Nickname">{Auth.username}</span>
                     </div>
