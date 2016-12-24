@@ -3,7 +3,7 @@ package com.musicbubble.controller;
 import com.musicbubble.service.base.AccountService;
 import com.musicbubble.service.SongListService;
 import com.musicbubble.service.base.ResourceService;
-import com.musicbubble.tools.Const;
+import com.musicbubble.tools.ConstUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -94,9 +94,7 @@ public class SongListController implements Serializable {
 
     @RequestMapping(value = "/song", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> getSongUrl(@RequestParam("id") int song_id) {
-        Map<String, Object> map = new HashMap<>();
-        String url = songListService.GetSongUrl(song_id);
-        map.put("song_url", url);
+        Map<String, Object> map = songListService.GetSongInfo(song_id);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
@@ -179,7 +177,7 @@ public class SongListController implements Serializable {
 
         boolean res;
         int song_id = 0;
-        if (!Const.LANGUAGES.contains(language) || !Const.CheckStyle(styles))
+        if (!ConstUtil.LANGUAGES.contains(language) || !ConstUtil.CheckStyle(styles))
             res = false;
         else {
             if ((song_id = songListService.SongExists(netease_id)) != 0) {
@@ -225,7 +223,7 @@ public class SongListController implements Serializable {
         boolean res = true;
         int song_id = 0;
 
-        if (!Const.LANGUAGES.contains(language) || !Const.CheckStyle(styles))
+        if (!ConstUtil.LANGUAGES.contains(language) || !ConstUtil.CheckStyle(styles))
             res = false;
         else {
             if (music != null

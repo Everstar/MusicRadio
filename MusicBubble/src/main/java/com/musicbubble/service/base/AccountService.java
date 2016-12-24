@@ -4,10 +4,9 @@ import com.musicbubble.model.UserEntity;
 import com.musicbubble.repository.UserRepository;
 import com.musicbubble.tools.CommonUtil;
 import com.musicbubble.tools.DESUtil;
-import com.musicbubble.tools.DateTimeUtil;
+import com.musicbubble.tools.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.musicbubble.service.base.MyService;
 import com.musicbubble.tools.Encrypt;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -15,7 +14,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
@@ -107,7 +105,7 @@ public class AccountService extends MyService {
             System.out.println("decrypted :" + decrypted);
 
             String[] tokens = decrypted.split("&");
-            boolean expires = DateTimeUtil.expires(tokens[1]);
+            boolean expires = TimeUtil.expires(tokens[1]);
             if (!expires)
                 user_id = Integer.parseInt(tokens[0]);
             else {

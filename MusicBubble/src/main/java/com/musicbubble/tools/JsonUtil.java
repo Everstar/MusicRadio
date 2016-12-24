@@ -1,7 +1,7 @@
 package com.musicbubble.tools;
 
-import com.musicbubble.service.base.Languages;
-import com.musicbubble.service.base.Styles;
+import com.musicbubble.service.recommend.Languages;
+import com.musicbubble.service.recommend.Styles;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -32,7 +32,7 @@ public class JsonUtil {
         try {
             JsonNode root = mapper.readTree(json);
             JsonNode langs = root.path("langs");
-            for (int i = 0; i < Const.SONG_LANG_LENGTH; ++i) {
+            for (int i = 0; i < ConstUtil.SONG_LANG_LENGTH; ++i) {
                 languages.setLangs(i, langs.get(i).asInt());
             }
         } catch (IOException e) {
@@ -46,7 +46,7 @@ public class JsonUtil {
         Styles styles = new Styles();
         try {
             JsonNode root = mapper.readTree(json).path("styles");
-            for (int i = 0; i < Const.SONG_STYLE_LENGTH; ++i){
+            for (int i = 0; i < ConstUtil.SONG_STYLE_LENGTH; ++i){
                 styles.setStyles(i, root.get(i).asInt());
             }
         }catch (IOException e){

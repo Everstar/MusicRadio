@@ -7,13 +7,11 @@ import com.musicbubble.service.base.AccountService;
 import com.musicbubble.service.base.MyService;
 import com.musicbubble.service.base.ResourceService;
 import com.musicbubble.tools.CommonUtil;
-import com.musicbubble.tools.DateTimeUtil;
+import com.musicbubble.tools.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -120,7 +118,7 @@ public class FollowService extends MyService {
             map.put("username", user_name);
             map.put("avator_url", avator_url);
             map.put("type", "like");
-            map.put("time", DateTimeUtil.GetTimeStampString(p.getPreferTime()));
+            map.put("time", TimeUtil.GetTimeStampString(p.getPreferTime()));
             map.put("songlist_id", p.getListId());
             map.put("songlist_name", songListService.GetSongListNameById(p.getListId()));
             moments.add(map);
@@ -141,7 +139,7 @@ public class FollowService extends MyService {
             map.put("username", user_name);
             map.put("avator_url", avator_url);
             map.put("type", "create");
-            map.put("time", DateTimeUtil.GetTimeStampString(s.getCreateTime()));
+            map.put("time", TimeUtil.GetTimeStampString(s.getCreateTime()));
             map.put("songlist_id", s.getListId());
             map.put("songlist_name", s.getListName());
             moments.add(map);
@@ -162,7 +160,7 @@ public class FollowService extends MyService {
             map.put("username", user_name);
             map.put("avator_url", avator_url);
             map.put("type", "comment");
-            map.put("time", DateTimeUtil.GetTimeStampString(c.getCommentTime()));
+            map.put("time", TimeUtil.GetTimeStampString(c.getCommentTime()));
             map.put("songlist_id", c.getListId());
             map.put("songlist_name", songListService.GetSongListNameById(c.getListId()));
             moments.add(map);

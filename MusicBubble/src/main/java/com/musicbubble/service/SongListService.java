@@ -73,10 +73,18 @@ public class SongListService extends MyService {
     }
 
 
-    public String GetSongUrl(int song_id){
+    public Map<String, Object> GetSongInfo(int song_id) {
         SongEntity entity = songRepository.findOne(song_id);
-        return entity!=null?entity.getSongUri():null;
-
+        if (entity == null)
+            return null;
+        Map<String, Object> map = new HashMap<>();
+        map.put("netease_id", entity.getNeteaseId());
+        if (entity.getNeteaseId() == 0) {
+            map.put("artists", entity.getAuthorName());
+            map.put("song_name", entity.getSongName());
+            map.put("song_url", entity.getSongUri());
+        }
+        return map;
     }
 
     public int NumOfSongListByUserId(int user_id) {
@@ -106,7 +114,7 @@ public class SongListService extends MyService {
         return commentRepository.findCommentByUserIdAndPage(user_id, pageable).getContent();
     }
 
-    public List<SongListEntity> GetNearestSongList(Pageable pageable){
+    public List<SongListEntity> GetNearestSongList(Pageable pageable) {
         return songListRepository.findNearestSongList(pageable).getContent();
     }
 

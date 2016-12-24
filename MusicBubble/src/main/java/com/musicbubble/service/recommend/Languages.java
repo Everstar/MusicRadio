@@ -1,8 +1,6 @@
-package com.musicbubble.service.base;
+package com.musicbubble.service.recommend;
 
-import com.musicbubble.tools.Const;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import com.musicbubble.tools.ConstUtil;
 
 import java.io.Serializable;
 
@@ -14,7 +12,7 @@ public class Languages implements Serializable{
     private int [] langs;
 
     public Languages() {
-        langs = new int[Const.SONG_LANG_LENGTH];
+        langs = new int[ConstUtil.SONG_LANG_LENGTH];
     }
 
     public int[] getLangs(){
@@ -26,9 +24,9 @@ public class Languages implements Serializable{
    }
 
     public void updateLanguage(String language) {
-        assert Const.LANGUAGES.contains(language);
+        assert ConstUtil.LANGUAGES.contains(language);
 
-        int index = Const.LANGUAGES.indexOf(language);
+        int index = ConstUtil.LANGUAGES.indexOf(language);
 
         langs[index] += 1;
     }

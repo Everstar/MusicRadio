@@ -1,6 +1,6 @@
-package com.musicbubble.service.base;
+package com.musicbubble.service.recommend;
 
-import com.musicbubble.tools.Const;
+import com.musicbubble.tools.ConstUtil;
 
 import java.io.Serializable;
 
@@ -11,7 +11,7 @@ public class Styles implements Serializable{
     private int[] styles;
 
     public Styles() {
-        styles = new int[Const.SONG_STYLE_LENGTH];
+        styles = new int[ConstUtil.SONG_STYLE_LENGTH];
     }
 
     public int[] getStyles(){
@@ -23,9 +23,9 @@ public class Styles implements Serializable{
     }
 
     public void updateStyle(String style) {
-        assert style.length() == Const.SONG_STYLE_LENGTH;
+        assert style.length() == ConstUtil.SONG_STYLE_LENGTH;
 
-        for (int i = 0; i < Const.SONG_STYLE_LENGTH; ++i) {
+        for (int i = 0; i < ConstUtil.SONG_STYLE_LENGTH; ++i) {
             if (style.charAt(i) == '1')
                 styles[i] += 1;
         }

@@ -4,7 +4,7 @@ import com.musicbubble.service.RecordService;
 import com.musicbubble.service.base.AccountService;
 import com.musicbubble.service.SongListService;
 import com.musicbubble.tools.DESUtil;
-import com.musicbubble.tools.DateTimeUtil;
+import com.musicbubble.tools.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -78,7 +77,7 @@ public class AccountController implements Serializable {
         }
 
         //set expire time;
-        String tokenTime = DateTimeUtil.makeExpireTime(24 * 3600);
+        String tokenTime = TimeUtil.makeExpireTime(24 * 3600);
 
         HttpStatus status = HttpStatus.OK;
         try {

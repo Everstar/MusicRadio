@@ -3,7 +3,6 @@
 
     <persistence-unit name="musicPU">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
-        <class>com.musicbubble.model.TasteEntity</class>
         <properties>
             <!--<property name="hibernate.connection.url" value="jdbc:mysql://neverstar.top:3306/db_03?useUnicode=true&amp;characterEncoding=UTF-8"/>-->
             <!--<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>-->

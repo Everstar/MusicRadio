@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * Created by happyfarmer on 2016/12/9.
  */
-public class DateTimeUtil {
+public class TimeUtil {
     public static final int MomentInterval = 7 * 24 * 3600;
 
     private static final String dateFormat = "yyyy-MM-dd HH:mm:ss";

@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by happyfarmer on 2016/12/11.
  */
-public class Const {
+public class ConstUtil {
     public static final int HOT_LIST_SIZE = 10;
     private static final String[] LANG = new String[]{"zh-cn", "en-us", "ja-jp", "fr-fr", "ko-kr"};
     public static final List LANGUAGES = Arrays.asList(LANG);

@@ -3,12 +3,11 @@ package com.musicbubble.service;
 import com.musicbubble.model.CommentEntity;
 import com.musicbubble.model.ContainEntity;
 import com.musicbubble.model.PreferEntity;
-import com.musicbubble.model.UserEntity;
 import com.musicbubble.repository.*;
 import com.musicbubble.service.base.AccountService;
 import com.musicbubble.service.base.MyService;
 import com.musicbubble.service.base.ResourceService;
-import com.musicbubble.tools.DateTimeUtil;
+import com.musicbubble.tools.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,7 +99,7 @@ public class AdviceService extends MyService {
             map.put("user_id", c.getUserId());
             map.put("avator_url", resourceService.GetImgUrlById(accountService.GetImage(c.getUserId())));
             map.put("content", c.getContent());
-            map.put("time", DateTimeUtil.GetTimeStampString(c.getCommentTime()));
+            map.put("time", TimeUtil.GetTimeStampString(c.getCommentTime()));
             map.put("likes", c.getLikes());
             list.add(map);
         }

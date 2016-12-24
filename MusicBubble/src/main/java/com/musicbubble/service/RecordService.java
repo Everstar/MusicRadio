@@ -4,10 +4,10 @@ import com.musicbubble.model.SongEntity;
 import com.musicbubble.model.TasteEntity;
 import com.musicbubble.repository.SongRepository;
 import com.musicbubble.repository.TasteRepository;
-import com.musicbubble.service.base.Languages;
+import com.musicbubble.service.recommend.Languages;
 import com.musicbubble.service.base.MyService;
-import com.musicbubble.service.base.Styles;
-import com.musicbubble.tools.Const;
+import com.musicbubble.service.recommend.Styles;
+import com.musicbubble.tools.ConstUtil;
 import com.musicbubble.tools.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,8 +52,8 @@ public class RecordService extends MyService {
     public boolean CreateTaste(int user_id) {
         TasteEntity entity = new TasteEntity();
         entity.setUserId(user_id);
-        entity.setLanguage(Const.DEFAULT_LANGUAGE);
-        entity.setStyle(Const.DEFAULT_STYLE);
+        entity.setLanguage(ConstUtil.DEFAULT_LANGUAGE);
+        entity.setStyle(ConstUtil.DEFAULT_STYLE);
         tasteRepository.save(entity);
         return true;
     }
@@ -62,7 +62,7 @@ public class RecordService extends MyService {
         Vector<Integer> vector = new Vector<>();
         Languages languages = JsonUtil.langFromJson(language);
 
-        for (int i = 0; i < Const.SONG_LANG_LENGTH; ++i) {
+        for (int i = 0; i < ConstUtil.SONG_LANG_LENGTH; ++i) {
             vector.add(languages.getLangs()[i]);
         }
         return vector;
@@ -72,7 +72,7 @@ public class RecordService extends MyService {
         Vector<Integer> vector = new Vector<>();
         Styles styles = JsonUtil.styleFromJson(style);
 
-        for (int i = 0; i < Const.SONG_STYLE_LENGTH; ++i) {
+        for (int i = 0; i < ConstUtil.SONG_STYLE_LENGTH; ++i) {
             vector.add(styles.getStyles()[i]);
         }
 
