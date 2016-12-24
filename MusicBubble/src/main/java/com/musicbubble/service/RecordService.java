@@ -10,9 +10,13 @@ import com.musicbubble.service.recommend.Styles;
 import com.musicbubble.tools.ConstUtil;
 import com.musicbubble.tools.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -58,24 +62,42 @@ public class RecordService extends MyService {
         return true;
     }
 
-    private Vector<Integer> parseLanguage(int user_id, String language) {
-        Vector<Integer> vector = new Vector<>();
-        Languages languages = JsonUtil.langFromJson(language);
+    public List<Integer> getOneUserStyle(int user_id){
+        TasteEntity t=tasteRepository.findOne(user_id);
+        String style=t.getStyle();
 
-        for (int i = 0; i < ConstUtil.SONG_LANG_LENGTH; ++i) {
-            vector.add(languages.getLangs()[i]);
-        }
-        return vector;
+        return parseStyle(style);
     }
 
-    private Vector<Integer> parseStyle(int user_id, String style) {
-        Vector<Integer> vector = new Vector<>();
-        Styles styles = JsonUtil.styleFromJson(style);
-
-        for (int i = 0; i < ConstUtil.SONG_STYLE_LENGTH; ++i) {
-            vector.add(styles.getStyles()[i]);
+    public List<List<Integer>> getRangeUserStyle(int pre_id,int las_id){
+        List<String> style=tasteRepository.findRangeOfUser(pre_id,las_id);
+        List<List<Integer>> returnStyle=new ArrayList<>();
+        for(String userStyle:style){
+            returnStyle.add(parseStyle(userStyle));
         }
 
-        return vector;
+        return returnStyle;
+    }
+
+    private List<Integer> parseLanguage(int user_id, String language) {
+        List<Integer> list = new ArrayList<>();
+        Languages languages = JsonUtil.langFromJson(language);
+
+        for (int i = 0; i < Const.SONG_LANG_LENGTH; ++i) {
+            list.add(languages.getLangs()[i]);
+        }
+        return list;
+    }
+
+    private List<Integer> parseStyle(String style) {
+        List<Integer> list = new ArrayList<>();
+        Styles styles = JsonUtil.styleFromJson(style);
+
+
+        for (int i = 0; i < Const.SONG_STYLE_LENGTH; ++i) {
+            list.add(styles.getStyles()[i]);
+        }
+
+        return list;
     }
 }

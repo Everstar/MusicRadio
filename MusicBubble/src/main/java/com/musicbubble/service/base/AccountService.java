@@ -49,7 +49,9 @@ public class AccountService extends MyService {
         entity.setRank(1);
         entity.setSex(sex.equals("M") ? "M" : "F");
         entity.setExperience(0);
+
         entity.setLastSignin(new Timestamp(2000));
+
         entity = userRepository.saveAndFlush(entity);
 
         return entity.getUserId();
