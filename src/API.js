@@ -47,9 +47,15 @@ class API {
     static GetComments = URL + '/comment';//success
     static AddComment = URL + '/addcomment';//success
 
+    //推荐
+    static RecommendUser = URL + '/recommendUser';
+    static RecommendSong = URL + '/recommendSong';
+
     //音乐
     static SongInfo = URL + '/api/song';//success
     static SearchhSong = URL + '/api/search';//success
+
+    static LocalSongInfo = URL + '/song';
 
     static ImageInfo = URL + '/img';//success
 
