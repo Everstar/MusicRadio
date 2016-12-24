@@ -53,6 +53,12 @@ public class SongListController implements Serializable {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/updateSong", method = RequestMethod.GET)
+    public ResponseEntity<Object> udpateSong(){
+        songListService.updateSong();
+        return null;
+    }
+
     //tested
     @RequestMapping(value = "/hotlist", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> getHotList(@RequestParam(value = "num", defaultValue = "10") int num) {

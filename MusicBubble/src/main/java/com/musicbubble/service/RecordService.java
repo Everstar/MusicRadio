@@ -10,14 +10,11 @@ import com.musicbubble.service.recommend.Styles;
 import com.musicbubble.tools.ConstUtil;
 import com.musicbubble.tools.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.support.PagedListHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Created by happyfarmer on 12/22/2016.
@@ -83,7 +80,7 @@ public class RecordService extends MyService {
         List<Integer> list = new ArrayList<>();
         Languages languages = JsonUtil.langFromJson(language);
 
-        for (int i = 0; i < Const.SONG_LANG_LENGTH; ++i) {
+        for (int i = 0; i < ConstUtil.SONG_LANG_LENGTH; ++i) {
             list.add(languages.getLangs()[i]);
         }
         return list;
@@ -94,7 +91,7 @@ public class RecordService extends MyService {
         Styles styles = JsonUtil.styleFromJson(style);
 
 
-        for (int i = 0; i < Const.SONG_STYLE_LENGTH; ++i) {
+        for (int i = 0; i < ConstUtil.SONG_STYLE_LENGTH; ++i) {
             list.add(styles.getStyles()[i]);
         }
 

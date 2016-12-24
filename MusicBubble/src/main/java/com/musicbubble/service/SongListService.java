@@ -128,7 +128,7 @@ public class SongListService extends MyService {
         entity.setProfile(summary);
         entity.setCreateTime(new Timestamp(System.currentTimeMillis()));
         entity.setUserId(user_id);
-        entity.setImageId(1);
+        entity.setImageId(2);
         entity = songListRepository.saveAndFlush(entity);
         return entity.getListId();
     }
@@ -153,7 +153,7 @@ public class SongListService extends MyService {
         ContainEntity entity = new ContainEntity();
         entity.setSongId(song_id);
         entity.setListId(list_id);
-        entity.setImageId(1);
+        entity.setImageId(3);
         containRepository.save(entity);
         return true;
     }
@@ -181,6 +181,22 @@ public class SongListService extends MyService {
         containEntityPK.setSongId(song_id);
         containRepository.delete(containEntityPK);
         return true;
+    }
+
+    @Transactional
+    public void updateSong(){
+        List<SongEntity> list = songRepository.findAll();
+        StringBuilder builder ;
+        for (SongEntity entity : list){
+            if(entity.getStyles() == null){
+                builder = new StringBuilder();
+                for (int t = 0; t < 21; ++t) {
+                    int i = Math.random() > 0.8 ? 1 : 0;
+                    builder.append(i);
+                }
+                songRepository.updateStyle(entity.getSongId(), builder.toString());
+            }
+        }
     }
 
     private PageRequest buildPageRequest(int pageNumber, int pagzSize) {
