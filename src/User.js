@@ -5,7 +5,6 @@ import React from 'react';
 import {Card, CardHeader, CardText} from 'material-ui/Card';
 import LinearProgress from 'material-ui/LinearProgress'
 import Divider from 'material-ui/Divider';
-import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import {List, ListItem} from 'material-ui/List';
 import TextField from 'material-ui/TextField';
@@ -66,6 +65,8 @@ export default class User extends React.Component {
                 id : this.state.user_id
             },
             success : function(data, textStatus, jqXHR) {
+                let avator_url = data.avator_url;
+                if(avator_url != null) data.avator_url = avator_url.replace(/.*\\resources\\images\\/, "http://radioimg.neverstar.top/");
                 this.setState({
                     username : data.username,
                     exp : data.exp,
@@ -99,6 +100,11 @@ export default class User extends React.Component {
             },
             success : function(data, textStatus, jqXHR) {
                 console.log(data);
+                for(let i = 0; i < data.length; i++) {
+                    let avator_url = data[i].avator_url;
+                    if(avator_url === null) continue;
+                    data[i].avator_url = avator_url.replace(/.*\\resources\\images\\/, "http://radioimg.neverstar.top/");
+                };
                 this.setState({moments : data});
             }.bind(this),
             error : function(xhr, textStatus) {
@@ -122,7 +128,8 @@ export default class User extends React.Component {
             data : JSON.stringify(data),
             success : function(data, textStatus, jqXHR) {
                 console.log(data);
-            }.bind(this),
+                alert('success!');
+            },
             error : function(xhr, textStatus) {
                 console.log(xhr.status + '\n' + textStatus + '\n');
             }

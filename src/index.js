@@ -21,14 +21,16 @@ ReactDOM.render((
             <IndexRoute component={Discover}/>
             <Route path="/sign" component={Sign}/>
             <Route path="/discover" component={Discover}/>
-            <Route path="/home" component={Home}/>
-            <Route path="/hotlist" component={HotList}/>
-            <Route path="/songlist" component={ManageSongList}/>
-            <Route path="/following" component={Following}/>
+            <Route path="/viewhotlist" component={HotList}/>
+            <Route onEnter={() => {if(Auth.username === null) window.location.href='/#/sign';}}>
+                <Route path="/home" component={Home}/>
+                <Route path="/viewsonglist" component={ManageSongList}/>
+                <Route path="/following" component={Following}/>
+            </Route>
             <Route onEnter={() => {API.title = 'Music Radio'}}>
                 <Route path="/user/:id" component={User}/>
                 <Route path="/user/:id/songlist" component={ViewSongList}/>
-                <Route path="/songlist/:id(/:songlist_name/:author/:img_id)" component={SongList}/>
+                <Route path="/viewsonglist/:id(/:songlist_name/:author/:img_id)" component={SongList}/>
             </Route>
 
         </Route>

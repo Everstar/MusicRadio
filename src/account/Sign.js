@@ -163,7 +163,7 @@ export default class Sign extends React.Component {
             success : function(data, textStatus, jqXHR) {
                 console.log(data);
                 if(data.result){
-                    this.refs.dialog.handleOpen();
+                    this.refs.dialog.handleOpen(true);
                     window.localStorage.setItem('musicradio', this.state.username);
                     Auth.username = this.state.username;
                     Auth.Avator = this.getAvator();
@@ -190,7 +190,7 @@ export default class Sign extends React.Component {
             success : function(data, textStatus, jqXHR) {
                 console.log(data);
                 avator_url = data.avator_url;
-            }.bind(this),
+            },
             error : function(xhr, textStatus) {
                 console.log(xhr.status + '\n' + textStatus + '\n');
             }
@@ -219,7 +219,7 @@ export default class Sign extends React.Component {
             success : function(data, textStatus, jqXHR) {
                 if(data.result) {
                     this.refs.dialog.setContent('Sign Up success!', 'You can sign in now.');
-                    this.refs.dialog.handleOpen();
+                    this.refs.dialog.handleOpen(false);
                     this.handleChange(0);
                 }
             }.bind(this),

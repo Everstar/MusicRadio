@@ -20,80 +20,6 @@ const styles = {
     },
 };
 
-const tilesData = [
-    {
-        img_url: 'dynamic/img/0.jpg',
-        songlist_name: 'Breakfast',
-        author: 'jill111',
-        liked : 2048,
-        featured: true,
-    },
-    {
-        img_url: 'dynamic/img/1.jpg',
-        songlist_name: 'Tasty burger',
-        author: 'pashminu',
-        liked : 1024,
-    },
-    {
-        img_url: 'dynamic/img/2.jpg',
-        songlist_name: 'Camera',
-        author: 'Danson67',
-        liked : 512,
-    },
-    {
-        img_url: 'dynamic/img/3.jpg',
-        songlist_name: 'Morning',
-        author: 'fancycrave1',
-        liked : 256,
-    },
-    {
-        img_url: 'dynamic/img/4.jpg',
-        songlist_name: 'Hats',
-        author: 'Hans',
-        liked : 128,
-    },
-    {
-        img_url: 'dynamic/img/5.jpg',
-        songlist_name: 'Honey',
-        author: 'fancycravel',
-        liked : 64,
-    },
-    {
-        img_url: 'dynamic/img/6.jpg',
-        songlist_name: 'Vegetables',
-        author: 'jill111',
-        liked : 16,
-    },
-    {
-        img_url: 'dynamic/img/7.jpg',
-        songlist_name: 'Water plant',
-        author: 'BkrmadtyaKarki',
-        liked : 8,
-    },
-    {
-        img_url: 'dynamic/img/8.jpg',
-        songlist_name: 'Nothing on you',
-        author: 'happyfarmergo',
-        liked : 4,
-    },
-    {
-        img_url: 'dynamic/img/9.jpg',
-        songlist_name: 'goodbye',
-        author: 'captain',
-        liked : 2,
-    },
-    {
-        img_url: 'dynamic/img/10.jpg',
-        songlist_name: 'dream me',
-        author: 'everstar',
-        liked : 1,
-    }
-];
-
-/**
- * This example demonstrates "featured" tiles, using the `rows` and `cols` props to adjust the size of the tile.
- * The tiles have a customised title, positioned at the top and with a custom gradient `titleBackground`.
- */
 class HotList extends React.Component {
 
     constructor(props) {
@@ -131,7 +57,6 @@ class HotList extends React.Component {
 
     componentWillMount() {
         this.loadData();
-        // this.setState({songlist : tilesData});
     };
 
     redirect = (event) => {

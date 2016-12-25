@@ -162,7 +162,10 @@ function play() {
 	switch (type) {
 		case 'song':
             music_info = get_local_music_info(musicList[sequence].song_id);
-            nextPicPath = 'url(' + GetImageById(musicList[sequence].img_id) +') no-repeat center';
+            if(musicList[sequence].img_id == undefined)
+            	nextPicPath = 'url(http://img.neverstar.top/default_song.jpg) no-repeat center';
+            else
+            	nextPicPath = 'url(' + GetImageById(musicList[sequence].img_id) +') no-repeat center';
 			break;
 		case 'songlist':
             music_info = musicList[sequence];
@@ -174,6 +177,7 @@ function play() {
             nextPicPath = 'url(dynamic/img/' + sequence + '.jpg) no-repeat center';
 			break;
 	}
+    if(music_info == undefined) {alert('Song not Found!'); window.location.href='/radio.html'; return;}
 	console.log(music_info);
 
 	$('#playing-area').css('background', nextPicPath);
@@ -183,6 +187,7 @@ function play() {
 	$('#artist').html(music_info.song_artists);
 	$('#control-play .material-icons').html('pause');
     music_info.mp3Url = music_info.mp3Url.replace(/http:\/\/m/, "http://p");
+    music_info.mp3Url = music_info.mp3Url.replace(/.*\\resources\\musics\\/, "http://radiosong.neverstar.top/");
 	audio_load(music_info.mp3Url);
 	audioPlayer.play();
 

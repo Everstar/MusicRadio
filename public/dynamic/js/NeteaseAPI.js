@@ -53,9 +53,11 @@ function get_local_music_info(song_id) {
             music_info = data;
         },
         error : function(xhr, textStatus) {
+            music_info = undefined;
             console.log(xhr.status + '\n' + textStatus + '\n');
         }
     });
+    if(music_info == undefined ) {return undefined;}
     if(music_info.netease_id != 0) {
     	music_info = get_music_info(music_info.netease_id);
 	}else {

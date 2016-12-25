@@ -43,7 +43,7 @@ class ViewSongList extends React.Component {
                 target : 'api'
             },
             success : function(data, textStatus, jqXHR) {
-                if((data.length % 2) != 0)
+                if((data.length % 2) !== 0)
                     data[0].featured = true;
                 this.setState({songlist : data});
                 console.log(data);

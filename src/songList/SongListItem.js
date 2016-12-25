@@ -58,6 +58,16 @@ const styles = {
         float :'left',
         width : 200,
     },
+    imageInput: {
+        cursor: 'pointer',
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        right: 0,
+        left: 0,
+        width: '100%',
+        opacity: 0,
+    },
 };
 
 //编辑乐单信息
@@ -87,7 +97,6 @@ class EditSongListDialog extends React.Component {
     };
 
     handleSubmit = () => {
-        const URL = API.EditSongList;
         if(this.state.songlist_name === "") {
             this.setState({error_text: "This field is required"});
             return;
@@ -142,7 +151,7 @@ class EditSongListDialog extends React.Component {
                     onRequestClose={this.handleClose}
                 >
                     <Toggle
-                        label="Image Url/upload local song"
+                        label="Image Url/upload local image"
                         defaultToggled={false}
                         style={styles.toggle}
                         onToggle={this.handleToggle}
@@ -181,7 +190,9 @@ class EditSongListDialog extends React.Component {
                             value={this.state.image_url}
                             onChange={this.inputImageUrl}
                         />
-                        <input type="file" name="image_file" style={{display : this.state.imageImportWay ? 'block' : 'none'}}/>
+                        <FlatButton label="Choose an Image" labelPosition="before" style={{display : this.state.imageImportWay ? 'block' : 'none'}}>
+                            <input type="file" name="image_file" style={styles.imageInput} />
+                        </FlatButton>
                         <input type="submit" id="uploadSonglistImage" value="upload"  style={{display:'none'}}/>
                     </form>
                 </Dialog>
@@ -284,12 +295,14 @@ class ChangeMusicImage extends React.Component {
                         <input type="hidden" value={this.state.img_id} name="image_id" />
                         <input type="hidden" value={this.state.song_id} name="song_id"/>
                         <input type="hidden" value={this.state.songlist_id} name="songlist_id"/>
-                        <input
-                            style={this.state.imageImportWay ? {visibility : 'visible'}:{visibility : 'collapse'}}
-                            name="image_file"
-                            type="file"
-                            accept='image/*'
-                        />
+                        <FlatButton label="Choose an Image" labelPosition="before" style={{display : this.state.imageImportWay ? 'block' : 'none'}}>
+                            <input
+                                style={styles.imageInput}
+                                name="image_file"
+                                type="file"
+                                accept='image/*'
+                            />
+                        </FlatButton>
                         <input
                             type="submit" id="changeSongImg" value="Upload"
                             style={{visibility : 'collapse'}}
@@ -396,8 +409,11 @@ class AddMusicItemDialog extends React.Component {
                 this.setState({error_text : 'This field is required'});
                 return;
             }
+            $('#AddNeteaseSong').click();
+        }else {
+            $('#uploadLocalSong').click();
         }
-        $('#uploadLocalSong').click();
+
 
         //console.log('song_id : ' + $("[name='uploadFrame']").html());
         this.setState({open: false});
@@ -456,7 +472,7 @@ class AddMusicItemDialog extends React.Component {
     handleChangeStyle = (event, isInputChecked) => {
         let checked = this.state.styles_source;
         let style = this.state.styles_array;
-        let position = parseInt(event.target.id);
+        let position = parseInt(event.target.id, 10);
         checked[position] = isInputChecked;
         style[position] = isInputChecked ? '1' : '0';
         this.setState({
@@ -508,7 +524,59 @@ class AddMusicItemDialog extends React.Component {
                         onNewRequest={this.handleMenuClose}
                         maxSearchResults={10}
                     />
-                    <form id="addsong" method="post" encType="multipart/form-data" action={API.AddSongFromNetEase} target="uploadSongFrame">
+                    <form id="Uploadsong" method="post" encType="multipart/form-data"
+                          style={this.state.musicImportWay ? {visibility : 'visible', textAlign:'center'}:{visibility : 'collapse'}}
+                          action={API.AddSongFromUpload} target="uploadSongFrame"
+                    >
+                        <FlatButton label="Choose a Song" labelPosition="before" style={{display : this.state.musicImportWay ? 'block' : 'none'}}>
+                            <input
+                                disabled={this.state.musicImportWay ? '' : 'disabled'}
+                                style={styles.imageInput}
+                                name="song_file"
+                                placeholder="upload local song"
+                                type="file"
+                            />
+                        </FlatButton>
+                        <input type="hidden" name="songlist_id" value={this.state.songlist_id}/>
+                        <input type="hidden" name="language" value={this.state.language}/>
+                        <input type="hidden" name="styles" value={this.state.styles_binary}/>
+                        <input type="submit" value="upload" id="uploadLocalSong" style={{visibility : 'collapse'}}/>
+                    </form>
+                    <SelectField
+                        name="language"
+                        value={this.state.language}
+                        onChange={this.handleChangeLanguage}
+                        floatingLabelText="语言"
+                        maxHeight={200}
+                    >
+                        {language_items}
+                    </SelectField>
+                    <div>
+                        <Checkbox label="流行" checked={this.state.styles_source[0]} id="0" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                        <Checkbox label="摇滚" checked={this.state.styles_source[1]} id="1" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                        <Checkbox label="民谣" checked={this.state.styles_source[2]} id="2" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                        <Checkbox label="电子" checked={this.state.styles_source[3]} id="3" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                        <Checkbox label="舞曲" checked={this.state.styles_source[4]} id="4" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                        <Checkbox label="说唱" checked={this.state.styles_source[5]} id="5" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                        <Checkbox label="轻音乐" checked={this.state.styles_source[6]} id="6" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                        <Checkbox label="爵士" checked={this.state.styles_source[7]} id="7" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                        <Checkbox label="乡村" checked={this.state.styles_source[8]} id="8" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                        <Checkbox label="古典" checked={this.state.styles_source[9]} id="9" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                        <Checkbox label="民族" checked={this.state.styles_source[10]} id="10" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                        <Checkbox label="英伦" checked={this.state.styles_source[11]} id="11" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                        <Checkbox label="金属" checked={this.state.styles_source[12]} id="12" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                        <Checkbox label="朋克" checked={this.state.styles_source[13]} id="13" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                        <Checkbox label="蓝调" checked={this.state.styles_source[14]} id="14" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                        <Checkbox label="雷鬼" checked={this.state.styles_source[15]} id="15" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                        <Checkbox label="古风" checked={this.state.styles_source[16]} id="16" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                        <Checkbox label="另类/独立" checked={this.state.styles_source[17]} id="17" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                        <Checkbox label="世界音乐" checked={this.state.styles_source[18]} id="18" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                        <Checkbox label="拉丁" checked={this.state.styles_source[19]} id="19" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                        <Checkbox label="R&B/Soul" checked={this.state.styles_source[20]} id="20" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
+                    </div>
+                    <form id="addsong" method="post" encType="multipart/form-data" action={API.AddSongFromNetEase} target="uploadSongFrame"
+                          style={this.state.musicImportWay ? {visibility : 'collapse', textAlign:'center'}:{visibility : 'visible'}}
+                    >
                         <input type="hidden" name="songlist_id" value={this.state.songlist_id}/>
                         <input type="hidden" name="netease_id" value={this.state.song_netease_id} />
                         <input type="hidden" name="song_name" value={this.state.song_name}/>
@@ -517,50 +585,8 @@ class AddMusicItemDialog extends React.Component {
                         <input type="hidden" name="duration" value={this.state.duration}/>
                         <input type="hidden" name="language" value={this.state.language}/>
                         <input type="hidden" name="styles" value={this.state.styles_binary}/>
-                        <input
-                            style={this.state.musicImportWay ? {visibility : 'visible', textAlign:'center'}:{visibility : 'collapse'}}
-                            disabled={this.state.musicImportWay ? '' : 'disabled'}
-                            name="song_file"
-                            placeholder="upload local song"
-                            type="file"
-                        />
-                        <br/>
-                        <SelectField
-                            name="language"
-                            value={this.state.language}
-                            onChange={this.handleChangeLanguage}
-                            floatingLabelText="语言"
-                            maxHeight={200}
-                        >
-                            {language_items}
-                        </SelectField>
-                        <div>
-                            <Checkbox label="流行" checked={this.state.styles_source[0]} id="0" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                            <Checkbox label="摇滚" checked={this.state.styles_source[1]} id="1" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                            <Checkbox label="民谣" checked={this.state.styles_source[2]} id="2" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                            <Checkbox label="电子" checked={this.state.styles_source[3]} id="3" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                            <Checkbox label="舞曲" checked={this.state.styles_source[4]} id="4" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                            <Checkbox label="说唱" checked={this.state.styles_source[5]} id="5" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                            <Checkbox label="轻音乐" checked={this.state.styles_source[6]} id="6" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                            <Checkbox label="爵士" checked={this.state.styles_source[7]} id="7" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                            <Checkbox label="乡村" checked={this.state.styles_source[8]} id="8" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                            <Checkbox label="古典" checked={this.state.styles_source[9]} id="9" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                            <Checkbox label="民族" checked={this.state.styles_source[10]} id="10" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                            <Checkbox label="英伦" checked={this.state.styles_source[11]} id="11" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                            <Checkbox label="金属" checked={this.state.styles_source[12]} id="12" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                            <Checkbox label="朋克" checked={this.state.styles_source[13]} id="13" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                            <Checkbox label="蓝调" checked={this.state.styles_source[14]} id="14" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                            <Checkbox label="雷鬼" checked={this.state.styles_source[15]} id="15" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                            <Checkbox label="古风" checked={this.state.styles_source[16]} id="16" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                            <Checkbox label="另类/独立" checked={this.state.styles_source[17]} id="17" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                            <Checkbox label="世界音乐" checked={this.state.styles_source[18]} id="18" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                            <Checkbox label="拉丁" checked={this.state.styles_source[19]} id="19" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                            <Checkbox label="R&B/Soul" checked={this.state.styles_source[20]} id="20" style={styles.checkbox} onCheck={this.handleChangeStyle}/>
-                        </div>
-                        <input type="submit" value="upload" id="uploadLocalSong" style={{visibility : 'collapse'}}/>
+                        <input type="submit" value="upload" id="AddNeteaseSong" style={{visibility : 'collapse'}}/>
                     </form>
-
-
                 </Dialog>
             </div>
         );
@@ -599,6 +625,11 @@ export default class SongListItem extends React.Component {
             },
             success : function(data, textStatus, jqXHR) {
                 console.log(data);
+                for(let i = 0; i < data.length; i++){
+                    let img_url = data[i].image_url;
+                    if(img_url === null) continue;
+                    data[i].image_url = img_url.replace(/.*\\resources\\images\\/, "http://radioimg.neverstar.top/");
+                }
                 this.setState({song_list : data})
             }.bind(this),
             error : function(xhr, textStatus) {
@@ -701,6 +732,10 @@ export default class SongListItem extends React.Component {
     };
 
     render() {
+
+        let img_url = this.props.img_url;
+        img_url = img_url.replace(/.*\\resources\\images\\/, "http://radioimg.neverstar.top/");
+
         return (
             <Card expanded={this.state.expanded} onExpandChange={this.handleExpandChange} style={styles.cardSize}>
                 <CardHeader
@@ -717,7 +752,7 @@ export default class SongListItem extends React.Component {
                         subtitle={this.props.author}
                     />}
                 >
-                    <img src={this.props.img_url} alt="居然找不到图片" />
+                    <img src={img_url} alt="居然找不到图片" />
                 </CardMedia>
                 <Table
                     expandable={true}

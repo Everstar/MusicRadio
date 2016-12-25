@@ -2,7 +2,7 @@
  * Created by kevin on 12/7/2016.
  */
 
-let URL = 'http://localhost:3344';
+let URL = 'http://music.neverstar.top';
 // let URL = 'http://221.239.199.226:3344';
 
 //后端API

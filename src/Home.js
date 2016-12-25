@@ -2,7 +2,10 @@
  * Created by tsengkasing on 12/8/2016.
  */
 import React from 'react';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
 import {Card, CardHeader,} from 'material-ui/Card';
+import { hashHistory } from 'react-router'
 import LinearProgress from 'material-ui/LinearProgress'
 import Divider from 'material-ui/Divider';
 import Subheader from 'material-ui/Subheader';
@@ -38,12 +41,77 @@ const styles = {
     gridList: {
         display: 'flex',
         flexWrap: 'nowrap',
-        overflowX: 'scroll',
+        overflowX: 'auto',
+        textAlign : 'left',
     },
     titleStyle: {
         color: 'rgb(0, 188, 212)',
     },
+    imageInput: {
+        cursor: 'pointer',
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        right: 0,
+        left: 0,
+        width: '100%',
+        opacity: 0,
+    },
 };
+
+
+class UploadAvator extends React.Component {
+    state = {
+        open: false,
+    };
+
+    handleOpen = () => {
+        this.setState({open: true});
+    };
+
+    handleClose = () => {
+        this.setState({open: false});
+    };
+
+    handleSubmit = () => {
+        $('#uploadAvator').click();
+        this.setState({open: false});
+    };
+
+    render() {
+        const actions = [
+            <FlatButton
+                label="取消"
+                primary={true}
+                onTouchTap={this.handleClose}
+            />,
+            <FlatButton
+                label="确定"
+                primary={true}
+                onTouchTap={this.handleSubmit}
+            />,
+        ];
+
+        return (
+            <div>
+                <Dialog
+                    title="Upload a Avator"
+                    actions={actions}
+                    modal={false}
+                    open={this.state.open}
+                    onRequestClose={this.handleClose}
+                >
+                    <form id="changeAvator" method="post" encType="multipart/form-data" action={API.Avatar} target="uploadFrame">
+                        <FlatButton label="Choose an Image" labelPosition="before">
+                            <input type="file" style={styles.imageInput} name="imgFile" />
+                        </FlatButton>
+                        <input type="submit" value="upload" id="uploadAvator" style={{visibility : 'collapse'}}/>
+                    </form>
+                </Dialog>
+            </div>
+        );
+    }
+}
 
 export default class Home extends React.Component {
 
@@ -51,13 +119,13 @@ export default class Home extends React.Component {
         super(props);
         this.state = {
             avator_url : 'http://img.neverstar.top/default.jpg',
-            exp: 50,
+            exp: 0,
             exp_max : 100,
             level : 1,
             gender : "male",
-            ctr_songlist : 16,
-            liked_songlist : 64,
-            following_num : 32,
+            ctr_songlist : 0,
+            liked_songlist : 0,
+            following_num : 0,
             moments : [],
 
             recommend_user_list : [],
@@ -96,7 +164,7 @@ export default class Home extends React.Component {
     };
 
     changeAvatar = () => {
-        console.log('changeAvatar');
+        this.refs.UploadAvatorDialog.handleOpen();
     };
 
     getMoments = () => {
@@ -111,6 +179,11 @@ export default class Home extends React.Component {
             },
             success : function(data, textStatus, jqXHR) {
                 console.log(data);
+                for(let i = 0; i < data.length; i++) {
+                    let avator_url = data[i].avator_url;
+                    if(avator_url === null) continue;
+                    data[i].avator_url = avator_url.replace(/.*\\resources\\images\\/, "http://radioimg.neverstar.top/");
+                };
                 this.setState({moments : data});
             }.bind(this),
             error : function(xhr, textStatus) {
@@ -158,6 +231,8 @@ export default class Home extends React.Component {
                 id : song_id,
             },
             success : function(data, textStatus, jqXHR) {
+                let avator_url = data.avator_url;
+                if(avator_url != null) data.avator_url = avator_url.replace(/.*\\resources\\images\\/, "http://radioimg.neverstar.top/");
                 song_info = data;
             },
             error : function(xhr, textStatus) {
@@ -165,7 +240,7 @@ export default class Home extends React.Component {
             }
         });
 
-        if(song_info.netease_id != 0) {
+        if(song_info.netease_id !== 0) {
             song_info = this.getNeteaseSonginfo(song_info.netease_id);
         }else{
             song_info.song_artists = song_info.artists;
@@ -190,7 +265,9 @@ export default class Home extends React.Component {
             success : function(data, textStatus, jqXHR) {
                 let detail_list = [];
                 for(let i = 0; i < data.length; i++) {
-                    detail_list.push(this.getLocalSongInfo(data[i]));
+                    let info = this.getLocalSongInfo(data[i]);
+                    info.song_id = data[i];
+                    detail_list.push(info);
                 }
                 console.log(detail_list);
                 this.setState({recommend_song_list : detail_list});
@@ -201,7 +278,7 @@ export default class Home extends React.Component {
         });
     };
 
-    getUserInfo = (user_id) => {
+    getRecommendUserInfo = (user_id) => {
         let info = {};
         const URL = API.Info;
         $.ajax({
@@ -218,7 +295,7 @@ export default class Home extends React.Component {
             },
             success : function(data, textStatus, jqXHR) {
                 info = data;
-            }.bind(this),
+            },
             error : function(xhr, textStatus) {
                 console.log(xhr.status + '\n' + textStatus + '\n');
             }
@@ -243,7 +320,7 @@ export default class Home extends React.Component {
                 console.log(data);
                 let detail_list = [];
                 for(let i = 0; i < data.length; i++) {
-                    detail_list.push(this.getUserInfo(data[i]));
+                    detail_list.push(this.getRecommendUserInfo(data[i]));
                 }
                 console.log(detail_list);
                 this.setState({recommend_user_list : detail_list});
@@ -252,6 +329,14 @@ export default class Home extends React.Component {
                 console.log(xhr.status + '\n' + textStatus + '\n');
             }
         });
+    };
+
+    onClickRecommendSong = (event) => {
+        window.open('/radio.html?type=song&song_id=' + event.target.getAttribute('about'));
+    };
+
+    onClickRecommendUser = (event) => {
+        hashHistory.push('/user/' + event.target.getAttribute('about'));
     };
 
     componentWillMount() {
@@ -265,6 +350,10 @@ export default class Home extends React.Component {
     };
 
     render() {
+
+        let avator_url = this.state.avator_url;
+        if(avator_url !== null) avator_url = avator_url.replace(/.*\\resources\\images\\/, "http://radioimg.neverstar.top/");
+
         return (
             <div style={{maxWidth: '1024px', margin:'0 auto'}}>
                 <Card containerStyle={{margin: 16}}
@@ -274,7 +363,7 @@ export default class Home extends React.Component {
                         titleStyle={{fontSize:'3vh'}}
                         subtitle={this.state.gender}
                         subtitleStyle={{fontSize:'2vh'}}
-                        avatar={<Avatar src={this.state.avator_url} size={100} onTouchTap={this.changeAvatar} />}
+                        avatar={<Avatar src={avator_url} size={100} onTouchTap={this.changeAvatar} />}
                     />
                     <div style={{width: '96%', margin:'0 auto'}}>
                         Lv{this.state.level}<LinearProgress mode="determinate" value={this.state.exp} max={this.state.exp_max} />
@@ -286,23 +375,49 @@ export default class Home extends React.Component {
                     </List>
                 </Card>
                 <Divider style={{marginTop : '2%'}}/>
+                {/*歌曲推荐*/}
                 <Subheader>Today's Songs Recommend</Subheader>
                 <div style={styles.root}>
                     <GridList style={styles.gridList} cols={2.2}>
                         {this.state.recommend_song_list.map((song, index) => (
                             <GridTile
                                 key={index}
+                                cols={index}
                                 title={song.song_name}
                                 titleStyle={styles.titleStyle}
                                 subtitle={song.song_artists}
                                 titleBackground="linear-gradient(to top, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)"
                             >
-                                <img src={'http://img.neverstar.top/' + index + '.jpg'} alt="居然找不到图片" />
+                                <img src={'http://img.neverstar.top/' + index + '.jpg'} alt="居然找不到图片" onClick={this.onClickRecommendSong} about={song.song_id}
+                                     style={this.state.recommend_song_list.length > 1 ? null : {width:'100%', height:'auto'}} />
+                            </GridTile>
+                        ))}
+
+                    </GridList>
+                </div>
+                <Divider style={{marginTop : '2%'}}/>
+                {/*用户推荐*/}
+                <Subheader>Today's Users Recommend</Subheader>
+                <div style={styles.root}>
+                    <GridList style={styles.gridList} cols={2.2}>
+                        {this.state.recommend_user_list.map((user, index) => (
+                            <GridTile
+                                cols={index}
+                                key={index}
+                                title={user.username}
+                                titleStyle={styles.titleStyle}
+                                subtitle={'level ' + user.level}
+                                titleBackground="linear-gradient(to top, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)"
+                            >
+                                <img src={user.avator_url} alt="居然找不到头像" onClick={this.onClickRecommendUser} about={user.id}
+                                     style={this.state.recommend_user_list.length > 1 ? null : {width:'100%', height:'auto'}} />
                             </GridTile>
                         ))}
                     </GridList>
                 </div>
                 <Divider style={{marginTop : '2%'}}/>
+
+                <Subheader>Your following's moment</Subheader>
                 {this.state.moments.map((moment, index) => (
                     <Paper style={styles.paper} zDepth={1} key={index} >
                         <ListItem
@@ -313,6 +428,7 @@ export default class Home extends React.Component {
                     </Paper>
                 ))}
                 <Divider style={{marginTop : '2%'}}/>
+                <UploadAvator ref="UploadAvatorDialog" />
             </div>
         );
     }

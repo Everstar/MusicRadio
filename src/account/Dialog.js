@@ -16,16 +16,20 @@ export default class SimpleDialog extends React.Component {
     state = {
         open: false,
         title : "Sign Success!",
-        description : "Press OK to redirect to Home."
+        description : "Press OK to redirect to Home.",
+        redirect : false,
     };
 
-    handleOpen = () => {
-        this.setState({open: true});
+    handleOpen = (redirect) => {
+        this.setState({
+            open: true,
+            redirect : redirect,
+        });
     };
 
     handleClose = () => {
         this.setState({open: false});
-        if(this.props.onPress) {
+        if(this.props.onPress && this.state.redirect) {
             this.props.onPress();
         }
     };

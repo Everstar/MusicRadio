@@ -11,39 +11,6 @@ import RaisedButton from 'material-ui/RaisedButton';
 import API from './API';
 import $ from 'jquery';
 
-const friends_data_1 = [
-    {
-        user_id : 15,
-        avatar : 'dynamic/img/0.jpg',
-        gender : 'male',
-        name : 'rabbit',
-        level : 4,
-    },
-    {
-        user_id : 15,
-        avatar : 'dynamic/img/2.jpg',
-        gender : 'male',
-        name : 'pig',
-        level : 2,
-    },
-    {
-        user_id : 15,
-        avatar : 'dynamic/img/3.jpg',
-        gender : 'female',
-        name : 'monkey',
-        level : 3,
-    },
-    {
-        user_id : 15,
-        avatar : 'dynamic/img/4.jpg',
-        gender : 'female',
-        name : 'hive',
-        level : 1,
-    },
-
-
-];
-
 export default class Following extends React.Component {
 
     constructor(props) {

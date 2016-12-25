@@ -10,11 +10,10 @@ import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
 import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
-import {List, ListItem} from 'material-ui/List';
+import {ListItem} from 'material-ui/List';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import TextField from 'material-ui/TextField';
 import Dialog from 'material-ui/Dialog';
-import StarBorder from 'material-ui/svg-icons/toggle/star-border';
 import AvPlayCircleOutline from 'material-ui/svg-icons/av/play-circle-outline';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAddCircleOutline from 'material-ui/svg-icons/content/add-circle-outline';
@@ -287,7 +286,7 @@ export default class SongList extends React.Component {
             data : JSON.stringify(data),
             success : function(data, textStatus, jqXHR) {
                 console.log(data);
-            }.bind(this),
+            },
             error : function(xhr, textStatus) {
                 console.log(xhr.status + '\n' + textStatus + '\n');
             }
@@ -296,7 +295,7 @@ export default class SongList extends React.Component {
 
     playSingle = (event) => {
         const index = event.target.parentNode.parentNode.parentNode.getAttribute('alt');
-        if(index == undefined) return;
+        if(index === undefined || index === null) return;
         console.log(this.state.song_lists[index]);
         const song = this.state.song_lists[index];
         window.open('/radio.html?type=song&song_id=' + song.song_id + '&img_id=' + song.image_id);

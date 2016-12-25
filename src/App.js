@@ -4,6 +4,8 @@ import MenuBar from './MenuBar';
 import './App.css';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import Auth from './account/Auth'
+import $ from 'jquery';
+import API from './API';
 
 
 injectTapEventPlugin();
@@ -12,15 +14,34 @@ const App = React.createClass({
 
     //初始化
     getInitialState() {
-        let status = window.localStorage.getItem('musicradio');
-        if(status != null) {
-            console.log('登录状态存在:' + status);
-            Auth.username = status;
-        }
+        let logged = this.getUserInfo();
         return {
-            logged : false,
-            permit : false
+            logged : logged,
         }
+    },
+
+    getUserInfo() {
+        const URL = API.Info;
+        $.ajax({
+            url : URL,
+            type : 'POST',
+            async : false,
+            contentType: 'application/json',
+            headers : {
+                'target' : 'api',
+            },
+            success : function(data, textStatus, jqXHR) {
+                console.log(data);
+                console.log('登录状态存在:' + data.username);
+                Auth.username = data.username;
+                Auth.Avator = data.avator_url;
+            },
+            error : function(xhr, textStatus) {
+                //window.location.href='/#/sign';
+                console.log(xhr.status + '\n' + textStatus + '\n');
+            }
+        });
+        return true;
     },
 
     render() {
