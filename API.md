@@ -48,9 +48,18 @@ example ：{bool} 表示bool值
 	[POST]
     UrlPattern = "/avator"
     data = {
-    *imgFile* : {file}
+    *image_file* : {file}
     }
-
+	返回JSON {
+    *result* : {bool}
+    }
+* 登出
+	@cookie
+	[GET]
+    UrlPattern = "/signout"
+    返回JSON {
+    *result* : {bool}
+    }
 
 ### 喜爱/点赞/评论
 
@@ -224,6 +233,8 @@ example ：{bool} 表示bool值
     UrlPattern = "/songlist/one?id={Integer}"
     返回JSON{
     *song_id* : {Integer},
+    *image_id* : {Integer},
+    *image_url* : {String},
     *song_name* : {String},
     *artists* : {String},
     *duration* : {Integer},
@@ -231,8 +242,18 @@ example ：{bool} 表示bool值
     }
 
 ###推荐系统
-
-
+* 推荐用户
+	[GET]
+    UrlPattern="/recommendUser?data={Integer}"
+    返回JSON[
+    {Integer},
+    ]
+* 推荐歌曲
+	[GET]
+    UrlPattern="/recommendSong?data={Integer}"
+    返回JSON[
+    {Integer},
+    ]
 ### 社交
 * 用户信息相关
 	* 个人主页
@@ -280,6 +301,18 @@ example ：{bool} 表示bool值
     返回JSON{
     *result* : {bool}
     }
+* 广场
+	[GET]
+    UrlPattern = "/square"
+    返回JSON {
+    *result* : [
+    {*username*:{String}, *id* : {Integer}, *type*:{String->enum},
+    *songlist_id* : {Integer}, *songlist_name*:{String}, *time*:{String}
+    },
+    {*username*:{String}, *id* : {Integer}, *type*:{String->enum}, 		*songlist_id* : {Integer}, *songlist_name*:{String}, *time*:{String}},
+    ...
+    ]
+    }
 
 * 动态
 	1. 用户动态
@@ -295,8 +328,10 @@ example ：{bool} 表示bool值
 
     返回JSON {
     *result* : [
-    {*username*:{String}, *id* : {Integer}, *type*:{String->enum}, *songlist_name*:{String}, *time*:{String}},
-    {*username*:{String}, *id* : {Integer}, *type*:{String->enum}, *songlist_name*:{String}, *time*:{String}},
+    {*username*:{String}, *id* : {Integer}, *type*:{String->enum},
+    *songlist_id* : {Integer}, *songlist_name*:{String}, *time*:{String}
+    },
+    {*username*:{String}, *id* : {Integer}, *type*:{String->enum}, 		*songlist_id* : {Integer}, *songlist_name*:{String}, *time*:{String}},
     ...
     ]
     }
