@@ -49,6 +49,9 @@
 <button id="signin">signin</button>
 <br/>
 
+<button id="signout">signout</button>
+<br/>
+
 <form name="upload" action="/addsong/upload" method="post" enctype="multipart/form-data">
     file:<input type="file" name="song_file"/><br/>
     songlist_id:<input type="number" name="songlist_id"/><br/>
@@ -106,6 +109,20 @@
             }
         });
     });
+
+    $('#signout').click(function (){
+        $.ajax({
+            type : "POST",
+            dataType : "json",
+            contentType : "application/json",
+            data : null,
+            url : "http://localhost:8080/signout",
+            success : function(data){
+                alert("signout success");
+            }
+        });
+    }
+    );
 
 </script>
 

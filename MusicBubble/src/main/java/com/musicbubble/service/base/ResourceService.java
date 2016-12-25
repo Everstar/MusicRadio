@@ -219,7 +219,8 @@ public class ResourceService extends MyService {
             File resourceFile = new File(path);
             if (!resourceFile.exists())
                 resourceFile.mkdir();
-
+            resourceFile.setReadable(true);
+            resourceFile.setWritable(true);
             file.transferTo(resourceFile);
 
             if (isImage) {

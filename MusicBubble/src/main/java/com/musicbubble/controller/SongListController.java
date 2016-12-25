@@ -31,7 +31,7 @@ public class SongListController implements Serializable {
     @RequestMapping(value = "/api/import", method = RequestMethod.GET)
     public ResponseEntity<Object> importSongs(@CookieValue("token") String token, @RequestParam("id") String songlist_id) {
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         List<Map<String, Object>> list = resourceService.GetPlaylistInfo(songlist_id);
         Map<String, Object> map = list.get(0);
@@ -72,7 +72,7 @@ public class SongListController implements Serializable {
     @RequestMapping(value = "/songlist", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> getOwnSongLists(@CookieValue("token") String token) {
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         List<Map<String, Object>> list = songListService.GetSongListByUserId(user_id, 0);
         return new ResponseEntity<>(list, HttpStatus.OK);
@@ -82,7 +82,7 @@ public class SongListController implements Serializable {
     @RequestMapping(value = "/songlist", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> getFollowSongLists(@CookieValue("token") String token, @RequestParam("id") int follow_id) {
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         List<Map<String, Object>> list = songListService.GetSongListByUserId(follow_id, user_id);
         return new ResponseEntity<>(list, HttpStatus.OK);
@@ -92,7 +92,7 @@ public class SongListController implements Serializable {
     @RequestMapping(value = "/songlist/one", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> getSongsOfSongList(@CookieValue("token") String token, @RequestParam("id") int list_id) {
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         List<Map<String, Object>> list = songListService.GetSongsBySongListId(list_id);
         return new ResponseEntity<>(list, HttpStatus.OK);
@@ -108,7 +108,7 @@ public class SongListController implements Serializable {
     @RequestMapping(value = "/newlist", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> addSongList(@CookieValue("token") String token, @RequestBody Map<String, String> data) {
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         String song_name = data.get("songlist_name").trim();
         String desc = data.get("description").trim();
@@ -122,7 +122,7 @@ public class SongListController implements Serializable {
     @RequestMapping(value = "/deletelist", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> removeSongList(@CookieValue("token") String token, @RequestBody Map<String, Integer> data) {
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         int list_id = data.get("id");
         boolean res = songListService.DeleteSongList(list_id);
@@ -138,7 +138,7 @@ public class SongListController implements Serializable {
     public ResponseEntity<Object> changeSongList(@CookieValue("token") String token
             , @RequestParam("image_file") CommonsMultipartFile image, HttpServletRequest request) {
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         Integer list_id = Integer.parseInt(request.getParameter("songlist_id"));
         String song_name = request.getParameter("songlist_name").trim();
@@ -170,7 +170,7 @@ public class SongListController implements Serializable {
     @RequestMapping(value = "/addsong/netease", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> addSongByNetEase(@CookieValue("token") String token, HttpServletRequest request) {
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         Integer list_id = Integer.parseInt(request.getParameter("songlist_id"));
         Integer netease_id = Integer.parseInt(request.getParameter("netease_id"));
@@ -203,7 +203,7 @@ public class SongListController implements Serializable {
 //    @RequestMapping(value = "/addsong/songlist", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
 //    public ResponseEntity<Object> addSongBySongList(@CookieValue("token") String token, @RequestBody Map<String, Integer> data) {
 //        int user_id = accountService.IdentifyUser(token);
-//        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+//        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 //
 //        Integer list_id = data.get("songlist_id");
 //        Integer song_id = data.get("song_id");
@@ -218,9 +218,9 @@ public class SongListController implements Serializable {
     //tested
     @RequestMapping(value = "/addsong/upload", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> addSongByUpload(@CookieValue("token") String token,
-                                                  @RequestParam("song_file") CommonsMultipartFile music, HttpServletRequest request) {
+            @RequestParam("song_file") CommonsMultipartFile music, HttpServletRequest request) {
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         Integer list_id = Integer.parseInt(request.getParameter("songlist_id"));
         String language = request.getParameter("language");
@@ -251,7 +251,7 @@ public class SongListController implements Serializable {
     @RequestMapping(value = "/removesong", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> removeSong(@CookieValue("token") String token, @RequestBody Map<String, Integer> data) {
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<Object>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<Object>(null, HttpStatus.UNAUTHORIZED);
 
         int list_id = data.get("songlist_id");
         int song_id = data.get("song_id");
@@ -268,7 +268,7 @@ public class SongListController implements Serializable {
     public ResponseEntity<Object> changeSong(@CookieValue("token") String token
             , @RequestParam("image_file") CommonsMultipartFile image, HttpServletRequest request) {
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<Object>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<Object>(null, HttpStatus.UNAUTHORIZED);
 
         Integer list_id = Integer.parseInt(request.getParameter("songlist_id"));
         Integer song_id = Integer.parseInt(request.getParameter("song_id"));

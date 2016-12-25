@@ -26,7 +26,7 @@ public class AdviceController {
     @RequestMapping(value = "/likesonglist", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> likeSonglist(@CookieValue(value = "token", required = true) String token, @RequestBody Map<String, Integer> data) {
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         int list_id = data.get("songlist_id");
 
@@ -41,7 +41,7 @@ public class AdviceController {
     @RequestMapping(value = "/likesong", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> likeSong(@CookieValue(value = "token", required = true) String token, @RequestBody Map<String, Integer> data) {
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         int list_id = data.get("songlist_id");
         int song_id = data.get("song_id");
@@ -58,7 +58,7 @@ public class AdviceController {
     @RequestMapping(value = "/addcomment", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> addComment(@CookieValue(value = "token", required = true) String token, @RequestBody Map<String, Object> data) {
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         int list_id = (Integer) data.get("songlist_id");
         String content = (String) data.get("content");

@@ -183,6 +183,7 @@ public class SongListService extends MyService {
         return true;
     }
 
+    //just for recommend
     @Transactional
     public void updateSong(){
         List<SongEntity> list = songRepository.findAll();

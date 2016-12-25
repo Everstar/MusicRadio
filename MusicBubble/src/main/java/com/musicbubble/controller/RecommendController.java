@@ -32,7 +32,7 @@ public class RecommendController {
     public ResponseEntity<Object> recommendSong(@CookieValue(value = "token", required = true) String token, @RequestParam("data") int data) {
         //cookie验证
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         //得到要求推荐的用户特征向量
         List<Integer> user_fea = recordService.getOneUserStyle(user_id);
@@ -53,7 +53,7 @@ public class RecommendController {
     @RequestMapping(value = "/recommendUser", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> recommendUser(@CookieValue(value = "token", required = true) String token, @RequestParam("data") int data) {
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         //得到要求推荐的用户的特征向量
         List<Integer> user_fea = recordService.getOneUserStyle(user_id);

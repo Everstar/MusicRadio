@@ -3,6 +3,7 @@ package com.musicbubble.controller;
 import com.musicbubble.service.RecordService;
 import com.musicbubble.service.base.AccountService;
 import com.musicbubble.service.SongListService;
+import com.musicbubble.service.base.ResourceService;
 import com.musicbubble.tools.DESUtil;
 import com.musicbubble.tools.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -29,6 +32,8 @@ public class AccountController implements Serializable {
     private SongListService songListService;
     @Autowired
     private RecordService recordService;
+    @Autowired
+    private ResourceService resourceService;
 
     @RequestMapping(value = "/account", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<Object> validateAccount(@RequestParam("id") String id) {
@@ -93,6 +98,41 @@ public class AccountController implements Serializable {
             e.printStackTrace();
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
+        return new ResponseEntity<>(map, status);
+    }
+
+    @RequestMapping(value = "/signout", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+    public ResponseEntity<Object> signOut(@CookieValue("token") String token) {
+        int user_id = accountService.IdentifyUser(token);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+
+        boolean res = accountService.SignOut();
+        Map<String, Object> map = new HashMap<>();
+        map.put("result", res);
+        HttpStatus status = res ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR;
+        return new ResponseEntity<>(map, status);
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public ResponseEntity<Object> update(@CookieValue("token") String token,
+        @RequestParam("image_file") CommonsMultipartFile image, HttpServletRequest request){
+        int user_id = accountService.IdentifyUser(token);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+
+        int image_id = 0;
+        HttpStatus status;
+        if (image != null
+                && image.getSize() > 0
+                && image.getContentType().startsWith("image")) {
+            //上传图片
+            image_id = resourceService.SaveUploadResource(image, "image", null, null);
+        }else {
+            status = HttpStatus.BAD_REQUEST;
+        }
+        boolean res = accountService.SetImage(user_id, image_id);
+        status = res ? HttpStatus.OK : HttpStatus.NOT_MODIFIED;
+        Map<String, Object> map = new HashMap<>();
+        map.put("result", res);
         return new ResponseEntity<>(map, status);
     }
 }

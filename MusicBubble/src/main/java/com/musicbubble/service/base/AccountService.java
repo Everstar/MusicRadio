@@ -14,9 +14,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
 import java.util.Calendar;
-
 
 
 /**
@@ -79,12 +79,28 @@ public class AccountService extends MyService {
         return true;
     }
 
+    public boolean SignOut() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("token")) {
+                cookie.setMaxAge(0);//删除Cookie
+                cookie.setPath("/");
+                cookie.setValue(null);
+                HttpServletResponse response = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getResponse();
+                response.addCookie(cookie);
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Transactional
     public void SetDefaultSongList(int user_id, int list_id) {
         userRepository.setListId(user_id, list_id);
     }
 
-    public int FindDefaultSongList(int user_id){
+    public int FindDefaultSongList(int user_id) {
         UserEntity entity = userRepository.findOne(user_id);
         return entity.getListId();
     }
@@ -94,13 +110,21 @@ public class AccountService extends MyService {
         return userEntity == null ? null : userEntity.getUserName();
     }
 
+    @Transactional
+    public boolean SetImage(int user_id, int image_id){
+        if (image_id == 0)return false;
+
+        userRepository.setImage(user_id, image_id);
+        return true;
+    }
+
     public int GetImage(int user_id) {
         UserEntity userEntity = userRepository.findOne(user_id);
         return userEntity == null ? null : userEntity.getImageId();
     }
 
     public int IdentifyUser(String token) {
-        int user_id = -1;
+        int user_id = 0;
         try {
             String decrypted = DESUtil.decrypt(token, DESUtil.getKey());
 
@@ -112,12 +136,7 @@ public class AccountService extends MyService {
                 user_id = Integer.parseInt(tokens[0]);
             else {
                 System.out.println("expires");
-                HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-                Cookie[] cookies = request.getCookies();
-                for (Cookie cookie : cookies) {
-                    if (cookie.getName().equals("token"))
-                        cookie.setMaxAge(0);//删除Cookie
-                }
+                SignOut();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -125,10 +144,10 @@ public class AccountService extends MyService {
         return user_id;
     }
 
-    public void updateExperience(int user_id, int exp){
+    public void updateExperience(int user_id, int exp) {
         userRepository.incExperience(user_id, exp);
         UserEntity entity = userRepository.findOne(user_id);
-        if(entity.getExperience() >= CommonUtil.MaxExp(entity.getRank()))
+        if (entity.getExperience() >= CommonUtil.MaxExp(entity.getRank()))
             userRepository.incRank(entity.getUserId());
     }
 
@@ -136,7 +155,7 @@ public class AccountService extends MyService {
         return userRepository.findOne(user_id);
     }
 
-    private Timestamp getDayBegin(){
+    private Timestamp getDayBegin() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);

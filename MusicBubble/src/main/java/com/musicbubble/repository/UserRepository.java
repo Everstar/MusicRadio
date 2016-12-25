@@ -35,4 +35,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     @Query("update UserEntity u set u.listId = ?2 where u.userId = ?1")
     int setListId(int user_id, int list_id);
 
+    @Modifying
+    @Query("update UserEntity u set u.imageId = ?2 where u.userId = ?1")
+    void setImage(int user_id, int image_id);
 }

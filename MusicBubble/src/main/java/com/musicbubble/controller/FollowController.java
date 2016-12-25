@@ -28,7 +28,7 @@ public class FollowController {
     @RequestMapping(value = "/follow", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> addFollows(@CookieValue("token") String token, @RequestBody Map<String, Integer> data){
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         Integer follow_id = data.get("user_id");
         boolean res = followService.AddFollows(user_id, follow_id);
@@ -42,7 +42,7 @@ public class FollowController {
     @RequestMapping(value = "/follow", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> getFollows(@CookieValue("token") String token) {
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         List<Map<String, Object>> list = followService.GetFollows(user_id);
         return new ResponseEntity<>(list, HttpStatus.OK);
@@ -51,7 +51,7 @@ public class FollowController {
     @RequestMapping(value = "/info", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> getOwnInfo(@CookieValue("token") String token) {
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         Map<String, Object> map = followService.GetUserInfo(user_id);
         return new ResponseEntity<>(map, HttpStatus.OK);
@@ -60,7 +60,7 @@ public class FollowController {
     @RequestMapping(value = "/info", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> getOthersInfo(@CookieValue("token") String token, @RequestParam("id") Integer id) {
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         Map<String, Object> map = followService.GetUserInfo(id);
         return new ResponseEntity<>(map, HttpStatus.OK);
@@ -70,7 +70,7 @@ public class FollowController {
     @RequestMapping(value = "/moment", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> getMomentOfOne(@CookieValue("token") String token, @RequestParam("id") int id){
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         List<Map<String, Object>> list = followService.MomentOfOne(id);
         return new ResponseEntity<>(list, HttpStatus.OK);
@@ -80,7 +80,7 @@ public class FollowController {
     @RequestMapping(value = "/moment", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> getMomentOfOne(@CookieValue("token") String token){
         int user_id = accountService.IdentifyUser(token);
-        if (user_id == -1) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         List<Map<String, Object>> list = followService.MomentOfFollow(user_id);
         return new ResponseEntity<>(list, HttpStatus.OK);
