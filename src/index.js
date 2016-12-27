@@ -12,25 +12,26 @@ import User from './User';
 import ViewSongList from './ViewSongList';
 import SongList from './SongList';
 import API from './API';
+import Auth from './account/Auth';
 import './index.css';
 
 
 ReactDOM.render((
     <Router history={hashHistory}>
-        <Route path="/" component={App}>
+        <Route path="/" component={App} onEnter={() => {if(Auth.username === null) App.getUserInfo();}}>
             <IndexRoute component={Discover}/>
             <Route path="/sign" component={Sign}/>
             <Route path="/discover" component={Discover}/>
-            <Route path="/viewhotlist" component={HotList}/>
+            <Route path="/hotlist" component={HotList}/>
             <Route onEnter={() => {if(Auth.username === null) window.location.href='/#/sign';}}>
                 <Route path="/home" component={Home}/>
-                <Route path="/viewsonglist" component={ManageSongList}/>
+                <Route path="/songlist" component={ManageSongList}/>
                 <Route path="/following" component={Following}/>
             </Route>
             <Route onEnter={() => {API.title = 'Music Radio'}}>
                 <Route path="/user/:id" component={User}/>
                 <Route path="/user/:id/songlist" component={ViewSongList}/>
-                <Route path="/viewsonglist/:id(/:songlist_name/:author/:img_id)" component={SongList}/>
+                <Route path="/songlist/:id(/:songlist_name/:author/:img_id)" component={SongList}/>
             </Route>
 
         </Route>

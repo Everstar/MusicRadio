@@ -10,17 +10,9 @@ import API from './API';
 
 injectTapEventPlugin();
 
-const App = React.createClass({
+class App extends React.Component {
 
-    //初始化
-    getInitialState() {
-        let logged = this.getUserInfo();
-        return {
-            logged : logged,
-        }
-    },
-
-    getUserInfo() {
+    static getUserInfo = () => {
         const URL = API.Info;
         $.ajax({
             url : URL,
@@ -42,7 +34,7 @@ const App = React.createClass({
             }
         });
         return true;
-    },
+    };
 
     render() {
         return (
@@ -56,6 +48,6 @@ const App = React.createClass({
             </div>
         );
     }
-});
+}
 
 export default App;

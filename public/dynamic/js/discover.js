@@ -32,26 +32,53 @@ var svg_background_color_online = '#0288D1',
   var songList = ['weave music', 'hot songs of bilibli', 'for earphone', 'American Hit Songs'];
   var operationList = ['CreatePlayList', 'LikePlayList', 'CommentPlayList'];
 
-function createEvent(){
+  //第几次获取广场数据
+var getEventsTimes = 0;
 
-  var event = {
-    'id': Math.random() * 100000,
-    'type': operationList[parseInt(Math.random() * 3)] ,
-    'user': userList[parseInt(Math.random() * 4)],
-    'user_avatar': '233',
-    'repo_id': '233',
-    'repo_name': songList[parseInt(Math.random() * 4)],
-    'payload_size': '233',
-    'message':'nothing',
-    'created': '233',
-    'url': 'radio.html'
-  };
-  if(!isEventInQueue(event))
-      eventQueue.push(event);
-
-  setTimeout(createEvent, 2000);
+function getEvent() {
+    getEventsTimes++;
+    //var URL = 'music.neverstar.top/square';
+    var URL = '/square';
+    $.ajax({
+        url : URL,
+        type : 'GET',
+        headers : {
+            target : 'api'
+        },
+        success : function(data, textStatus, jqXHR) {
+            data.sort(function(){ return 0.5 - Math.random() })
+            createEvent(data);
+            console.log(data);
+        },
+        error : function(xhr, textStatus) {
+            console.log(xhr.status + '\n' + textStatus + '\n');
+        }
+    });
 }
-setTimeout(createEvent, 2000);
+
+setTimeout(getEvent, 500);
+
+function createEvent(events){
+
+    for(var i = 0; i < events.length; i++) {
+        var event = {
+            'id': getEventsTimes.toString(10) + i.toString(10),
+            'type': events[i].type.toUpperCase(),
+            'user': events[i].username,
+            'user_avatar': 'no',
+            'repo_id': 'no',
+            'repo_name': events[i].songlist_name,
+            'payload_size': '233',
+            'message':'nothing',
+            'created': '233',
+            'url': '/user/' + events[i].id,
+        };
+
+        if(!isEventInQueue(event))
+            eventQueue.push(event);
+    }
+
+}
 
 
 /**
@@ -112,9 +139,8 @@ $(function(){
           all_loaded = true;
           setTimeout(playFromQueueExchange, Math.floor(Math.random() * 1000));
           // Starting the second exchange makes music a bad experience
-          // setTimeout(playFromQueueExchange2, Math.floor(Math.random() * 2000));
       }
-  }
+  };
 
   // Load sounds
   for (var i = 1; i <= 24; i++) {
@@ -198,12 +224,14 @@ function playSound(size, type) {
 
 function playFromQueueExchange(){
   var event = eventQueue.shift();
-  if(event != null && event.message != null && svg != null){
+  if(event != null && svg != null){
     //playSound(event.message.length*1.1, event.type);
     if(!document.hidden)
       drawEvent(event, svg);
+  }else if(event == null) {
+      setTimeout(getEvent, 500);
   }
-  setTimeout(playFromQueueExchange, Math.floor(Math.random() * 1000) + 500);
+  setTimeout(playFromQueueExchange, Math.floor(Math.random() * 1000) + 3000);
   $('.events-remaining-value').html(eventQueue.length);
 }
 
@@ -216,7 +244,7 @@ String.prototype.capitalize=function(all){
     }else{
          return this.charAt(0).toUpperCase() + this.slice(1);
     }
-}
+};
 
 
 function drawEvent(data, svg_area) {
@@ -232,17 +260,17 @@ function drawEvent(data, svg_area) {
     var ring_anim_duration = 3000;
     svg_text_color = '#000000';
     switch(data.type){
-      case "CreatePlayList":
+      case "CREATE":
         label_text = data.user.capitalize() + " CREATE <" + data.repo_name + ">";
         edit_color = '#80DEEA';
       break;
-      case "CommentPlayList":
+      case "COMMENT":
         label_text = data.user.capitalize() + " COMMENT <" + data.repo_name + ">";
         edit_color = '#FF9800';
         ring_anim_duration = 10000;
         ring_radius = 600;
       break;
-      case "LikePlayList":
+      case "LIKE":
         label_text = data.user.capitalize() + " LIKE <" + data.repo_name + ">";
         edit_color = '#FFEB3B';
       break;
@@ -276,8 +304,8 @@ function drawEvent(data, svg_area) {
         .remove();
 
     var circle_container = circle_group.append('a');
-    circle_container.attr('xlink:href', data.url);
-    circle_container.attr('target', '_blank');
+    circle_container.attr('href', '/#' + data.url);
+    //circle_container.attr('target', '_blank');
     circle_container.attr('fill', svg_text_color);
 
     var circle = circle_container.append('circle');

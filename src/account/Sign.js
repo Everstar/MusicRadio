@@ -144,7 +144,6 @@ export default class Sign extends React.Component {
         if(this.state.username === 'test'){
             this.refs.dialog.handleOpen();
             //登录信息保存到本地
-            window.localStorage.setItem('musicradio', this.state.username);
             Auth.username = this.state.username;
             return;
         }
@@ -163,8 +162,8 @@ export default class Sign extends React.Component {
             success : function(data, textStatus, jqXHR) {
                 console.log(data);
                 if(data.result){
+                    this.refs.dialog.setContent('Sign in Success!', 'Press OK to redirect to Home.');
                     this.refs.dialog.handleOpen(true);
-                    window.localStorage.setItem('musicradio', this.state.username);
                     Auth.username = this.state.username;
                     Auth.Avator = this.getAvator();
                 }

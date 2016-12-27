@@ -2,6 +2,7 @@
  * Created by tsengkasing on 12/16/2016.
  */
 import React from 'react';
+import { hashHistory } from 'react-router'
 import {Card, CardHeader, CardText} from 'material-ui/Card';
 import LinearProgress from 'material-ui/LinearProgress'
 import Divider from 'material-ui/Divider';
@@ -67,6 +68,7 @@ export default class User extends React.Component {
             success : function(data, textStatus, jqXHR) {
                 let avator_url = data.avator_url;
                 if(avator_url != null) data.avator_url = avator_url.replace(/.*\\resources\\images\\/, "http://radioimg.neverstar.top/");
+                if(avator_url != null) data.avator_url = avator_url.replace(/.*\/resources\/images\//, "http://radioimg.neverstar.top/");
                 this.setState({
                     username : data.username,
                     exp : data.exp,
@@ -104,6 +106,7 @@ export default class User extends React.Component {
                     let avator_url = data[i].avator_url;
                     if(avator_url === null) continue;
                     data[i].avator_url = avator_url.replace(/.*\\resources\\images\\/, "http://radioimg.neverstar.top/");
+                    data[i].avator_url = avator_url.replace(/.*\/resources\/images\//, "http://radioimg.neverstar.top/");
                 };
                 this.setState({moments : data});
             }.bind(this),
@@ -131,6 +134,8 @@ export default class User extends React.Component {
                 alert('success!');
             },
             error : function(xhr, textStatus) {
+                if(xhr.status === 400)
+                    hashHistory.push('/sign');
                 console.log(xhr.status + '\n' + textStatus + '\n');
             }
         });

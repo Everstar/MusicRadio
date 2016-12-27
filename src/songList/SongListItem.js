@@ -629,6 +629,7 @@ export default class SongListItem extends React.Component {
                     let img_url = data[i].image_url;
                     if(img_url === null) continue;
                     data[i].image_url = img_url.replace(/.*\\resources\\images\\/, "http://radioimg.neverstar.top/");
+                    data[i].image_url = img_url.replace(/.*\/resources\/images\//, "http://radioimg.neverstar.top/");
                 }
                 this.setState({song_list : data})
             }.bind(this),
@@ -735,6 +736,7 @@ export default class SongListItem extends React.Component {
 
         let img_url = this.props.img_url;
         img_url = img_url.replace(/.*\\resources\\images\\/, "http://radioimg.neverstar.top/");
+        img_url = img_url.replace(/.*\/resources\/images\//, "http://radioimg.neverstar.top/");
 
         return (
             <Card expanded={this.state.expanded} onExpandChange={this.handleExpandChange} style={styles.cardSize}>

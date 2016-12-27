@@ -103,7 +103,7 @@ class UploadAvator extends React.Component {
                 >
                     <form id="changeAvator" method="post" encType="multipart/form-data" action={API.Avatar} target="uploadFrame">
                         <FlatButton label="Choose an Image" labelPosition="before">
-                            <input type="file" style={styles.imageInput} name="imgFile" />
+                            <input type="file" style={styles.imageInput} name="image_file" />
                         </FlatButton>
                         <input type="submit" value="upload" id="uploadAvator" style={{visibility : 'collapse'}}/>
                     </form>
@@ -183,6 +183,7 @@ export default class Home extends React.Component {
                     let avator_url = data[i].avator_url;
                     if(avator_url === null) continue;
                     data[i].avator_url = avator_url.replace(/.*\\resources\\images\\/, "http://radioimg.neverstar.top/");
+                    data[i].avator_url = avator_url.replace(/.*\/resources\/images\//, "http://radioimg.neverstar.top/");
                 };
                 this.setState({moments : data});
             }.bind(this),
@@ -233,6 +234,7 @@ export default class Home extends React.Component {
             success : function(data, textStatus, jqXHR) {
                 let avator_url = data.avator_url;
                 if(avator_url != null) data.avator_url = avator_url.replace(/.*\\resources\\images\\/, "http://radioimg.neverstar.top/");
+                if(avator_url != null) data.avator_url = avator_url.replace(/.*\/resources\/images\//, "http://radioimg.neverstar.top/");
                 song_info = data;
             },
             error : function(xhr, textStatus) {
@@ -353,6 +355,7 @@ export default class Home extends React.Component {
 
         let avator_url = this.state.avator_url;
         if(avator_url !== null) avator_url = avator_url.replace(/.*\\resources\\images\\/, "http://radioimg.neverstar.top/");
+        if(avator_url !== null) avator_url = avator_url.replace(/.*\/resources\/images\//, "http://radioimg.neverstar.top/");
 
         return (
             <div style={{maxWidth: '1024px', margin:'0 auto'}}>

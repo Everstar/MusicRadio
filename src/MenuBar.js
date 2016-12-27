@@ -14,6 +14,7 @@ import Avatar from 'material-ui/Avatar';
 import {IndexLink, Link, browserHistory, hashHistory}from 'react-router';
 import Auth from './account/Auth'
 import API from './API'
+import $ from 'jquery';
 
 
 class Signin extends React.Component {
@@ -100,23 +101,38 @@ class DrawerUndocked extends React.Component {
                 API.title = 'Following';
                 hashHistory.push('Following');
                 break;
-            case 'Message' :
-                console.log('Message');
-                API.title = 'Message';
-                hashHistory.push('Home');
-                break;
             default:
                 break;
         }
     };
 
     onSignOut = (event) => {
-        window.localStorage.removeItem('musicradio');
+        const URL = API.SignOut;
+        $.ajax({
+            url : URL,
+            type : 'GET',
+            async : false,
+            contentType: 'application/json',
+            headers : {
+                'target' : 'api',
+            },
+            success : function(data, textStatus, jqXHR) {
+                console.log(data);
+            },
+            error : function(xhr, textStatus) {
+                console.log(xhr.status + '\n' + textStatus + '\n');
+            }
+        });
         browserHistory.push('/');
         window.location.reload();
     };
 
     render() {
+        let avator_url = Auth.Avator;
+        if(avator_url !== null) {
+            avator_url = avator_url.replace(/.*\\resources\\images\\/, "http://radioimg.neverstar.top/");
+            avator_url = avator_url.replace(/.*\/resources\/images\//, "http://radioimg.neverstar.top/");
+        }
         return (
             <div>
                 <IconButton
@@ -130,7 +146,7 @@ class DrawerUndocked extends React.Component {
                     onRequestChange={(open) => this.setState({open})}
                 >
                     <div className="MenuBar-header" style={MenubarHeader_Background}>
-                        <Avatar src={Auth.Avator} size={56} />
+                        <Avatar src={avator_url} size={56} />
                         <br/>
                         <span className="Nickname">{Auth.username}</span>
                     </div>
@@ -141,7 +157,6 @@ class DrawerUndocked extends React.Component {
                     <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Home" disabled={this.state.menuItem_status[2]}/>
                     <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Song List" disabled={this.state.menuItem_status[3]}/>
                     <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Following" disabled={this.state.menuItem_status[4]}/>
-                    <MenuItem onTouchTap={this.handleClose} onClick={this.onclick} primaryText="Message" disabled={this.state.menuItem_status[5]}/>
                     <Divider />
                     <MenuItem onTouchTap={this.handleClose} onClick={this.onSignOut} primaryText="Sign Out"/>
                 </Drawer>

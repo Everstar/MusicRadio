@@ -187,7 +187,8 @@ function play() {
 	$('#artist').html(music_info.song_artists);
 	$('#control-play .material-icons').html('pause');
     music_info.mp3Url = music_info.mp3Url.replace(/http:\/\/m/, "http://p");
-    music_info.mp3Url = music_info.mp3Url.replace(/.*\\resources\\musics\\/, "http://radiosong.neverstar.top/");
+    music_info.mp3Url = music_info.mp3Url.replace(/.*\\resources\\musics\\/, "http://radioimg.neverstar.top/");
+    music_info.mp3Url = music_info.mp3Url.replace(/.*\/resources\/musics\//, "http://radioimg.neverstar.top/");
 	audio_load(music_info.mp3Url);
 	audioPlayer.play();
 
