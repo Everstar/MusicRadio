@@ -208,7 +208,6 @@ public class ResourceService extends MyService {
         return entity.getSongId();
     }
 
-
     public int SaveUploadResource(CommonsMultipartFile file, String type, String lang, String styles) {
         int id = 0;
         boolean isImage = type.equals("image");
@@ -219,9 +218,9 @@ public class ResourceService extends MyService {
             File resourceFile = new File(path);
             if (!resourceFile.exists())
                 resourceFile.mkdir();
-            resourceFile.setReadable(true);
-            resourceFile.setWritable(true);
             file.transferTo(resourceFile);
+            resourceFile.setReadable(true, true);
+            resourceFile.setWritable(true, true);
 
             if (isImage) {
                 id = CreateImage(path, "0");

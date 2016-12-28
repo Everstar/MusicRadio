@@ -81,19 +81,18 @@ public class SongListController implements Serializable {
     //tested
     @RequestMapping(value = "/songlist", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> getFollowSongLists(@CookieValue("token") String token, @RequestParam("id") int follow_id) {
-        int user_id = accountService.IdentifyUser(token);
-        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-
+        int user_id = -1;
+        if (token != null && !token.equals("")) {
+            user_id = accountService.IdentifyUser(token);
+            if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
         List<Map<String, Object>> list = songListService.GetSongListByUserId(follow_id, user_id);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
     //tested
     @RequestMapping(value = "/songlist/one", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
-    public ResponseEntity<Object> getSongsOfSongList(@CookieValue("token") String token, @RequestParam("id") int list_id) {
-        int user_id = accountService.IdentifyUser(token);
-        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-
+    public ResponseEntity<Object> getSongsOfSongList(@RequestParam("id") int list_id) {
         List<Map<String, Object>> list = songListService.GetSongsBySongListId(list_id);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }

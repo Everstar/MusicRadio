@@ -35,8 +35,8 @@ public class FollowService extends MyService {
     @Autowired
     private PreferRepository preferRepository;
 
-    public boolean AddFollows(int user_id, int follow_id){
-        if(user_id == follow_id)
+    public boolean AddFollows(int user_id, int follow_id) {
+        if (user_id == follow_id)
             return false;
         FollowEntity entity = new FollowEntity();
         entity.setUserId(user_id);
@@ -60,9 +60,9 @@ public class FollowService extends MyService {
         return list;
     }
 
-    public Map<String, Object> GetUserInfo(int user_id) {
+    public Map<String, Object> GetUserInfo(int user_id, int other_id) {
         Map<String, Object> map = new HashMap<>();
-        UserEntity userEntity = accountService.findOne(user_id);
+        UserEntity userEntity = accountService.findOne(other_id == 0 ? user_id : other_id);
         if (userEntity != null) {
             map.put("id", userEntity.getUserId());
             map.put("username", userEntity.getUserName());
@@ -76,6 +76,13 @@ public class FollowService extends MyService {
             map.put("friends_num", followRepository.countFollow(userEntity.getUserId()));
             map.put("exp_max", CommonUtil.MaxExp(userEntity.getRank()));
 
+            if (other_id != 0) {
+                int cnt = followRepository.Exists(user_id, other_id);
+                if (user_id != 0)
+                    map.put("followed", cnt > 0);
+                else
+                    map.put("followed", false);
+            }
         }
         return map;
     }
@@ -98,13 +105,13 @@ public class FollowService extends MyService {
         List<Map<String, Object>> moments = new ArrayList<>();
         List<Map<String, Object>> list = GetFollows(user_id);
         for (Map<String, Object> m : list) {
-            List<Map<String, Object>> part = MomentOfOne((int)m.get("id"));
+            List<Map<String, Object>> part = MomentOfOne((int) m.get("id"));
             moments.addAll(part);
         }
         return moments;
     }
 
-    public List<Map<String, Object>>GetPreferPagesByUserId(int user_id, int page_size){
+    public List<Map<String, Object>> GetPreferPagesByUserId(int user_id, int page_size) {
         List<Map<String, Object>> moments = new ArrayList<>();
         PageRequest request = buildPageRequest(1, page_size);
         UserEntity entity = accountService.findOne(user_id);
@@ -112,7 +119,7 @@ public class FollowService extends MyService {
         String avator_url = resourceService.GetImgUrlById(entity.getImageId());
 
         List<PreferEntity> prefers = preferRepository.findPreferByUserId(user_id, request).getContent();
-        for (PreferEntity p : prefers){
+        for (PreferEntity p : prefers) {
             Map<String, Object> map = new HashMap<>();
             map.put("id", user_id);
             map.put("username", user_name);
@@ -126,14 +133,14 @@ public class FollowService extends MyService {
         return moments;
     }
 
-    public List<Map<String, Object>>GetCreatePagesByUserId(int user_id, int page_size){
+    public List<Map<String, Object>> GetCreatePagesByUserId(int user_id, int page_size) {
         List<Map<String, Object>> moments = new ArrayList<>();
         PageRequest request = buildPageRequest(1, page_size);
         UserEntity entity = accountService.findOne(user_id);
         String user_name = entity.getUserName();
         String avator_url = resourceService.GetImgUrlById(entity.getImageId());
         List<SongListEntity> songs = songListService.GetSongListByUserIdAndPage(user_id, request);
-        for(SongListEntity s : songs){
+        for (SongListEntity s : songs) {
             Map<String, Object> map = new HashMap<>();
             map.put("id", user_id);
             map.put("username", user_name);
@@ -147,14 +154,14 @@ public class FollowService extends MyService {
         return moments;
     }
 
-    public List<Map<String, Object>>GetCommentPagesByUserId(int user_id, int page_size){
+    public List<Map<String, Object>> GetCommentPagesByUserId(int user_id, int page_size) {
         List<Map<String, Object>> moments = new ArrayList<>();
         PageRequest request = buildPageRequest(1, page_size);
         UserEntity entity = accountService.findOne(user_id);
         String user_name = entity.getUserName();
         String avator_url = resourceService.GetImgUrlById(entity.getImageId());
         List<CommentEntity> comments = songListService.GetCommentByUserIdAndPage(user_id, request);
-        for(CommentEntity c : comments){
+        for (CommentEntity c : comments) {
             Map<String, Object> map = new HashMap<>();
             map.put("id", user_id);
             map.put("username", user_name);

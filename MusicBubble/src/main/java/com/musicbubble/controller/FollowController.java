@@ -26,7 +26,7 @@ public class FollowController {
     private AccountService accountService;
 
     @RequestMapping(value = "/follow", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public ResponseEntity<Object> addFollows(@CookieValue("token") String token, @RequestBody Map<String, Integer> data){
+    public ResponseEntity<Object> addFollows(@CookieValue("token") String token, @RequestBody Map<String, Integer> data) {
         int user_id = accountService.IdentifyUser(token);
         if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
@@ -53,22 +53,24 @@ public class FollowController {
         int user_id = accountService.IdentifyUser(token);
         if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
-        Map<String, Object> map = followService.GetUserInfo(user_id);
+        Map<String, Object> map = followService.GetUserInfo(user_id, 0);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/info", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-    public ResponseEntity<Object> getOthersInfo(@CookieValue("token") String token, @RequestParam("id") Integer id) {
-        int user_id = accountService.IdentifyUser(token);
-        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-
-        Map<String, Object> map = followService.GetUserInfo(id);
+    public ResponseEntity<Object> getOthersInfo(@CookieValue(value = "token", required = false) String token, @RequestParam("id") Integer id) {
+        int user_id = 0;
+        if (token != null && !token.equals("")) {
+            user_id = accountService.IdentifyUser(token);
+            if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+        Map<String, Object> map = followService.GetUserInfo(user_id, id);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     //tested
     @RequestMapping(value = "/moment", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-    public ResponseEntity<Object> getMomentOfOne(@CookieValue("token") String token, @RequestParam("id") int id){
+    public ResponseEntity<Object> getMomentOfOne(@CookieValue("token") String token, @RequestParam("id") int id) {
         int user_id = accountService.IdentifyUser(token);
         if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
@@ -78,14 +80,13 @@ public class FollowController {
 
     //tested
     @RequestMapping(value = "/moment", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public ResponseEntity<Object> getMomentOfOne(@CookieValue("token") String token){
+    public ResponseEntity<Object> getMomentOfFollow(@CookieValue("token") String token) {
         int user_id = accountService.IdentifyUser(token);
         if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
         List<Map<String, Object>> list = followService.MomentOfFollow(user_id);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
-
 
 
 }

@@ -68,13 +68,11 @@
     image_url:<input type="text" name="image_url"/><br/>
     <input type="submit" value="upload">
 </form>
-<%--<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->--%>
-<%--<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>--%>
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 
-<%--<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->--%>
-<%--<script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>--%>
-
-<script src="../../jquery-3.1.1.js"></script>
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
 
@@ -112,7 +110,7 @@
 
     $('#signout').click(function (){
         $.ajax({
-            type : "POST",
+            type : "GET",
             dataType : "json",
             contentType : "application/json",
             data : null,

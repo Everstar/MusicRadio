@@ -39,13 +39,21 @@ public class SongListService extends MyService {
     public List<Map<String, Object>> GetHotList(int page_size) {
         PageRequest request = buildPageRequest(1, page_size);
         Page<SongListEntity> songs = songListRepository.findHotlist(request);
-        List<Map<String, Object>> list = fillSongList(0, songs.getContent());
+        List<Map<String, Object>> list = fillSongList(0, songs.getContent(), true);
         return list;
     }
 
     public List<Map<String, Object>> GetSongListByUserId(int own_id, int follow_id) {
         List<SongListEntity> songs = songListRepository.findByUserId(own_id);
-        List<Map<String, Object>> list = fillSongList(follow_id == 0 ? own_id : follow_id, songs);
+        int param;
+        if (follow_id == 0)       //查看自己的歌单
+            param = own_id;
+        else if (follow_id == -1){//游客查看歌单
+            param = own_id;
+        }else                     //查看已关注好友的歌单
+            param = follow_id;
+        boolean login = follow_id != -1;
+        List<Map<String, Object>> list = fillSongList(param, songs, login);
         return list;
     }
 
@@ -204,18 +212,21 @@ public class SongListService extends MyService {
         return new PageRequest(pageNumber - 1, pagzSize, null);
     }
 
-    private List<Map<String, Object>> fillSongList(int user_id, List<SongListEntity> lists) {
+    private List<Map<String, Object>> fillSongList(int user_id, List<SongListEntity> lists, boolean login) {
         List<Map<String, Object>> list = new ArrayList<>();
         for (SongListEntity s : lists) {
             Map<String, Object> map = new HashMap<>();
 
-            if (user_id != 0) {
+            if (user_id != 0 && login) {
                 PreferEntityPK entityPK = new PreferEntityPK();
                 entityPK.setListId(s.getListId());
                 entityPK.setUserId(user_id);
                 PreferEntity preferEntity = preferRepository.findOne(entityPK);
                 map.put("liked", preferEntity != null);
+            }else {
+                map.put("liked", false);
             }
+
             map.put("list_id", s.getListId());
             map.put("songlist_name", s.getListName());
             map.put("author_id", s.getUserId());

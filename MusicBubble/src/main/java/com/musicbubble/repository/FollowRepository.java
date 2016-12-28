@@ -17,4 +17,6 @@ public interface FollowRepository extends JpaRepository<FollowEntity, Integer>{
     @Query("select count (*) from FollowEntity f where f.userId = ?1")
     int countFollow(int user_id);
 
+    @Query("select count(*) from FollowEntity  f where  f.userId = ?1 and f.followId = ?2")
+    int Exists(int user_id, int follow_id);
 }
