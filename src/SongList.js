@@ -36,10 +36,10 @@ const styles = {
         overflowX : 'auto',
     },
     tableFont : {
-        fontSize:'1.5vh',
+        fontSize:'2vh',
     },
     tableDur : {
-        fontSize:'1.5vh',
+        fontSize:'2vh',
     },
     imgSize: {
         maxWidth : '128px',
@@ -366,7 +366,7 @@ export default class SongList extends React.Component {
                     </CardText>
                     <CardActions>
                         <RaisedButton label="PlayAll" primary={true} onTouchTap={this.playAll} />
-                        <RaisedButton label="Share" primary={true} />
+                        {/*<RaisedButton label="Share" primary={true} />*/}
                     </CardActions>
                 </Card>
                 <Divider style={{marginTop : '2%'}}/>

@@ -60,7 +60,10 @@ class HotList extends React.Component {
     };
 
     redirect = (event) => {
-        hashHistory.push('/songlist/' + event.target.id);
+        const index = event.target.id;
+        const list = this.state.songlist[index];
+
+        hashHistory.push('/songlist/' + list.list_id + '/' + list.songlist_name + '/' + list.author + '/' + list.img_id);
     };
 
     render() {
@@ -81,10 +84,8 @@ class HotList extends React.Component {
                         titleBackground="linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)"
                         cols={tile.featured ? 2 : 1}
                         rows={tile.featured ? 2 : 1}
-                        onTouchTap={this.redirect}
-                        id={tile.list_id}
                     >
-                        <img alt="居然找不到图片" src={tile.img_url || 'dynamic/img/6.png'} />
+                        <img alt="居然找不到图片" src={tile.img_url || 'dynamic/img/6.png'} id={index} onClick={this.redirect} />
                     </GridTile>
                 ))}
             </GridList>

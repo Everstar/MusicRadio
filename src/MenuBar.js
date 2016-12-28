@@ -43,7 +43,7 @@ class Signin extends React.Component {
 }
 
 const MenubarHeader_Background = {
-    backgroundImage: 'url("img/account-bg.png")',
+    backgroundImage: 'url("http://img.neverstar.top/account-bg.png")',
 };
 
 class DrawerUndocked extends React.Component {

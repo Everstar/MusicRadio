@@ -34,8 +34,11 @@ var svg_background_color_online = '#0288D1',
 
   //第几次获取广场数据
 var getEventsTimes = 0;
+var allow_getEvents = true;
 
 function getEvent() {
+    if(!allow_getEvents) return;
+    else allow_getEvents = false;
     getEventsTimes++;
     //var URL = 'music.neverstar.top/square';
     var URL = '/square';
@@ -49,8 +52,10 @@ function getEvent() {
             data.sort(function(){ return 0.5 - Math.random() })
             createEvent(data);
             console.log(data);
+            allow_getEvents = false;
         },
         error : function(xhr, textStatus) {
+            allow_getEvents = false;
             console.log(xhr.status + '\n' + textStatus + '\n');
         }
     });
@@ -229,7 +234,7 @@ function playFromQueueExchange(){
     if(!document.hidden)
       drawEvent(event, svg);
   }else if(event == null) {
-      setTimeout(getEvent, 500);
+      setTimeout(getEvent, 10000);
   }
   setTimeout(playFromQueueExchange, Math.floor(Math.random() * 1000) + 3000);
   $('.events-remaining-value').html(eventQueue.length);

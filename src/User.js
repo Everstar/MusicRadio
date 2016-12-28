@@ -13,6 +13,7 @@ import Paper from 'material-ui/Paper';
 import Avatar from 'material-ui/Avatar';
 import $ from 'jquery';
 import API from './API'
+import Auth from './account/Auth';
 
 const styles = {
     wrapper: {
@@ -45,10 +46,10 @@ export default class User extends React.Component {
             ctr_songlist : 0,
             liked_songlist : 0,
             following_num : 0,
+            followed : false,
             moments : [],
             avator_url : 'http://img.neverstar.top/default.jpg',
         };
-        console.log(this.props.params.id);
     };
 
     //获取用户信息
@@ -78,6 +79,7 @@ export default class User extends React.Component {
                     ctr_songlist: data.ctr_songlist,
                     liked_songlist: data.liked_songlist,
                     following_num: data.friends_num,
+                    followed : data.followed,
                     avator_url : data.avator_url,
                 });
             }.bind(this),
@@ -117,7 +119,9 @@ export default class User extends React.Component {
     };
 
     follow = () => {
-        console.log('follow' + this.props.params.id);
+        //如果未登录，跳转到登录页面
+        if(Auth.username === null){ hashHistory.push('/sign'); return;}
+
         const URL = API.Follow;
         const data = {user_id : this.props.params.id};
         $.ajax({
@@ -161,7 +165,7 @@ export default class User extends React.Component {
                         Lv{this.state.level}<LinearProgress mode="determinate" value={this.state.exp} max={this.state.exp_max} />
                     </div>
                     <CardText>
-                        <RaisedButton label="Follow" primary={true} onTouchTap={this.follow}/>
+                        <RaisedButton label={this.state.followed ? 'Followed' : 'Follow'} primary={true} onTouchTap={this.follow} disabled={this.state.followed}/>
                     </CardText>
                     <List>
                         <ListItem primaryText="Created Song Lists" rightIcon={<TextField value={this.state.ctr_songlist} id="crt" inputStyle={styles.autoWidth} readOnly="true" underlineShow={false} />} />

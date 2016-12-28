@@ -29,8 +29,9 @@ class App extends React.Component {
                 Auth.Avator = data.avator_url;
             },
             error : function(xhr, textStatus) {
+                console.log('未登录');
                 //window.location.href='/#/sign';
-                console.log(xhr.status + '\n' + textStatus + '\n');
+                //console.log(xhr.status + '\n' + textStatus + '\n');
             }
         });
         return true;

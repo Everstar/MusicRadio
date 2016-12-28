@@ -58,6 +58,9 @@ function GetImageById(img_id) {
             console.log(xhr.status + '\n' + textStatus + '\n');
         }
     });
+    img_url = img_url.replace(/.*\\resources\\images\\/, "http://radioimg.neverstar.top/");
+    img_url = img_url.replace(/.*\/resources\/images\//, "http://radioimg.neverstar.top/");
+    console.log(img_url);
     return img_url;
 }
 
@@ -170,6 +173,8 @@ function play() {
 		case 'songlist':
             music_info = musicList[sequence];
             music_info.song_artists = music_info.artists;
+            music_info.image_url = music_info.image_url.replace(/.*\\resources\\images\\/, "http://radioimg.neverstar.top/");
+            music_info.image_url = music_info.image_url.replace(/.*\/resources\/images\//, "http://radioimg.neverstar.top/");
             nextPicPath = 'url(' + music_info.image_url +') no-repeat center';
 			break;
 		default:
@@ -187,8 +192,8 @@ function play() {
 	$('#artist').html(music_info.song_artists);
 	$('#control-play .material-icons').html('pause');
     music_info.mp3Url = music_info.mp3Url.replace(/http:\/\/m/, "http://p");
-    music_info.mp3Url = music_info.mp3Url.replace(/.*\\resources\\musics\\/, "http://radioimg.neverstar.top/");
-    music_info.mp3Url = music_info.mp3Url.replace(/.*\/resources\/musics\//, "http://radioimg.neverstar.top/");
+    music_info.mp3Url = music_info.mp3Url.replace(/.*\\resources\\musics\\/, "http://radiosong.neverstar.top/");
+    music_info.mp3Url = music_info.mp3Url.replace(/.*\/resources\/musics\//, "http://radiosong.neverstar.top/");
 	audio_load(music_info.mp3Url);
 	audioPlayer.play();
 

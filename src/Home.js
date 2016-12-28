@@ -374,7 +374,7 @@ export default class Home extends React.Component {
                     <List>
                         <ListItem primaryText="Created Song Lists" rightIcon={<TextField value={this.state.ctr_songlist} id="crt" inputStyle={styles.autoWidth} readOnly="true" underlineShow={false} />} />
                         <ListItem primaryText="Liked Song Lists" rightIcon={<TextField value={this.state.liked_songlist} id="lik" inputStyle={styles.autoWidth} readOnly="true" underlineShow={false} />} />
-                        <ListItem primaryText="Friends" rightIcon={<TextField value={this.state.following_num} id="friend" inputStyle={styles.autoWidth} readOnly="true" underlineShow={false} />} />
+                        <ListItem primaryText="Following" rightIcon={<TextField value={this.state.following_num} id="friend" inputStyle={styles.autoWidth} readOnly="true" underlineShow={false} />} />
                     </List>
                 </Card>
                 <Divider style={{marginTop : '2%'}}/>
@@ -405,6 +405,7 @@ export default class Home extends React.Component {
                     <GridList style={styles.gridList} cols={2.2}>
                         {this.state.recommend_user_list.map((user, index) => (
                             <GridTile
+                                style={{display : user.avator_url ? 'block' : 'none'}}
                                 cols={index}
                                 key={index}
                                 title={user.username}
@@ -413,7 +414,7 @@ export default class Home extends React.Component {
                                 titleBackground="linear-gradient(to top, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)"
                             >
                                 <img src={user.avator_url} alt="居然找不到头像" onClick={this.onClickRecommendUser} about={user.id}
-                                     style={this.state.recommend_user_list.length > 1 ? null : {width:'100%', height:'auto'}} />
+                                     style={this.state.recommend_user_list.length > 2 ? null : {width:'100%', height:'auto'}} />
                             </GridTile>
                         ))}
                     </GridList>

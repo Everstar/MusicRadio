@@ -36,10 +36,10 @@ const styles = {
         overflowX : 'auto',
     },
     tableFont : {
-        fontSize:'1.5vh',
+        fontSize:'2vh',
     },
     tableDur : {
-        fontSize:'1.5vh',
+        fontSize:'2vh',
     },
     imgSize: {
         maxWidth : '128px',
@@ -732,6 +732,13 @@ export default class SongListItem extends React.Component {
         this.refs.editSongList.handleOpen(this.props.songlist_id, this.props.title, this.props.description, this.props.img_id);
     };
 
+    replaceURL = (url) => {
+        let img_url = url;
+        img_url = img_url.replace(/.*\\resources\\images\\/, "http://radioimg.neverstar.top/");
+        img_url = img_url.replace(/.*\/resources\/images\//, "http://radioimg.neverstar.top/");
+        return img_url;
+    };
+
     render() {
 
         let img_url = this.props.img_url;
@@ -794,7 +801,7 @@ export default class SongListItem extends React.Component {
                                 <TableRowColumn style={styles.tableFont}>{row.song_name}</TableRowColumn>
                                 <TableRowColumn style={styles.tableFont}>{row.artists}</TableRowColumn>
                                 <TableRowColumn style={styles.tableDur}>{(row.duration / 60000).toFixed(0) + '分' + ((row.duration / 1000) % 60).toFixed(0) + '秒' }</TableRowColumn>
-                                <TableRowColumn><img style={styles.imgSize} src={row.image_url} onClick={this.changeImg} alt={index}/></TableRowColumn>
+                                <TableRowColumn><img style={styles.imgSize} src={this.replaceURL(row.image_url)} onClick={this.changeImg} alt={index}/></TableRowColumn>
                                 <TableRowColumn style={styles.tableButton}>
                                     <IconButton onTouchTap={this.removeItem} alt={row.song_id} key={index}><ContentRemoveCircleOutline /></IconButton>
                                 </TableRowColumn>
