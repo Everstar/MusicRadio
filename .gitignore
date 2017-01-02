@@ -1,10 +1,12 @@
 
-.idea/
+source-frontend/.idea/
 
-node_modules/
+source-frontend/node_modules/
 
-build/
+source-frontend/build/
 
-public/dynamic/img
+source-frontend/public/dynamic/img
 
 
+source-backend/MusicBubble/target
+source-backend/MusicBubble/.idea/*
