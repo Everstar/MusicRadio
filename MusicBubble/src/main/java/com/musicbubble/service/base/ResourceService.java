@@ -4,6 +4,8 @@ import com.musicbubble.model.ImageEntity;
 import com.musicbubble.model.SongEntity;
 import com.musicbubble.repository.ImageRepository;
 import com.musicbubble.repository.SongRepository;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jaudiotagger.audio.mp3.MP3AudioHeader;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.Charset;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +31,7 @@ import java.util.Map;
  */
 @Service
 public class ResourceService extends MyService {
-
+    private static Logger logger = Logger.getLogger(ResourceService.class);
     @Autowired
     private ImageRepository imageRepository;
     @Autowired
@@ -94,7 +97,7 @@ public class ResourceService extends MyService {
         return lyric;
     }
 
-    public List<Map<String, Object>> GetPlaylistInfo(String id){
+    public List<Map<String, Object>> GetPlaylistInfo(String id) {
         String uri = new String("http://music.163.com/api/playlist/detail?id=" + id);
         List<Map<String, Object>> list = new ArrayList<>();
         try {
@@ -110,9 +113,9 @@ public class ResourceService extends MyService {
             list.add(map);
 
             //歌曲信息
-            for(int index = 0; ;index++){
+            for (int index = 0; ; index++) {
                 JsonNode song = tracks.get(index);
-                if(song == null)break;
+                if (song == null) break;
 
                 map = new HashMap<>();
                 map.put("name", song.path("name").asText());
@@ -123,7 +126,7 @@ public class ResourceService extends MyService {
                 map.put("type", "1");
                 list.add(map);
             }
-        }catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             System.err.println(uri + "is not a valid url");
         } catch (IOException e) {
             e.printStackTrace();
@@ -132,6 +135,7 @@ public class ResourceService extends MyService {
         }
         return list;
     }
+
     //中英文都可以识别
     public List<Map<String, Object>> SearchMusic(String keys, int limit, int type) {
         String uri = new String("http://music.163.com/api/search/get/web?csrf_token=");
@@ -191,53 +195,89 @@ public class ResourceService extends MyService {
     }
 
     @Transactional
-    public int CreateSong(String song_url, String type, String song_name, String song_artists, int netease_id, int duration, String lang,  String styles) {
-        if (!type.equals("0") && !type.equals("1"))
-            return 0;
+    public int CreateSong(String song_url, String song_name, String song_artists, int duration, String lang, String styles, Integer uploader_id) {
         SongEntity entity = new SongEntity();
         entity.setSongName(song_name);
-        entity.setNeteaseId(netease_id);
         entity.setAuthorName(song_artists);
         entity.setSongUri(song_url);
-        entity.setSongType(type);
         entity.setLastTime(duration);
         entity.setStyles(styles);
         entity.setLanguage(lang);
+        entity.setUploaderId(uploader_id);
+        entity.setUploadTime(new Timestamp(System.currentTimeMillis()));
+        entity.setPlayedTimes(0);
         entity = songRepository.saveAndFlush(entity);
 
         return entity.getSongId();
     }
 
-    public int SaveUploadResource(CommonsMultipartFile file, String type, String lang, String styles) {
+    public boolean UpdateAllSongs() {
+        List<SongEntity> list = songRepository.findAll();
+        for (SongEntity entity : list) {
+            if (entity.getSongUri().startsWith("http://m2.music.126.net")) {
+                try {
+                    URL url = new URL(entity.getSongUri());
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    InputStream stream = connection.getInputStream();
+                    ByteArrayOutputStream output = new ByteArrayOutputStream();
+                    byte[] buffer = new byte[4096];
+                    int n = 0;
+                    while (-1 != (n = stream.read(buffer))) {
+                        output.write(buffer, 0, n);
+                    }
+                    String qiniuPath = QiniuStore.storeBytes(output.toByteArray(), entity.getSongName());
+                    if (qiniuPath != null) {
+                        entity.setSongUri(qiniuPath);
+                        songRepository.save(entity);
+                    } else {
+                        System.out.println("3qiniu upload failed!!!");
+                        continue;
+                    }
+
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }catch (FileNotFoundException e){
+                    logger.error("file not found! [" + entity.getSongId() + "]=" + entity.getSongUri());
+                }catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return true;
+    }
+
+    public int SaveUploadResource(CommonsMultipartFile file, String type, String lang, String styles, Integer uploader_id) {
         int id = 0;
         boolean isImage = type.equals("image");
         try {
             String rootPath = System.getProperty("web.root");
-            String relativePath = "resources" + File.separatorChar + (isImage ? "images" : "musics");
-            String path = rootPath +  relativePath + File.separatorChar + file.getOriginalFilename();
+            String path = rootPath + "resources" + File.separatorChar + file.getOriginalFilename();
             File resourceFile = new File(path);
-            if (!resourceFile.exists())
-                resourceFile.mkdir();
+            if(!resourceFile.exists())
+                resourceFile.mkdirs();
             file.transferTo(resourceFile);
-            resourceFile.setReadable(true, true);
-            resourceFile.setWritable(true, true);
+
+            String qiniuPath = QiniuStore.storeFile(path, file.getOriginalFilename());
+            if (qiniuPath == null) return id;
+
+            resourceFile.deleteOnExit();
 
             if (isImage) {
-                id = CreateImage(path, "0");
+                id = CreateImage(qiniuPath, "0");
             } else {
                 Map<String, String> song_info = parseMp3(path);
-                id = CreateSong(path, "0",
+                id = CreateSong(qiniuPath,
                         song_info.get("song_name"),
                         song_info.get("artists"),
-                        0,
                         Integer.parseInt(song_info.get("duration")),
                         lang,
-                        styles);
+                        styles,
+                        uploader_id
+                        );
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return id;
@@ -287,7 +327,7 @@ public class ResourceService extends MyService {
         return list;
     }
 
-    private Map<String, String> parseMp3(String path){
+    private Map<String, String> parseMp3(String path) {
         Map<String, String> map = new HashMap<>();
         try {
             MP3File mp3File = new MP3File(path);
@@ -299,7 +339,7 @@ public class ResourceService extends MyService {
             map.put("song_name", song_name);
             map.put("artists", artists);
             map.put("duration", duration.toString());
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return map;

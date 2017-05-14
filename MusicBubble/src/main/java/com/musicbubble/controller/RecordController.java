@@ -21,7 +21,7 @@ public class RecordController {
     @Autowired
     private RecordService recordService;
 
-    @RequestMapping(value = "/record", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/api/record", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> recordTaste(@CookieValue("token") String token, @RequestBody Map<String, Integer> data){
         int user_id = accountService.IdentifyUser(token);
         if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);

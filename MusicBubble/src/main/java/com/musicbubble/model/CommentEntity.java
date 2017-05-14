@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 /**
- * Created by happyfarmer on 12/16/2016.
+ * Created by happyfarmer on 5/6/2017.
  */
 @Entity
 @Table(name = "comment", schema = "db_03", catalog = "")
@@ -82,14 +82,14 @@ public class CommentEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        CommentEntity that = (CommentEntity) o;
+        CommentEntity entity = (CommentEntity) o;
 
-        if (commentId != that.commentId) return false;
-        if (userId != null ? !userId.equals(that.userId) : that.userId != null) return false;
-        if (listId != null ? !listId.equals(that.listId) : that.listId != null) return false;
-        if (content != null ? !content.equals(that.content) : that.content != null) return false;
-        if (commentTime != null ? !commentTime.equals(that.commentTime) : that.commentTime != null) return false;
-        if (likes != null ? !likes.equals(that.likes) : that.likes != null) return false;
+        if (commentId != entity.commentId) return false;
+        if (userId != null ? !userId.equals(entity.userId) : entity.userId != null) return false;
+        if (listId != null ? !listId.equals(entity.listId) : entity.listId != null) return false;
+        if (content != null ? !content.equals(entity.content) : entity.content != null) return false;
+        if (commentTime != null ? !commentTime.equals(entity.commentTime) : entity.commentTime != null) return false;
+        if (likes != null ? !likes.equals(entity.likes) : entity.likes != null) return false;
 
         return true;
     }

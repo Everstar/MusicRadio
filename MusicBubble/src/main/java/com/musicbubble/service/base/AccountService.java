@@ -35,7 +35,7 @@ public class AccountService extends MyService {
     }
 
     @Transactional
-    public int SignUp(String user_name, String passwd, String sex) {
+    public int SignUp(String user_name, String passwd, String sex, String birthday, String email) {
         if (user_name.length() > 100
                 || passwd.length() > 20
                 || (!sex.equals("M") && !sex.equals("F")))
@@ -49,6 +49,8 @@ public class AccountService extends MyService {
         entity.setRank(1);
         entity.setSex(sex.equals("M") ? "M" : "F");
         entity.setExperience(0);
+        entity.setBirthday(birthday);
+        entity.setMail(email);
 
         entity.setLastSignin(new Timestamp(2000));
 

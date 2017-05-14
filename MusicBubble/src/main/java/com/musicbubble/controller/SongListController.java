@@ -4,6 +4,7 @@ import com.musicbubble.service.base.AccountService;
 import com.musicbubble.service.SongListService;
 import com.musicbubble.service.base.ResourceService;
 import com.musicbubble.tools.ConstUtil;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import java.util.Map;
  */
 @RestController
 public class SongListController implements Serializable {
+    private static Logger logger = Logger.getLogger(SongListController.class);
     @Autowired
     private SongListService songListService;
     @Autowired
@@ -33,34 +35,35 @@ public class SongListController implements Serializable {
         int user_id = accountService.IdentifyUser(token);
         if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
-        List<Map<String, Object>> list = resourceService.GetPlaylistInfo(songlist_id);
-        Map<String, Object> map = list.get(0);
-        int list_id = songListService.CreateSongList(user_id, (String) map.get("name"), (String) map.get("description"));
-        for (int index = 1; index < list.size(); ++index) {
-            map = list.get(index);
-            int song_id = resourceService.CreateSong(
-                    (String) map.get("mp3Url"),
-                    (String) map.get("type"),
-                    (String) map.get("name"),
-                    (String) map.get("artists"),
-                    (Integer) map.get("id"),
-                    (Integer) map.get("duration"),
-                    null,
-                    null
-            );
-            songListService.AddSongToList(list_id, song_id);
-        }
-        return new ResponseEntity<>(list, HttpStatus.OK);
+//        List<Map<String, Object>> list = resourceService.GetPlaylistInfo(songlist_id);
+//        Map<String, Object> map = list.get(0);
+//        int list_id = songListService.CreateSongList(user_id, (String) map.get("name"), (String) map.get("description"));
+//        for (int index = 1; index < list.size(); ++index) {
+//            map = list.get(index);
+//            int song_id = resourceService.CreateSong(
+//                    (String) map.get("mp3Url"),
+//                    (String) map.get("type"),
+//                    (String) map.get("name"),
+//                    (String) map.get("artists"),
+//                    (Integer) map.get("id"),
+//                    (Integer) map.get("duration"),
+//                    null,
+//                    null
+//            );
+//            songListService.AddSongToList(list_id, song_id);
+//        }
+        resourceService.UpdateAllSongs();
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/updateSong", method = RequestMethod.GET)
-    public ResponseEntity<Object> udpateSong(){
-        songListService.updateSong();
-        return null;
-    }
+//    @RequestMapping(value = "/api/updateSong", method = RequestMethod.GET)
+//    public ResponseEntity<Object> udpateSong(){
+//        songListService.updateSong();
+//        return null;
+//    }
 
     //tested
-    @RequestMapping(value = "/hotlist", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/api/hotlist", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> getHotList(@RequestParam(value = "num", defaultValue = "10") int num) {
         List<Map<String, Object>> list = songListService.GetHotList(num);
         HttpStatus status = HttpStatus.OK;
@@ -69,7 +72,7 @@ public class SongListController implements Serializable {
     }
 
     //tested
-    @RequestMapping(value = "/songlist", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/api/songlist", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> getOwnSongLists(@CookieValue("token") String token) {
         int user_id = accountService.IdentifyUser(token);
         if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
@@ -78,8 +81,26 @@ public class SongListController implements Serializable {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/api/songlistown", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+    public ResponseEntity<Object> getOwnSongListIds(@CookieValue("token") String token) {
+        int user_id = accountService.IdentifyUser(token);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+
+        List<Integer> list = songListService.GetSongListIdByUserId(user_id);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/api/songlistinfo", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<Object> getSongListInfo(@CookieValue("token") String token, @RequestParam("id") int list_id){
+        int user_id = accountService.IdentifyUser(token);
+        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+
+        Map<String, Object> info = songListService.GetSongListInfo(user_id, list_id);
+        return new ResponseEntity<Object>(info, HttpStatus.OK);
+    }
+
     //tested
-    @RequestMapping(value = "/songlist", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/api/songlist", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> getFollowSongLists(@CookieValue("token") String token, @RequestParam("id") int follow_id) {
         int user_id = -1;
         if (token != null && !token.equals("")) {
@@ -91,20 +112,20 @@ public class SongListController implements Serializable {
     }
 
     //tested
-    @RequestMapping(value = "/songlist/one", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/api/songlist/one", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> getSongsOfSongList(@RequestParam("id") int list_id) {
         List<Map<String, Object>> list = songListService.GetSongsBySongListId(list_id);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/song", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/api/play", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> getSongUrl(@RequestParam("id") int song_id) {
         Map<String, Object> map = songListService.GetSongInfo(song_id);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     //tested
-    @RequestMapping(value = "/newlist", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/api/newlist", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> addSongList(@CookieValue("token") String token, @RequestBody Map<String, String> data) {
         int user_id = accountService.IdentifyUser(token);
         if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
@@ -118,7 +139,7 @@ public class SongListController implements Serializable {
     }
 
     //tested
-    @RequestMapping(value = "/deletelist", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/api/deletelist", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> removeSongList(@CookieValue("token") String token, @RequestBody Map<String, Integer> data) {
         int user_id = accountService.IdentifyUser(token);
         if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
@@ -133,7 +154,7 @@ public class SongListController implements Serializable {
 
 
     //tested
-    @RequestMapping(value = "/changelist", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/api/changelist", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> changeSongList(@CookieValue("token") String token
             , @RequestParam("image_file") CommonsMultipartFile image, HttpServletRequest request) {
         int user_id = accountService.IdentifyUser(token);
@@ -142,22 +163,14 @@ public class SongListController implements Serializable {
         Integer list_id = Integer.parseInt(request.getParameter("songlist_id"));
         String song_name = request.getParameter("songlist_name").trim();
         String desc = request.getParameter("description").trim();
-        String image_url = request.getParameter("image_url").trim();
-        Integer image_id = Integer.parseInt(request.getParameter("image_id"));//原来的id
-
+        Integer image_id = 0;
         if (image != null
                 && image.getSize() > 0
                 && image.getContentType().startsWith("image")) {
             //上传图片
-            image_id = resourceService.SaveUploadResource(image, "image", null, null);
+            image_id = resourceService.SaveUploadResource(image, "image", null, null, user_id);
 
-        } else if (image_url != null) {
-            //外链图片
-            image_id = resourceService.CreateImage(image_url, "1");
-        } else {
-            //不改变背景图
         }
-
         boolean res = songListService.ChangeSongListInfo(list_id, song_name, desc, image_id);
         HttpStatus status = res ? HttpStatus.OK : HttpStatus.NOT_MODIFIED;
         Map<String, Object> map = new HashMap<>();
@@ -166,58 +179,44 @@ public class SongListController implements Serializable {
     }
 
 
-    @RequestMapping(value = "/addsong/netease", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public ResponseEntity<Object> addSongByNetEase(@CookieValue("token") String token, HttpServletRequest request) {
-        int user_id = accountService.IdentifyUser(token);
-        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-
-        Integer list_id = Integer.parseInt(request.getParameter("songlist_id"));
-        Integer netease_id = Integer.parseInt(request.getParameter("netease_id"));
-        String song_name = request.getParameter("song_name");
-        String song_artists = request.getParameter("song_artists");
-        String song_url = request.getParameter("mp3Url");
-        Integer duration = Integer.parseInt(request.getParameter("duration"));
-        String styles = request.getParameter("styles");
-        String language = request.getParameter("language");
-
-        boolean res;
-        int song_id = 0;
-        if (!ConstUtil.LANGUAGES.contains(language) || !ConstUtil.CheckStyle(styles))
-            res = false;
-        else {
-            if ((song_id = songListService.SongExists(netease_id)) != 0) {
-                res = false;
-            } else {
-                song_id = resourceService.CreateSong(song_url, "1", song_name, song_artists, netease_id, duration, language, styles);
-            }
-            res = songListService.AddSongToList(list_id, song_id);
-        }
-        HttpStatus status = res ? HttpStatus.OK : HttpStatus.NOT_MODIFIED;
-        Map<String, Object> map = new HashMap<>();
-        map.put("song_id", song_id);
-        return new ResponseEntity<>(map, status);
-    }
-
-//    //tested
-//    @RequestMapping(value = "/addsong/songlist", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-//    public ResponseEntity<Object> addSongBySongList(@CookieValue("token") String token, @RequestBody Map<String, Integer> data) {
+    //deprerated
+//    @RequestMapping(value = "/api/addsong/netease", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+//    public ResponseEntity<Object> addSongByNetEase(@CookieValue("token") String token, HttpServletRequest request) {
 //        int user_id = accountService.IdentifyUser(token);
 //        if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 //
-//        Integer list_id = data.get("songlist_id");
-//        Integer song_id = data.get("song_id");
+//        Integer list_id = Integer.parseInt(request.getParameter("songlist_id"));
+//        Integer netease_id = Integer.parseInt(request.getParameter("netease_id"));
+//        String song_name = request.getParameter("song_name");
+//        String song_artists = request.getParameter("song_artists");
+//        String song_url = request.getParameter("mp3Url");
+//        Integer duration = Integer.parseInt(request.getParameter("duration"));
+//        String styles = request.getParameter("styles");
+//        String language = request.getParameter("language");
 //
-//        boolean res = songListService.AddSongToList(list_id, song_id);
+//        boolean res;
+//        int song_id = 0;
+//        if (!ConstUtil.LANGUAGES.contains(language) || !ConstUtil.CheckStyle(styles))
+//            res = false;
+//        else {
+//            if ((song_id = songListService.SongExists(netease_id)) != 0) {
+//                res = false;
+//            } else {
+//                song_id = resourceService.CreateSong(song_url, song_name, song_artists, duration, language, styles, user_id);
+//            }
+//            res = songListService.AddSongToList(list_id, song_id);
+//        }
 //        HttpStatus status = res ? HttpStatus.OK : HttpStatus.NOT_MODIFIED;
 //        Map<String, Object> map = new HashMap<>();
-//        map.put("result", res);
+//        map.put("song_id", song_id);
 //        return new ResponseEntity<>(map, status);
 //    }
 
+
     //tested
-    @RequestMapping(value = "/addsong/upload", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/api/addsong/upload", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> addSongByUpload(@CookieValue("token") String token,
-            @RequestParam("song_file") CommonsMultipartFile music, HttpServletRequest request) {
+                                                  @RequestParam("song_file") CommonsMultipartFile music, HttpServletRequest request) {
         int user_id = accountService.IdentifyUser(token);
         if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
@@ -235,7 +234,7 @@ public class SongListController implements Serializable {
                     && music.getSize() > 0
                     && music.getContentType().startsWith("audio")) {
                 //上传图片
-                song_id = resourceService.SaveUploadResource(music, "music", language, styles);
+                song_id = resourceService.SaveUploadResource(music, "music", language, styles, user_id);
             }
 
             res = songListService.AddSongToList(list_id, song_id);
@@ -247,7 +246,7 @@ public class SongListController implements Serializable {
     }
 
     //tested
-    @RequestMapping(value = "/removesong", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/api/removesong", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> removeSong(@CookieValue("token") String token, @RequestBody Map<String, Integer> data) {
         int user_id = accountService.IdentifyUser(token);
         if (user_id == 0) return new ResponseEntity<Object>(null, HttpStatus.UNAUTHORIZED);
@@ -262,37 +261,37 @@ public class SongListController implements Serializable {
         return new ResponseEntity<>(map, status);
     }
 
-    //tested
-    @RequestMapping(value = "/changesong", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public ResponseEntity<Object> changeSong(@CookieValue("token") String token
-            , @RequestParam("image_file") CommonsMultipartFile image, HttpServletRequest request) {
-        int user_id = accountService.IdentifyUser(token);
-        if (user_id == 0) return new ResponseEntity<Object>(null, HttpStatus.UNAUTHORIZED);
-
-        Integer list_id = Integer.parseInt(request.getParameter("songlist_id"));
-        Integer song_id = Integer.parseInt(request.getParameter("song_id"));
-        String image_url = request.getParameter("image_url").trim();
-        Integer image_id = Integer.parseInt(request.getParameter("image_id"));//原来的id
-
-        if (image != null
-                && image.getSize() > 0
-                && image.getContentType().startsWith("image")) {
-            //上传图片
-            image_id = resourceService.SaveUploadResource(image, "image", null, null);
-
-        } else if (image_url != null && !image_url.equals("")) {
-            //外链图片
-            image_id = resourceService.CreateImage(image_url, "1");
-        } else {
-            //不改变背景图
-        }
-
-        boolean res = songListService.ChangeSongImage(list_id, song_id, image_id);
-        HttpStatus status = res ? HttpStatus.OK : HttpStatus.NOT_MODIFIED;
-        Map<String, Object> map = new HashMap<>();
-        map.put("result", res);
-        return new ResponseEntity<>(map, status);
-    }
+    //deprerated
+//    @RequestMapping(value = "/api/changesong", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+//    public ResponseEntity<Object> changeSong(@CookieValue("token") String token
+//            , @RequestParam("image_file") CommonsMultipartFile image, HttpServletRequest request) {
+//        int user_id = accountService.IdentifyUser(token);
+//        if (user_id == 0) return new ResponseEntity<Object>(null, HttpStatus.UNAUTHORIZED);
+//
+//        Integer list_id = Integer.parseInt(request.getParameter("songlist_id"));
+//        Integer song_id = Integer.parseInt(request.getParameter("song_id"));
+//        String image_url = request.getParameter("image_url").trim();
+//        Integer image_id = Integer.parseInt(request.getParameter("image_id"));//原来的id
+//
+//        if (image != null
+//                && image.getSize() > 0
+//                && image.getContentType().startsWith("image")) {
+//            //上传图片
+//            image_id = resourceService.SaveUploadResource(image, "image", null, null, user_id);
+//
+//        } else if (image_url != null && !image_url.equals("")) {
+//            //外链图片
+//            image_id = resourceService.CreateImage(image_url, "1");
+//        } else {
+//            //不改变背景图
+//        }
+//
+//        boolean res = songListService.ChangeSongImage(list_id, song_id, image_id);
+//        HttpStatus status = res ? HttpStatus.OK : HttpStatus.NOT_MODIFIED;
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("result", res);
+//        return new ResponseEntity<>(map, status);
+//    }
 
 
 }

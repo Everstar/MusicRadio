@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 /**
- * Created by happyfarmer on 12/18/2016.
+ * Created by happyfarmer on 2017/5/10.
  */
 @Entity
 @Table(name = "user", schema = "db_03", catalog = "")
@@ -18,10 +18,11 @@ public class UserEntity {
     private Integer experience;
     private Integer listId;
     private Timestamp lastSignin;
+    private String mail;
+    private String birthday;
 
     @Id
     @Column(name = "user_id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getUserId() {
         return userId;
     }
@@ -110,6 +111,26 @@ public class UserEntity {
         this.lastSignin = lastSignin;
     }
 
+    @Basic
+    @Column(name = "mail", nullable = true, length = 100)
+    public String getMail() {
+        return mail;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
+
+    @Basic
+    @Column(name = "birthday", nullable = true, length = 100)
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -126,6 +147,8 @@ public class UserEntity {
         if (experience != null ? !experience.equals(entity.experience) : entity.experience != null) return false;
         if (listId != null ? !listId.equals(entity.listId) : entity.listId != null) return false;
         if (lastSignin != null ? !lastSignin.equals(entity.lastSignin) : entity.lastSignin != null) return false;
+        if (mail != null ? !mail.equals(entity.mail) : entity.mail != null) return false;
+        if (birthday != null ? !birthday.equals(entity.birthday) : entity.birthday != null) return false;
 
         return true;
     }
@@ -141,6 +164,8 @@ public class UserEntity {
         result = 31 * result + (experience != null ? experience.hashCode() : 0);
         result = 31 * result + (listId != null ? listId.hashCode() : 0);
         result = 31 * result + (lastSignin != null ? lastSignin.hashCode() : 0);
+        result = 31 * result + (mail != null ? mail.hashCode() : 0);
+        result = 31 * result + (birthday != null ? birthday.hashCode() : 0);
         return result;
     }
 }

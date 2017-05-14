@@ -48,13 +48,17 @@ public class SongListService extends MyService {
         int param;
         if (follow_id == 0)       //查看自己的歌单
             param = own_id;
-        else if (follow_id == -1){//游客查看歌单
+        else if (follow_id == -1) {//游客查看歌单
             param = own_id;
-        }else                     //查看已关注好友的歌单
+        } else                     //查看已关注好友的歌单
             param = follow_id;
         boolean login = follow_id != -1;
         List<Map<String, Object>> list = fillSongList(param, songs, login);
         return list;
+    }
+
+    public List<Integer> GetSongListIdByUserId(int user_id) {
+        return songListRepository.findListIdByUserId(user_id);
     }
 
     public List<Map<String, Object>> GetSongsBySongListId(int list_id) {
@@ -80,18 +84,18 @@ public class SongListService extends MyService {
         return list;
     }
 
-
     public Map<String, Object> GetSongInfo(int song_id) {
         SongEntity entity = songRepository.findOne(song_id);
         if (entity == null)
             return null;
         Map<String, Object> map = new HashMap<>();
-        map.put("netease_id", entity.getNeteaseId());
-        if (entity.getNeteaseId() == 0) {
-            map.put("artists", entity.getAuthorName());
-            map.put("song_name", entity.getSongName());
-            map.put("song_url", entity.getSongUri());
-        }
+        map.put("song_id", entity.getSongId());
+        map.put("artists", entity.getAuthorName());
+        map.put("audio_date", entity.getUploadTime());
+        map.put("audio_played_times", entity.getPlayedTimes());
+        map.put("audio_title", entity.getSongName());
+        map.put("audio_src", entity.getSongUri());
+        map.put("producer_id", entity.getUploaderId());
         return map;
     }
 
@@ -124,6 +128,31 @@ public class SongListService extends MyService {
 
     public List<SongListEntity> GetNearestSongList(Pageable pageable) {
         return songListRepository.findNearestSongList(pageable).getContent();
+    }
+
+    public Map<String, Object> GetSongListInfo(int user_id, int list_id) {
+        SongListEntity entity = songListRepository.findOne(list_id);
+        Map<String, Object> info = new HashMap<>();
+        if (entity == null)
+            return info;
+
+        info.put("songlist_name", entity.getListName());
+        info.put("author_id", entity.getUserId());
+        info.put("likes", entity.getLikes());
+
+        UserEntity userEntity = userRepository.findOne(entity.getUserId());
+        info.put("author", userEntity.getUserName());
+
+        PreferEntityPK preferEntityPK = new PreferEntityPK();
+        preferEntityPK.setListId(list_id);
+        preferEntityPK.setUserId(user_id);
+        PreferEntity preferEntity = preferRepository.findOne(preferEntityPK);
+        info.put("liked", preferEntity != null);
+
+        ImageEntity imageEntity = imageRepository.findOne(entity.getImageId());
+        info.put("img_url", imageEntity != null ? imageEntity.getImageUri() : "");
+
+        return info;
     }
 
     @Transactional
@@ -168,6 +197,8 @@ public class SongListService extends MyService {
 
     @Transactional
     public boolean ChangeSongListInfo(int list_id, String name, String desc, int image_id) {
+        if (image_id == 0)
+            return false;
         int res = songListRepository.updateListInfo(list_id, name, desc, image_id);
         return res == 1;
     }
@@ -178,35 +209,19 @@ public class SongListService extends MyService {
         return true;
     }
 
-    public int SongExists(int netease_id) {
-        SongEntity entity = songRepository.findByNeteaseId(netease_id);
-        return entity == null ? 0 : entity.getSongId();
-    }
-
     public boolean DeleteSong(int list_id, int song_id) {
         ContainEntityPK containEntityPK = new ContainEntityPK();
         containEntityPK.setListId(list_id);
         containEntityPK.setSongId(song_id);
-        containRepository.delete(containEntityPK);
-        return true;
+        try {
+            containRepository.delete(containEntityPK);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
-    //just for recommend
-    @Transactional
-    public void updateSong(){
-        List<SongEntity> list = songRepository.findAll();
-        StringBuilder builder ;
-        for (SongEntity entity : list){
-            if(entity.getStyles() == null){
-                builder = new StringBuilder();
-                for (int t = 0; t < 21; ++t) {
-                    int i = Math.random() > 0.8 ? 1 : 0;
-                    builder.append(i);
-                }
-                songRepository.updateStyle(entity.getSongId(), builder.toString());
-            }
-        }
-    }
 
     private PageRequest buildPageRequest(int pageNumber, int pagzSize) {
         return new PageRequest(pageNumber - 1, pagzSize, null);
@@ -223,7 +238,7 @@ public class SongListService extends MyService {
                 entityPK.setUserId(user_id);
                 PreferEntity preferEntity = preferRepository.findOne(entityPK);
                 map.put("liked", preferEntity != null);
-            }else {
+            } else {
                 map.put("liked", false);
             }
 

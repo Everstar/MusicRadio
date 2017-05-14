@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:websocket="http://www.springframework.org/schema/websocket"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:jpa="http://www.springframework.org/schema/data/jpa"
@@ -8,7 +9,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context
-       http://www.springframework.org/schema/context/spring-context.xsd
+              http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/websocket
+       http://www.springframework.org/schema/websocket/spring-websocket.xsd
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc.xsd
        http://www.springframework.org/schema/data/jpa
@@ -18,7 +21,7 @@
 
 
 
-    <context:component-scan base-package="com.musicbubble.controller com.musicbubble.service"/>
+    <context:component-scan base-package="com.musicbubble"/>
 
     <mvc:default-servlet-handler/>
 
@@ -75,6 +78,37 @@
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
+    <!--以下为web-socket配置-->
+
+    <bean id="danmuHandler" class="com.musicbubble.danmu.DanmuHandler"/>
+    <websocket:handlers allowed-origins="*">
+        <websocket:mapping path="/danmu" handler="danmuHandler"/>
+        <websocket:handshake-interceptors>
+            <bean class="com.musicbubble.danmu.config.DanmuInterceptor"/>
+        </websocket:handshake-interceptors>
+    </websocket:handlers>
+
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxTotal" value="200" />
+        <property name="maxIdle" value="50" />
+        <property name="minIdle" value="10" />
+        <property name="maxWaitMillis" value="15000"/>
+        <property name="testOnBorrow" value="true" />
+    </bean>
+
+    <bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool"  scope="singleton">
+        <constructor-arg index="0" ref="jedisPoolConfig" />
+        <constructor-arg index="1">
+            <list>
+                <bean class="redis.clients.jedis.JedisShardInfo">
+                    <constructor-arg name="host" value="127.0.0.1" />
+                    <constructor-arg name="port" value="6379" />
+                    <constructor-arg name="timeout" value="3000" />
+                    <constructor-arg name="weight" value="1" />
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
     <!---->
     <!--以下为JMS配置-->
     <!---->

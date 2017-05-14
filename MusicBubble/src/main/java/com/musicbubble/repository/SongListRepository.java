@@ -24,6 +24,9 @@ public interface SongListRepository extends JpaRepository<SongListEntity, Intege
 
     List<SongListEntity> findByUserId(int user_id);
 
+    @Query("select s.listId from SongListEntity s where s.userId=?1")
+    List<Integer> findListIdByUserId(int user_id);
+
     @Query("select s.listId from SongListEntity s where s.userId = ?1 and s.listName='MyFavorite'")
     int findFavoriteSongList(int user_id);
 

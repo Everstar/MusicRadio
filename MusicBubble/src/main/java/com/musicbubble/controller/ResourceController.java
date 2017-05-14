@@ -25,7 +25,7 @@ public class ResourceController {
     @Autowired
     private ResourceService resourceService;
 
-    @RequestMapping(value = "/api/song", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/api/net/song", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> getMusicInfo(@RequestParam("id")String song_id){
         Map<String, String> map = resourceService.GetMusicInfoById(song_id);
         HttpStatus status = HttpStatus.OK;
@@ -36,7 +36,7 @@ public class ResourceController {
     }
 
 
-    @RequestMapping(value = "api/search", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/api/net/search", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> searchMusic(@RequestParam("key") String keys, @RequestParam("num") int num) {
         System.out.println(keys + " " + num);
         List<Map<String, Object>> list = resourceService.SearchMusic(keys, num, 1);
@@ -45,7 +45,7 @@ public class ResourceController {
         return new ResponseEntity<Object>(list, status);
     }
 
-    @RequestMapping(value = "api/lyric", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/api/net/lyric", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> getMusicLyric(@RequestParam("id")String song_id){
         Map<String, String> map = resourceService.GetMusicLyric(song_id);
         HttpStatus status = HttpStatus.OK;
@@ -55,7 +55,7 @@ public class ResourceController {
         return new ResponseEntity<Object>(map, status);
     }
 
-    @RequestMapping(value = "/img", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/api/net/img", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> getImgUrl(@RequestParam("id") String img_id){
         String url = resourceService.GetImgUrlById(Integer.parseInt(img_id));
         Map<String, String>map = null;

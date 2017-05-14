@@ -21,7 +21,7 @@ public class SquareController {
     @Autowired
     private SquareService squareService;
 
-    @RequestMapping(value = "/square", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/api/square", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
     public ResponseEntity<Object> showSquare(){
         List<Map<String, Object>> list = squareService.GetSquare();
         return new ResponseEntity<>(list, HttpStatus.OK);

@@ -21,118 +21,115 @@
     <table id="16" parent="1" name="user"/>
     <table id="17" parent="1" name="style"/>
     <table id="18" parent="1" name="taste"/>
-    <column id="19" parent="8" name="comment_id">
+    <table id="19" parent="1" name="danmu"/>
+    <column id="20" parent="8" name="comment_id">
       <mandatory>1</mandatory>
       <data-type>int(10) unsigned|0</data-type>
       <sequence-identity>1</sequence-identity>
     </column>
-    <column id="20" parent="8" name="user_id">
+    <column id="21" parent="8" name="user_id">
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="21" parent="8" name="list_id">
+    <column id="22" parent="8" name="list_id">
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="22" parent="8" name="content">
+    <column id="23" parent="8" name="content">
       <data-type>mediumtext|0</data-type>
     </column>
-    <column id="23" parent="8" name="comment_time">
+    <column id="24" parent="8" name="comment_time">
       <data-type>timestamp|0</data-type>
     </column>
-    <column id="24" parent="8" name="likes">
+    <column id="25" parent="8" name="likes">
       <data-type>int(11)|0</data-type>
       <default-expression>&apos;0&apos;</default-expression>
     </column>
-    <key id="25" parent="8" name="PRIMARY">
+    <key id="26" parent="8" name="PRIMARY">
       <columns>comment_id</columns>
       <primary>1</primary>
     </key>
-    <column id="26" parent="9" name="list_id">
+    <column id="27" parent="9" name="list_id">
       <mandatory>1</mandatory>
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="27" parent="9" name="song_id">
+    <column id="28" parent="9" name="song_id">
       <mandatory>1</mandatory>
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="28" parent="9" name="image_id">
+    <column id="29" parent="9" name="image_id">
       <data-type>int(11)|0</data-type>
     </column>
-    <key id="29" parent="9" name="PRIMARY">
+    <key id="30" parent="9" name="PRIMARY">
       <columns>list_id
 song_id</columns>
       <primary>1</primary>
     </key>
-    <column id="30" parent="10" name="f_id">
+    <column id="31" parent="10" name="f_id">
       <mandatory>1</mandatory>
       <data-type>int(10) unsigned|0</data-type>
       <sequence-identity>1</sequence-identity>
     </column>
-    <column id="31" parent="10" name="user_id">
+    <column id="32" parent="10" name="user_id">
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="32" parent="10" name="follow_id">
+    <column id="33" parent="10" name="follow_id">
       <data-type>int(11)|0</data-type>
     </column>
-    <key id="33" parent="10" name="PRIMARY">
+    <key id="34" parent="10" name="PRIMARY">
       <columns>f_id</columns>
       <primary>1</primary>
     </key>
-    <column id="34" parent="11" name="image_id">
+    <column id="35" parent="11" name="image_id">
       <mandatory>1</mandatory>
       <data-type>int(10) unsigned|0</data-type>
       <sequence-identity>1</sequence-identity>
     </column>
-    <column id="35" parent="11" name="image_type">
+    <column id="36" parent="11" name="image_type">
       <data-type>char(1)|0</data-type>
       <default-expression>&apos;0&apos;</default-expression>
     </column>
-    <column id="36" parent="11" name="image_uri">
+    <column id="37" parent="11" name="image_uri">
       <data-type>varchar(255)|0</data-type>
     </column>
-    <key id="37" parent="11" name="PRIMARY">
+    <key id="38" parent="11" name="PRIMARY">
       <columns>image_id</columns>
       <primary>1</primary>
     </key>
-    <column id="38" parent="12" name="user1_id">
+    <column id="39" parent="12" name="user1_id">
       <mandatory>1</mandatory>
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="39" parent="12" name="user2_id">
+    <column id="40" parent="12" name="user2_id">
       <mandatory>1</mandatory>
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="40" parent="12" name="message_uri">
+    <column id="41" parent="12" name="message_uri">
       <data-type>varchar(255)|0</data-type>
     </column>
-    <key id="41" parent="12" name="PRIMARY">
+    <key id="42" parent="12" name="PRIMARY">
       <columns>user1_id
 user2_id</columns>
       <primary>1</primary>
     </key>
-    <column id="42" parent="13" name="user_id">
+    <column id="43" parent="13" name="user_id">
       <mandatory>1</mandatory>
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="43" parent="13" name="list_id">
+    <column id="44" parent="13" name="list_id">
       <mandatory>1</mandatory>
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="44" parent="13" name="prefer_time">
+    <column id="45" parent="13" name="prefer_time">
       <data-type>timestamp|0</data-type>
     </column>
-    <key id="45" parent="13" name="PRIMARY">
+    <key id="46" parent="13" name="PRIMARY">
       <columns>user_id
 list_id</columns>
       <primary>1</primary>
     </key>
-    <column id="46" parent="14" name="song_id">
+    <column id="47" parent="14" name="song_id">
       <mandatory>1</mandatory>
       <data-type>int(10) unsigned|0</data-type>
       <sequence-identity>1</sequence-identity>
-    </column>
-    <column id="47" parent="14" name="netease_id">
-      <data-type>int(10) unsigned|0</data-type>
-      <default-expression>&apos;0&apos;</default-expression>
     </column>
     <column id="48" parent="14" name="song_name">
       <mandatory>1</mandatory>
@@ -149,109 +146,145 @@ list_id</columns>
       <mandatory>1</mandatory>
       <data-type>varchar(255)|0</data-type>
     </column>
-    <column id="52" parent="14" name="song_type">
-      <data-type>char(1)|0</data-type>
+    <column id="52" parent="14" name="language">
+      <data-type>varchar(45)|0</data-type>
+    </column>
+    <column id="53" parent="14" name="styles">
+      <data-type>varchar(45)|0</data-type>
+    </column>
+    <column id="54" parent="14" name="uploader_id">
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="55" parent="14" name="upload_time">
+      <data-type>timestamp|0</data-type>
+    </column>
+    <column id="56" parent="14" name="played_times">
+      <data-type>int(11)|0</data-type>
       <default-expression>&apos;0&apos;</default-expression>
     </column>
-    <column id="53" parent="14" name="language">
-      <data-type>varchar(45)|0</data-type>
-    </column>
-    <column id="54" parent="14" name="styles">
-      <data-type>varchar(45)|0</data-type>
-    </column>
-    <key id="55" parent="14" name="PRIMARY">
+    <key id="57" parent="14" name="PRIMARY">
       <columns>song_id</columns>
       <primary>1</primary>
     </key>
-    <column id="56" parent="15" name="list_id">
+    <column id="58" parent="15" name="list_id">
       <mandatory>1</mandatory>
       <data-type>int(10) unsigned|0</data-type>
       <sequence-identity>1</sequence-identity>
     </column>
-    <column id="57" parent="15" name="list_name">
+    <column id="59" parent="15" name="list_name">
       <mandatory>1</mandatory>
       <data-type>varchar(100)|0</data-type>
     </column>
-    <column id="58" parent="15" name="likes">
+    <column id="60" parent="15" name="likes">
       <data-type>int(11)|0</data-type>
       <default-expression>&apos;0&apos;</default-expression>
     </column>
-    <column id="59" parent="15" name="image_id">
+    <column id="61" parent="15" name="image_id">
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="60" parent="15" name="profile">
+    <column id="62" parent="15" name="profile">
       <data-type>mediumtext|0</data-type>
     </column>
-    <column id="61" parent="15" name="user_id">
+    <column id="63" parent="15" name="user_id">
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="62" parent="15" name="create_time">
+    <column id="64" parent="15" name="create_time">
       <data-type>timestamp|0</data-type>
     </column>
-    <key id="63" parent="15" name="PRIMARY">
+    <key id="65" parent="15" name="PRIMARY">
       <columns>list_id</columns>
       <primary>1</primary>
     </key>
-    <column id="64" parent="16" name="user_id">
+    <column id="66" parent="16" name="user_id">
       <mandatory>1</mandatory>
       <data-type>int(10) unsigned|0</data-type>
       <sequence-identity>1</sequence-identity>
     </column>
-    <column id="65" parent="16" name="user_name">
+    <column id="67" parent="16" name="user_name">
       <data-type>varchar(100)|0</data-type>
     </column>
-    <column id="66" parent="16" name="passwd">
+    <column id="68" parent="16" name="passwd">
       <data-type>varchar(128)|0</data-type>
     </column>
-    <column id="67" parent="16" name="image_id">
+    <column id="69" parent="16" name="image_id">
       <data-type>int(11)|0</data-type>
       <default-expression>&apos;1&apos;</default-expression>
     </column>
-    <column id="68" parent="16" name="sex">
+    <column id="70" parent="16" name="sex">
       <data-type>char(1)|0</data-type>
     </column>
-    <column id="69" parent="16" name="rank">
+    <column id="71" parent="16" name="rank">
       <data-type>int(11)|0</data-type>
       <default-expression>&apos;1&apos;</default-expression>
     </column>
-    <column id="70" parent="16" name="experience">
+    <column id="72" parent="16" name="experience">
       <data-type>int(11)|0</data-type>
       <default-expression>&apos;0&apos;</default-expression>
     </column>
-    <column id="71" parent="16" name="list_id">
+    <column id="73" parent="16" name="list_id">
       <data-type>int(11)|0</data-type>
       <default-expression>&apos;0&apos;</default-expression>
     </column>
-    <column id="72" parent="16" name="last_signin">
+    <column id="74" parent="16" name="last_signin">
       <data-type>timestamp|0</data-type>
     </column>
-    <key id="73" parent="16" name="PRIMARY">
+    <column id="75" parent="16" name="mail">
+      <data-type>varchar(100)|0</data-type>
+    </column>
+    <column id="76" parent="16" name="birthday">
+      <data-type>varchar(100)|0</data-type>
+    </column>
+    <key id="77" parent="16" name="PRIMARY">
       <columns>user_id</columns>
       <primary>1</primary>
     </key>
-    <column id="74" parent="17" name="style_id">
+    <column id="78" parent="17" name="style_id">
       <mandatory>1</mandatory>
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="75" parent="17" name="style_name">
+    <column id="79" parent="17" name="style_name">
       <data-type>varchar(45)|0</data-type>
     </column>
-    <key id="76" parent="17" name="PRIMARY">
+    <key id="80" parent="17" name="PRIMARY">
       <columns>style_id</columns>
       <primary>1</primary>
     </key>
-    <column id="77" parent="18" name="user_id">
+    <column id="81" parent="18" name="user_id">
       <mandatory>1</mandatory>
       <data-type>int(11)|0</data-type>
     </column>
-    <column id="78" parent="18" name="language">
+    <column id="82" parent="18" name="language">
       <data-type>mediumtext|0</data-type>
     </column>
-    <column id="79" parent="18" name="style">
+    <column id="83" parent="18" name="style">
       <data-type>mediumtext|0</data-type>
     </column>
-    <key id="80" parent="18" name="PRIMARY">
+    <key id="84" parent="18" name="PRIMARY">
       <columns>user_id</columns>
+      <primary>1</primary>
+    </key>
+    <column id="85" parent="19" name="danmu_id">
+      <mandatory>1</mandatory>
+      <data-type>int(10) unsigned|0</data-type>
+      <sequence-identity>1</sequence-identity>
+    </column>
+    <column id="86" parent="19" name="user_id">
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="87" parent="19" name="content">
+      <data-type>varchar(100)|0</data-type>
+    </column>
+    <column id="88" parent="19" name="global_time">
+      <data-type>timestamp|0</data-type>
+    </column>
+    <column id="89" parent="19" name="local_time">
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="90" parent="19" name="song_id">
+      <data-type>int(11)|0</data-type>
+    </column>
+    <key id="91" parent="19" name="PRIMARY">
+      <columns>danmu_id</columns>
       <primary>1</primary>
     </key>
   </database-model>

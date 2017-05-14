@@ -3,11 +3,13 @@ package com.musicbubble.service;
 import com.musicbubble.model.CommentEntity;
 import com.musicbubble.model.ContainEntity;
 import com.musicbubble.model.PreferEntity;
+import com.musicbubble.model.UserEntity;
 import com.musicbubble.repository.*;
 import com.musicbubble.service.base.AccountService;
 import com.musicbubble.service.base.MyService;
 import com.musicbubble.service.base.ResourceService;
 import com.musicbubble.tools.TimeUtil;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,9 @@ import java.util.Map;
  */
 @Service
 public class AdviceService extends MyService {
+
+    private static Logger logger = Logger.getLogger(AdviceService.class);
+
     @Autowired
     private LikeRepository likeRepository;
 
@@ -34,6 +39,9 @@ public class AdviceService extends MyService {
 
     @Autowired
     private CommentRepository commentRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private AccountService accountService;
@@ -92,17 +100,24 @@ public class AdviceService extends MyService {
     }
 
     public List<Map<String, Object>> GetComment(int list_id){
+        long start = System.currentTimeMillis();
         List<CommentEntity> comments = commentRepository.findByListId(list_id);
+        logger.info("running SQL :" + (System.currentTimeMillis() - start));
+
+        start = System.currentTimeMillis();
         List<Map<String, Object>> list = new ArrayList<>();
         for (CommentEntity c : comments){
             Map<String, Object> map = new HashMap<>();
-            map.put("user_id", c.getUserId());
-            map.put("avator_url", resourceService.GetImgUrlById(accountService.GetImage(c.getUserId())));
+            UserEntity entity = userRepository.findOne(c.getUserId());
+            map.put("user",  entity.getUserName());
+            map.put("rank", entity.getRank());
+            map.put("avator_url", resourceService.GetImgUrlById(entity.getImageId()));
             map.put("content", c.getContent());
             map.put("time", TimeUtil.GetTimeStampString(c.getCommentTime()));
             map.put("likes", c.getLikes());
             list.add(map);
         }
+        logger.info("running loop :" +(System.currentTimeMillis() - start));
         return list;
     }
 }

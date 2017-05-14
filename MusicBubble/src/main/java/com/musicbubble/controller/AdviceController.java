@@ -23,7 +23,7 @@ public class AdviceController {
     @Autowired
     private AccountService accountService;
 
-    @RequestMapping(value = "/likesonglist", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/api/likesonglist", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> likeSonglist(@CookieValue(value = "token", required = true) String token, @RequestBody Map<String, Integer> data) {
         int user_id = accountService.IdentifyUser(token);
         if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
@@ -38,7 +38,7 @@ public class AdviceController {
         return new ResponseEntity<>(map, status);
     }
 
-    @RequestMapping(value = "/likesong", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/api/likesong", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> likeSong(@CookieValue(value = "token", required = true) String token, @RequestBody Map<String, Integer> data) {
         int user_id = accountService.IdentifyUser(token);
         if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
@@ -55,7 +55,7 @@ public class AdviceController {
     }
 
     //tested
-    @RequestMapping(value = "/addcomment", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/api/addcomment", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> addComment(@CookieValue(value = "token", required = true) String token, @RequestBody Map<String, Object> data) {
         int user_id = accountService.IdentifyUser(token);
         if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
@@ -71,7 +71,7 @@ public class AdviceController {
     }
 
     //tested
-    @RequestMapping(value = "/comment", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/api/comment", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> getComment(@RequestParam("id") Integer list_id){
         List<Map<String, Object>> list = adviceService.GetComment(list_id);
         return new ResponseEntity<>(list, HttpStatus.OK);

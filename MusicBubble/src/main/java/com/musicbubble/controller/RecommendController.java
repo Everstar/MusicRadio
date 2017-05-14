@@ -28,7 +28,7 @@ public class RecommendController {
     @Autowired
     private RecommendService recommendService;
 
-    @RequestMapping(value = "/recommendSong", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/api/recommendSong", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> recommendSong(@CookieValue(value = "token", required = true) String token, @RequestParam("data") int data) {
         //cookie验证
         int user_id = accountService.IdentifyUser(token);
@@ -50,7 +50,7 @@ public class RecommendController {
 
     }
 
-    @RequestMapping(value = "/recommendUser", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/api/recommendUser", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> recommendUser(@CookieValue(value = "token", required = true) String token, @RequestParam("data") int data) {
         int user_id = accountService.IdentifyUser(token);
         if (user_id == 0) return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);

@@ -3,7 +3,7 @@ package com.musicbubble.model;
 import javax.persistence.*;
 
 /**
- * Created by happyfarmer on 12/16/2016.
+ * Created by happyfarmer on 5/6/2017.
  */
 @Entity
 @Table(name = "message", schema = "db_03", catalog = "")

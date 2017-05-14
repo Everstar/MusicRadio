@@ -5,7 +5,7 @@ import javax.persistence.Id;
 import java.io.Serializable;
 
 /**
- * Created by happyfarmer on 12/16/2016.
+ * Created by happyfarmer on 5/6/2017.
  */
 public class PreferEntityPK implements Serializable {
     private int userId;
@@ -36,10 +36,10 @@ public class PreferEntityPK implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PreferEntityPK that = (PreferEntityPK) o;
+        PreferEntityPK entityPK = (PreferEntityPK) o;
 
-        if (userId != that.userId) return false;
-        if (listId != that.listId) return false;
+        if (userId != entityPK.userId) return false;
+        if (listId != entityPK.listId) return false;
 
         return true;
     }
